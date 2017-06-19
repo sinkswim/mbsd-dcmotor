@@ -1,0 +1,1370 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project>
+  <fileVersion>2</fileVersion>
+  <fileChecksum>52427702</fileChecksum>
+  <configuration>
+    <name>FLASH</name>
+    <outputs>
+      <file>$TOOLKIT_DIR$\inc\c\stdarg.h</file>
+      <file>$TOOLKIT_DIR$\lib\shb_l.a</file>
+      <file>$TOOLKIT_DIR$\lib\m7M_tlv.a</file>
+      <file>$TOOLKIT_DIR$\lib\dl7M_tln.a</file>
+      <file>$PROJ_DIR$\FLASH\List\OS3-KSDK.map</file>
+      <file>$TOOLKIT_DIR$\inc\c\string.h</file>
+      <file>$TOOLKIT_DIR$\lib\rt7M_tl.a</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\yfuns.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdlib.h</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_interrupt_manager.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_gpio_common.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_uart_driver.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_mcg_hal.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_uart_driver.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_uart_common.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_port_hal.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_port_hal.o</file>
+      <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_clock_K64F12.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_gpio_hal.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_clock_K64F12.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_sim_hal_K64F12.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_tmr.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_misc_utilities.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_gpio_common.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_uart_hal.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_gpio_hal.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_interrupt_manager.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\cpu_c.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_sim_hal.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_sim_hal.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\gpio_pins.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_uart_hal.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_sim_hal_K64F12.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\startup.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_clock_manager.o</file>
+      <file>$TOOLKIT_DIR$\inc\c\math.h</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_pend_multi.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_int.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_cfg_app.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_var.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_var.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_tick.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_app_hooks.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_app_hooks.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_msg.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_prio.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_msg.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_tick.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_stat.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\gpio_pins.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\bsp_ser.o</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Threads.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\assert.h</file>
+      <file>$PROJ_DIR$\FLASH\Obj\lib_str.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_mem.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\cpu_c.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_pend_multi.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_cfg_app.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_stat.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_prio.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_os_abstraction_ucosiii.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_os_abstraction_ucosiii.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_int.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_misc_utilities.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_dbg.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\cpu_bsp.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_sem.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_cpu_a.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\cpu_core.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\startup.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\lib_ascii.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\pin_mux.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\lib_ascii.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_mutex.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_task.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_gpio_driver.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\hardware_init.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\app.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\system_MK64F12.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_flag.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+      <file>$PROJ_DIR$\FLASH\Obj\lib_str.o</file>
+      <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\intrinsics.h</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_cpu_c.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\app.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdbool.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\xencoding_limits.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\osa\fsl_os_abstraction_ucosiii.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\hal\gpio\fsl_gpio_hal.c</file>
+      <file>$PROJ_DIR$\..\os_app_hooks.h</file>
+      <file>$PROJ_DIR$\..\..\BSP\bsp_ser.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_ftfe.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_fmc.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_enet.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_fb.h</file>
+      <file>$PROJ_DIR$\..\os_cfg_app.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_ewm.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_dmamux.h</file>
+      <file>$PROJ_DIR$\..\..\BSP\cpu_bsp.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_dma.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_dac.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_crc.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_cmt.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_cmp.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_cau.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_can.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_axbs.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_aips.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_adc.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\fsl_bitaccess.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\boards\frdmk64f120m\pin_mux.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\boards\frdmk64f120m\gpio_pins.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\boards\frdmk64f120m\hardware_init.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\boards\frdmk64f120m\pin_mux.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\hal\gpio\fsl_gpio_hal.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\boards\frdmk64f120m\gpio_pins.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\hal\mcg\fsl_mcg_features.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_i2c.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_mcm.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_llwu.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_spi.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_uart.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\hal\mcg\fsl_mcg_hal.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_lptmr.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_smc.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_mcg.h</file>
+      <file>$PROJ_DIR$\..\..\BSP\KSDK\IAR\startup_MK64F12.s</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_i2s.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_usb.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_usbdcd.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_vref.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_wdog.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_mpu.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_nv.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\boards\frdmk64f120m\board.h</file>
+      <file>$PROJ_DIR$\..\lib_cfg.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_ftm.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_gpio.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_sim.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_sdhc.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_rtc.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_rng.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_rfvbat.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_rfsys.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_rcm.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_port.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_pmc.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_pit.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_pdb.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\MK64F12\MK64F12_osc.h</file>
+      <file>$PROJ_DIR$\..\os_cfg.h</file>
+      <file>$PROJ_DIR$\..\app_cfg.h</file>
+      <file>$PROJ_DIR$\..\..\BSP\KSDK\IAR\K64FN1Mxxx12_flash.icf</file>
+      <file>$PROJ_DIR$\..\app.c</file>
+      <file>$PROJ_DIR$\..\..\BSP\KSDK\startup.c</file>
+      <file>$PROJ_DIR$\..\..\BSP\KSDK\startup.h</file>
+      <file>$PROJ_DIR$\..\..\BSP\bsp_ser.c</file>
+      <file>$PROJ_DIR$\..\os_app_hooks.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\device\fsl_device_registers.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\drivers\gpio\common\fsl_gpio_common.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\core_cm4.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\core_cm4_simd.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\core_cmFunc.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\CMSIS\Include\core_cmInstr.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\drivers\gpio\fsl_gpio_driver.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\drivers\gpio\common\fsl_gpio_common.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\hal\mcg\fsl_mcg_hal.c</file>
+      <file>$PROJ_DIR$\..\cpu_cfg.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\hal\port\fsl_port_hal.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\drivers\gpio\src\fsl_gpio_driver.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\hal\port\fsl_port_features.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\hal\gpio\fsl_gpio_features.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\startup\MK64F12\system_MK64F12.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\osa\src\fsl_os_abstraction_ucosiii.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\osa\fsl_os_abstraction.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\system\clock\fsl_clock_manager.h</file>
+      <file>$PROJ_DIR$\FLASH\Obj\OS3-KSDK.pbd</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_clock_manager.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_q.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
+      <file>$PROJ_DIR$\FLASH\Obj\lib_mem.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\c\ystdio.h</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_mcg_hal.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Exe\OS3-KSDK.out</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_flag.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-LIB\lib_mem.h</file>
+      <file>$PROJ_DIR$\FLASH\Obj\lib_mem.o</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_q.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Ports\ARM-Cortex-M4\Generic\IAR\os_cpu_c.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-LIB\lib_str.h</file>
+      <file>$PROJ_DIR$\FLASH\Obj\startup_MK64F12.o</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_type.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_var.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_tmr.c</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_cpu_c.pbi</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_int.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_pend_multi.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_mem.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_msg.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_dbg.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-LIB\lib_str.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Ports\ARM-Cortex-M4\Generic\IAR\os_cpu.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_mutex.c</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_mutex.o</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_core.c</file>
+      <file>$PROJ_DIR$\FLASH\Obj\bsp_ser.pbi</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_stat.c</file>
+      <file>$PROJ_DIR$\FLASH\Obj\cpu_bsp.pbi</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_task.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_sem.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_prio.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\utilities\src\fsl_misc_utilities.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\utilities\fsl_misc_utilities.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_tick.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_cfg_app.c</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_dbg.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\lib_mem_a.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\lib_math.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_core.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_task.o</file>
+      <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_time.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\hal\uart\fsl_uart_hal.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\hal\sim\MK64F12\fsl_sim_hal_K64F12.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\hal\uart\fsl_uart_hal.c</file>
+      <file>$TOOLKIT_DIR$\inc\c\ymath.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-LIB\lib_math.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-CPU\ARM-Cortex-M4\IAR\cpu_c.c</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_flag.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_time.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\hardware_init.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_core.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_mem.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_uart_common.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_debug_console.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_time.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\cpu_a.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_tmr.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_q.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\lib_math.pbi</file>
+      <file>$PROJ_DIR$\FLASH\Obj\system_MK64F12.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\c\xtgmath.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_gpio_driver.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\pin_mux.o</file>
+      <file>$PROJ_DIR$\FLASH\Obj\os_sem.o</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\utilities\fsl_debug_console.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\hal\sim\fsl_sim_hal.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\utilities\src\fsl_debug_console.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\hal\uart\fsl_uart_features.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\drivers\uart\src\fsl_uart_driver.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-LIB\lib_mem.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\system\interrupt\fsl_interrupt_features.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\drivers\uart\fsl_uart_driver.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\hal\sim\MK64F12\fsl_sim_hal_K64F12.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-CPU\ARM-Cortex-M4\IAR\cpu.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-CPU\ARM-Cortex-M4\IAR\cpu_a.asm</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\drivers\uart\common\fsl_uart_common.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\drivers\uart\common\fsl_uart_common.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-CPU\cpu_core.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-CPU\cpu_core.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-LIB\lib_ascii.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-LIB\Ports\ARM-Cortex-M4\IAR\lib_mem_a.asm</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-CPU\cpu_def.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-LIB\lib_ascii.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Ports\ARM-Cortex-M4\Generic\IAR\os_cpu_a.asm</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-LIB\lib_math.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-LIB\lib_def.h</file>
+      <file>$PROJ_DIR$\FLASH\Obj\cpu_core.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\c\cmsis_iar.h</file>
+      <file>$TOOLKIT_DIR$\inc\c\stdio.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\hal\port\fsl_port_hal.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\hal\sim\fsl_sim_features.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\hal\sim\fsl_sim_hal.c</file>
+      <file>$PROJ_DIR$\FLASH\Obj\fsl_debug_console.o</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\system\interrupt\src\fsl_interrupt_manager.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\system\interrupt\fsl_interrupt_manager.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\startup\MK64F12\system_MK64F12.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\system\clock\MK64F12\fsl_clock_K64F12.c</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\system\clock\MK64F12\fsl_clock_K64F12.h</file>
+      <file>$PROJ_DIR$\..\..\..\KSDK\platform\system\clock\fsl_clock_manager.c</file>
+    </outputs>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\platform\hal\gpio\fsl_gpio_hal.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 20</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 27</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 118 54 84 18 82 184 226 89 53 183 88 175 162 112 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 118 54 84 18 82 184 226 89 53 183 88 175 162 112 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\BSP\cpu_bsp.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 67</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 213</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 266 261 85 84 269 171 273 190 139 194 270 283 183 18 82 184 226 89 53</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 266 261 85 84 269 171 273 190 139 194 270 283 183 18 82 184 226 89 53</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\boards\frdmk64f120m\pin_mux.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 250</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 73</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 162 112 183 84 18 82 184 226 89 53 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 277 54 88 174 253 278 260 117</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 162 112 183 84 18 82 184 226 89 53 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 277 54 88 174 253 278 260 117</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\boards\frdmk64f120m\hardware_init.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 236</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 78</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 162 112 183 84 18 82 184 226 89 53 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 138 117 115 168 88 277 54 174 118 175 179 126 120 253 278 260 285 252</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 162 112 183 84 18 82 184 226 89 53 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 138 117 115 168 88 277 54 174 118 175 179 126 120 253 278 260 285 252</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\boards\frdmk64f120m\gpio_pins.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 32</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 51</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 115 168 183 84 18 82 184 226 89 53 9 248 88 277 54 174 162 112 164 167 275 85 166 165 283 111 113 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 118 175</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 115 168 183 84 18 82 184 226 89 53 9 248 88 277 54 174 162 112 164 167 275 85 166 165 283 111 113 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 118 175</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\BSP\KSDK\IAR\startup_MK64F12.s</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 195</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\app.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 79</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 87</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 37 84 231 18 82 184 226 89 53 247 232 261 85 269 171 266 273 190 139 194 270 155 276 248 186 203 154 196 207 178 183 88 9 90 283 138 117 115 168 277 54 174 162 112 164 167 275 166 165 111 113 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 118 175 93</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 37 84 231 18 82 184 226 89 53 247 232 261 85 269 171 266 273 190 139 194 270 155 276 248 186 203 154 196 207 178 183 88 9 90 283 138 117 115 168 277 54 174 162 112 164 167 275 166 165 111 113 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 118 175 93</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\BSP\KSDK\startup.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 71</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 35</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 159 162 112 183 84 18 82 184 226 89 53 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 159 162 112 183 84 18 82 184 226 89 53 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\BSP\bsp_ser.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 52</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 211</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 93 266 261 85 84 269 171 273 190 139 194 270 155 276 18 82 184 226 89 53 248 186 282 183 88 54 258 162 112 164 167 275 166 165 283 111 113 9 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 263 259 178 90 203 154 196 207 228 255 117</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 93 266 261 85 84 269 171 273 190 139 194 270 155 276 18 82 184 226 89 53 248 186 0 282 183 88 54 258 162 112 164 167 275 166 165 283 111 113 9 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 263 259 178 90 203 154 196 207 228 255 117</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\os_app_hooks.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 44</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 45</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207 92</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207 92</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\platform\drivers\gpio\common\fsl_gpio_common.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 11</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 25</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 162 112 183 84 18 82 184 226 89 53 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 162 112 183 84 18 82 184 226 89 53 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\platform\hal\mcg\fsl_mcg_hal.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 13</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 187</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 126 183 84 18 82 184 226 89 53 88 54 162 112 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 120</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 126 183 84 18 82 184 226 89 53 88 54 162 112 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 120</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\platform\hal\port\fsl_port_hal.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 17</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 16</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 277 54 84 18 82 184 226 89 53 183 88 174 162 112 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 277 54 84 18 82 184 226 89 53 183 88 174 162 112 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\platform\drivers\gpio\src\fsl_gpio_driver.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 249</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 77</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 168 183 84 18 82 184 226 89 53 9 248 88 277 54 174 162 112 164 167 275 85 166 165 283 111 113 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 118 175 169 179 126 120 253 278 260 285 282 258</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 168 183 84 18 82 184 226 89 53 9 248 88 277 54 174 162 112 164 167 275 85 166 165 283 111 113 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 118 175 169 179 126 120 253 278 260 285 282 258</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>[ROOT_NODE]</name>
+      <outputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 188 4</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\platform\startup\MK64F12\system_MK64F12.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 80</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 246</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 183 84 18 82 184 226 89 53 162 112 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\platform\osa\src\fsl_os_abstraction_ucosiii.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 62</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 63</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 54 84 18 82 184 226 89 53 178 183 88 9 248 90 203 154 266 261 85 269 171 273 190 139 194 270 196 207 282 258 162 112 164 167 275 166 165 283 111 113 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\FLASH\Exe\OS3-KSDK.out</name>
+      <outputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 4</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ILINK</name>
+          <file> 156 79 52 242 67 29 70 21 36 280 11 249 20 10 13 65 62 17 30 34 239 12 26 32 236 72 223 191 222 83 44 40 237 69 86 221 234 64 238 46 209 38 61 244 251 60 225 43 241 243 42 250 71 195 80 1 6 2 3</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_flag.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 234</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 81</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_q.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 244</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 182</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Ports\ARM-Cortex-M4\Generic\IAR\os_cpu_c.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 86</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 199</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_var.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 42</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 41</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_tmr.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 243</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 23</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_int.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 64</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 39</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_pend_multi.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 38</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 58</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_mem.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 238</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 56</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_msg.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 46</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 48</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_dbg.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 221</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 66</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-LIB\lib_str.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 83</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 55</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 194 261 85 84 269 171 273 270 139</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_mutex.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 209</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 75</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_core.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 237</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 224</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_stat.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 60</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 50</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_task.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 225</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 76</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_sem.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 251</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 68</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_prio.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 61</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 47</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\platform\utilities\src\fsl_misc_utilities.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 65</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 24</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 276 84 18 82 184 226 89 53 248 186 9 218 183</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_tick.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 43</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 49</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_cfg_app.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 40</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 59</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 98 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Source\os_time.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 241</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 235</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 203 154 266 261 85 84 269 171 273 190 139 194 270 196 207</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\platform\hal\sim\MK64F12\fsl_sim_hal_K64F12.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 34</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 22</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 183 84 18 82 184 226 89 53 9 248 88 162 112 164 167 275 85 166 165 283 111 113 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 260 253 54 278</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 183 84 18 82 184 226 89 53 9 248 88 162 112 164 167 275 85 166 165 283 111 113 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 260 253 54 278</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\platform\hal\uart\fsl_uart_hal.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 26</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 33</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 228 54 84 18 82 184 226 89 53 183 88 255 162 112 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-CPU\ARM-Cortex-M4\IAR\cpu_c.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 29</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 57</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 261 85 84 269 171 266 273 190 139 194 270</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\platform\utilities\src\fsl_debug_console.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 280</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 240</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 276 84 18 82 184 226 89 53 248 186 9 252 183 228 54 88 255 162 112 164 167 275 85 166 165 283 111 113 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 263 259 178 90 203 154 266 261 269 171 273 190 139 194 270 196 207 179 126 120 253 278 260 285 8</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\platform\drivers\uart\src\fsl_uart_driver.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 12</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 14</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 54 84 18 82 184 226 89 53 5 248 7 259 183 88 178 9 90 203 154 266 261 85 269 171 273 190 139 194 270 196 207 228 255 162 112 164 167 275 166 165 283 111 113 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 263 179 126 120 253 278 260 285 282 258</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-LIB\lib_mem.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 191</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 185</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 190 261 85 84 269 171 266 273 194 270 139 232</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-CPU\ARM-Cortex-M4\IAR\cpu_a.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 242</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\platform\drivers\uart\common\fsl_uart_common.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 239</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 15</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 162 112 183 84 18 82 184 226 89 53 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-CPU\cpu_core.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 70</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 274</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 266 261 85 84 269 171 273 190 139 194 270</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-LIB\lib_ascii.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 72</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 74</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 270 261 85 84 269 171 273</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-LIB\Ports\ARM-Cortex-M4\IAR\lib_mem_a.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 222</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uCOS-III\Ports\ARM-Cortex-M4\Generic\IAR\os_cpu_a.asm</name>
+      <outputs>
+        <tool>
+          <name>AARM</name>
+          <file> 69</file>
+        </tool>
+      </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\rtos\uCOSIII\src\uC-LIB\lib_math.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 223</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 245</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 232 261 85 84 269 171 266 273 190 139 194 270</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\platform\hal\sim\fsl_sim_hal.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 30</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 31</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 253 183 84 18 82 184 226 89 53 88 54 162 112 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 278 260</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 253 183 84 18 82 184 226 89 53 88 54 162 112 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 278 260</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\platform\system\interrupt\src\fsl_interrupt_manager.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 10</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 28</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 54 84 18 82 184 226 89 53 282 183 88 258 162 112 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\platform\system\clock\MK64F12\fsl_clock_K64F12.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 21</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 19</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 183 84 18 82 184 226 89 53 9 248 88 162 112 164 167 275 85 166 165 283 111 113 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 253 54 278 260 179 126 120 285</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\KSDK\platform\system\clock\fsl_clock_manager.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 36</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 181</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 162 112 183 84 18 82 184 226 89 53 164 167 275 85 166 165 283 111 113 9 248 110 109 108 107 106 105 104 103 102 100 96 99 97 95 94 140 141 121 131 123 127 129 122 136 137 153 152 151 150 149 148 147 146 145 144 143 142 128 124 125 132 133 134 135 179 88 54 126 120 253 278 260 285</file>
+        </tool>
+      </inputs>
+    </file>
+  </configuration>
+</project>
+
+

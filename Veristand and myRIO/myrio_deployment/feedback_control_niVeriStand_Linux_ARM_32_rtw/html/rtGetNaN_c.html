@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="./js/coder_app.js"></script>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="./rtwreport_utils.js"></script>
+<script type="text/javascript" src="./rtwannotate.js"></script>
+<link rel="stylesheet" type="text/css" href="./css/coder_app.css"/>
+</head>
+<body onload="srcFileOnload();">
+<pre id="code">
+<table class="code" id="codeTbl">
+<tr name="1" id="1">
+<td>1</td><td><span class="ct">/*</span></td></tr>
+<tr name="2" id="2">
+<td>2</td><td><span class="ct"> * rtGetNaN.c</span></td></tr>
+<tr name="3" id="3">
+<td>3</td><td><span class="ct"> *</span></td></tr>
+<tr name="4" id="4">
+<td>4</td><td><span class="ct"> * Academic License - for use in teaching, academic research, and meeting</span></td></tr>
+<tr name="5" id="5">
+<td>5</td><td><span class="ct"> * course requirements at degree granting institutions only.  Not for</span></td></tr>
+<tr name="6" id="6">
+<td>6</td><td><span class="ct"> * government, commercial, or other organizational use.</span></td></tr>
+<tr name="7" id="7">
+<td>7</td><td><span class="ct"> *</span></td></tr>
+<tr name="8" id="8">
+<td>8</td><td><span class="ct"> * Code generation for model "feedback_control".</span></td></tr>
+<tr name="9" id="9">
+<td>9</td><td><span class="ct"> *</span></td></tr>
+<tr name="10" id="10">
+<td>10</td><td><span class="ct"> * Model version              : 1.45</span></td></tr>
+<tr name="11" id="11">
+<td>11</td><td><span class="ct"> * Simulink Coder version : 8.10 (R2016a) 10-Feb-2016</span></td></tr>
+<tr name="12" id="12">
+<td>12</td><td><span class="ct"> * C source code generated on : Sun Jun 18 18:56:48 2017</span></td></tr>
+<tr name="13" id="13">
+<td>13</td><td><span class="ct"> *</span></td></tr>
+<tr name="14" id="14">
+<td>14</td><td><span class="ct"> * Target selection: NIVeriStand_Linux_ARM_32.tlc</span></td></tr>
+<tr name="15" id="15">
+<td>15</td><td><span class="ct"> * Note: GRT includes extra infrastructure and instrumentation for prototyping</span></td></tr>
+<tr name="16" id="16">
+<td>16</td><td><span class="ct"> * Embedded hardware selection: ARM Compatible-&gt;ARM 7</span></td></tr>
+<tr name="17" id="17">
+<td>17</td><td><span class="ct"> * Code generation objectives: Unspecified</span></td></tr>
+<tr name="18" id="18">
+<td>18</td><td><span class="ct"> * Validation result: Not run</span></td></tr>
+<tr name="19" id="19">
+<td>19</td><td><span class="ct"> */</span></td></tr>
+<tr name="20" id="20">
+<td>20</td><td></td></tr>
+<tr name="21" id="21">
+<td>21</td><td><span class="ct">/*</span></td></tr>
+<tr name="22" id="22">
+<td>22</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="23" id="23">
+<td>23</td><td><span class="ct"> *      Function to intialize non-finite, NaN</span></td></tr>
+<tr name="24" id="24">
+<td>24</td><td><span class="ct"> */</span></td></tr>
+<tr name="25" id="25">
+<td>25</td><td><span class="pp">#include "rtGetNaN.h"</span></td></tr>
+<tr name="26" id="26">
+<td>26</td><td><span class="pp">#define</span> <a id="26c9" class="tk">NumBitsPerChar</a>                 8U</td></tr>
+<tr name="27" id="27">
+<td>27</td><td></td></tr>
+<tr name="28" id="28">
+<td>28</td><td><span class="ct">/*</span></td></tr>
+<tr name="29" id="29">
+<td>29</td><td><span class="ct"> * Initialize rtNaN needed by the generated code.</span></td></tr>
+<tr name="30" id="30">
+<td>30</td><td><span class="ct"> * NaN is initialized as non-signaling. Assumes IEEE.</span></td></tr>
+<tr name="31" id="31">
+<td>31</td><td><span class="ct"> */</span></td></tr>
+<tr name="32" id="32">
+<td>32</td><td><a id="32c1" class="tk">real_T</a> <a id="32c8" class="tk">rtGetNaN</a>(<span class="kw">void</span>)</td></tr>
+<tr name="33" id="33">
+<td>33</td><td><span class="br">{</span></td></tr>
+<tr name="34" id="34">
+<td>34</td><td>  <a id="34c3" class="tk">size_t</a> <a id="34c10" class="tk">bitsPerReal</a> = <span class="kw">sizeof</span>(<a id="34c31" class="tk">real_T</a>) <a id="34c39" class="tk">*</a> (<a id="34c42" class="tk">NumBitsPerChar</a>);</td></tr>
+<tr name="35" id="35">
+<td>35</td><td>  <a id="35c3" class="tk">real_T</a> <a id="35c10" class="tk">nan</a> = 0.0;</td></tr>
+<tr name="36" id="36">
+<td>36</td><td>  <span class="kw">if</span> (<a id="36c7" class="tk">bitsPerReal</a> <a id="36c19" class="tk">==</a> 32U) <span class="br">{</span></td></tr>
+<tr name="37" id="37">
+<td>37</td><td>    <a id="37c5" class="tk">nan</a> = <a id="37c11" class="tk">rtGetNaNF</a>();</td></tr>
+<tr name="38" id="38">
+<td>38</td><td>  <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="39" id="39">
+<td>39</td><td>    <a id="39c5" class="tk">uint16_T</a> <a id="39c14" class="tk">one</a> = 1U;</td></tr>
+<tr name="40" id="40">
+<td>40</td><td>    <span class="kw">enum</span> <span class="br">{</span></td></tr>
+<tr name="41" id="41">
+<td>41</td><td>      <a id="41c7" class="tk">LittleEndian</a>,</td></tr>
+<tr name="42" id="42">
+<td>42</td><td>      <a id="42c7" class="tk">BigEndian</a></td></tr>
+<tr name="43" id="43">
+<td>43</td><td>    <span class="br">}</span> <a id="43c7" class="tk">machByteOrder</a> = (<a id="43c24" class="tk">*</a>((<a id="43c27" class="tk">uint8_T</a> <a id="43c35" class="tk">*</a>) <a id="43c38" class="tk">&amp;</a><a id="43c39" class="tk">one</a>) <a id="43c44" class="tk">==</a> 1U) <a id="43c51" class="tk">?</a> <a id="43c53" class="tk">LittleEndian</a> <a id="43c66" class="tk">:</a> <a id="43c68" class="tk">BigEndian</a>;</td></tr>
+<tr name="44" id="44">
+<td>44</td><td>    <span class="kw">switch</span> (<a id="44c13" class="tk">machByteOrder</a>) <span class="br">{</span></td></tr>
+<tr name="45" id="45">
+<td>45</td><td>     <span class="kw">case</span> <a id="45c11" class="tk">LittleEndian</a><a id="45c23" class="tk">:</a></td></tr>
+<tr name="46" id="46">
+<td>46</td><td>      <span class="br">{</span></td></tr>
+<tr name="47" id="47">
+<td>47</td><td>        <span class="kw">union</span> <span class="br">{</span></td></tr>
+<tr name="48" id="48">
+<td>48</td><td>          <a id="48c11" class="tk">LittleEndianIEEEDouble</a> <a id="48c34" class="tk">bitVal</a>;</td></tr>
+<tr name="49" id="49">
+<td>49</td><td>          <a id="49c11" class="tk">real_T</a> <a id="49c18" class="tk">fltVal</a>;</td></tr>
+<tr name="50" id="50">
+<td>50</td><td>        <span class="br">}</span> <a id="50c11" class="tk">tmpVal</a>;</td></tr>
+<tr name="51" id="51">
+<td>51</td><td></td></tr>
+<tr name="52" id="52">
+<td>52</td><td>        <a id="52c9" class="tk">tmpVal</a>.<a id="52c16" class="tk">bitVal</a>.<a id="52c23" class="tk">words</a>.<a id="52c29" class="tk">wordH</a> = 0xFFF80000U;</td></tr>
+<tr name="53" id="53">
+<td>53</td><td>        <a id="53c9" class="tk">tmpVal</a>.<a id="53c16" class="tk">bitVal</a>.<a id="53c23" class="tk">words</a>.<a id="53c29" class="tk">wordL</a> = 0x00000000U;</td></tr>
+<tr name="54" id="54">
+<td>54</td><td>        <a id="54c9" class="tk">nan</a> = <a id="54c15" class="tk">tmpVal</a>.<a id="54c22" class="tk">fltVal</a>;</td></tr>
+<tr name="55" id="55">
+<td>55</td><td>        <span class="kw">break</span>;</td></tr>
+<tr name="56" id="56">
+<td>56</td><td>      <span class="br">}</span></td></tr>
+<tr name="57" id="57">
+<td>57</td><td></td></tr>
+<tr name="58" id="58">
+<td>58</td><td>     <span class="kw">case</span> <a id="58c11" class="tk">BigEndian</a><a id="58c20" class="tk">:</a></td></tr>
+<tr name="59" id="59">
+<td>59</td><td>      <span class="br">{</span></td></tr>
+<tr name="60" id="60">
+<td>60</td><td>        <span class="kw">union</span> <span class="br">{</span></td></tr>
+<tr name="61" id="61">
+<td>61</td><td>          <a id="61c11" class="tk">BigEndianIEEEDouble</a> <a id="61c31" class="tk">bitVal</a>;</td></tr>
+<tr name="62" id="62">
+<td>62</td><td>          <a id="62c11" class="tk">real_T</a> <a id="62c18" class="tk">fltVal</a>;</td></tr>
+<tr name="63" id="63">
+<td>63</td><td>        <span class="br">}</span> <a id="63c11" class="tk">tmpVal</a>;</td></tr>
+<tr name="64" id="64">
+<td>64</td><td></td></tr>
+<tr name="65" id="65">
+<td>65</td><td>        <a id="65c9" class="tk">tmpVal</a>.<a id="65c16" class="tk">bitVal</a>.<a id="65c23" class="tk">words</a>.<a id="65c29" class="tk">wordH</a> = 0x7FFFFFFFU;</td></tr>
+<tr name="66" id="66">
+<td>66</td><td>        <a id="66c9" class="tk">tmpVal</a>.<a id="66c16" class="tk">bitVal</a>.<a id="66c23" class="tk">words</a>.<a id="66c29" class="tk">wordL</a> = 0xFFFFFFFFU;</td></tr>
+<tr name="67" id="67">
+<td>67</td><td>        <a id="67c9" class="tk">nan</a> = <a id="67c15" class="tk">tmpVal</a>.<a id="67c22" class="tk">fltVal</a>;</td></tr>
+<tr name="68" id="68">
+<td>68</td><td>        <span class="kw">break</span>;</td></tr>
+<tr name="69" id="69">
+<td>69</td><td>      <span class="br">}</span></td></tr>
+<tr name="70" id="70">
+<td>70</td><td>    <span class="br">}</span></td></tr>
+<tr name="71" id="71">
+<td>71</td><td>  <span class="br">}</span></td></tr>
+<tr name="72" id="72">
+<td>72</td><td></td></tr>
+<tr name="73" id="73">
+<td>73</td><td>  <span class="kw">return</span> <a id="73c10" class="tk">nan</a>;</td></tr>
+<tr name="74" id="74">
+<td>74</td><td><span class="br">}</span></td></tr>
+<tr name="75" id="75">
+<td>75</td><td></td></tr>
+<tr name="76" id="76">
+<td>76</td><td><span class="ct">/*</span></td></tr>
+<tr name="77" id="77">
+<td>77</td><td><span class="ct"> * Initialize rtNaNF needed by the generated code.</span></td></tr>
+<tr name="78" id="78">
+<td>78</td><td><span class="ct"> * NaN is initialized as non-signaling. Assumes IEEE.</span></td></tr>
+<tr name="79" id="79">
+<td>79</td><td><span class="ct"> */</span></td></tr>
+<tr name="80" id="80">
+<td>80</td><td><a id="80c1" class="tk">real32_T</a> <a id="80c10" class="tk">rtGetNaNF</a>(<span class="kw">void</span>)</td></tr>
+<tr name="81" id="81">
+<td>81</td><td><span class="br">{</span></td></tr>
+<tr name="82" id="82">
+<td>82</td><td>  <a id="82c3" class="tk">IEEESingle</a> <a id="82c14" class="tk">nanF</a> = <span class="br">{</span> <span class="br">{</span> 0 <span class="br">}</span> <span class="br">}</span>;</td></tr>
+<tr name="83" id="83">
+<td>83</td><td></td></tr>
+<tr name="84" id="84">
+<td>84</td><td>  <a id="84c3" class="tk">uint16_T</a> <a id="84c12" class="tk">one</a> = 1U;</td></tr>
+<tr name="85" id="85">
+<td>85</td><td>  <span class="kw">enum</span> <span class="br">{</span></td></tr>
+<tr name="86" id="86">
+<td>86</td><td>    <a id="86c5" class="tk">LittleEndian</a>,</td></tr>
+<tr name="87" id="87">
+<td>87</td><td>    <a id="87c5" class="tk">BigEndian</a></td></tr>
+<tr name="88" id="88">
+<td>88</td><td>  <span class="br">}</span> <a id="88c5" class="tk">machByteOrder</a> = (<a id="88c22" class="tk">*</a>((<a id="88c25" class="tk">uint8_T</a> <a id="88c33" class="tk">*</a>) <a id="88c36" class="tk">&amp;</a><a id="88c37" class="tk">one</a>) <a id="88c42" class="tk">==</a> 1U) <a id="88c49" class="tk">?</a> <a id="88c51" class="tk">LittleEndian</a> <a id="88c64" class="tk">:</a> <a id="88c66" class="tk">BigEndian</a>;</td></tr>
+<tr name="89" id="89">
+<td>89</td><td>  <span class="kw">switch</span> (<a id="89c11" class="tk">machByteOrder</a>) <span class="br">{</span></td></tr>
+<tr name="90" id="90">
+<td>90</td><td>   <span class="kw">case</span> <a id="90c9" class="tk">LittleEndian</a><a id="90c21" class="tk">:</a></td></tr>
+<tr name="91" id="91">
+<td>91</td><td>    <span class="br">{</span></td></tr>
+<tr name="92" id="92">
+<td>92</td><td>      <a id="92c7" class="tk">nanF</a>.<a id="92c12" class="tk">wordL</a>.<a id="92c18" class="tk">wordLuint</a> = 0xFFC00000U;</td></tr>
+<tr name="93" id="93">
+<td>93</td><td>      <span class="kw">break</span>;</td></tr>
+<tr name="94" id="94">
+<td>94</td><td>    <span class="br">}</span></td></tr>
+<tr name="95" id="95">
+<td>95</td><td></td></tr>
+<tr name="96" id="96">
+<td>96</td><td>   <span class="kw">case</span> <a id="96c9" class="tk">BigEndian</a><a id="96c18" class="tk">:</a></td></tr>
+<tr name="97" id="97">
+<td>97</td><td>    <span class="br">{</span></td></tr>
+<tr name="98" id="98">
+<td>98</td><td>      <a id="98c7" class="tk">nanF</a>.<a id="98c12" class="tk">wordL</a>.<a id="98c18" class="tk">wordLuint</a> = 0x7FFFFFFFU;</td></tr>
+<tr name="99" id="99">
+<td>99</td><td>      <span class="kw">break</span>;</td></tr>
+<tr name="100" id="100">
+<td>100</td><td>    <span class="br">}</span></td></tr>
+<tr name="101" id="101">
+<td>101</td><td>  <span class="br">}</span></td></tr>
+<tr name="102" id="102">
+<td>102</td><td></td></tr>
+<tr name="103" id="103">
+<td>103</td><td>  <span class="kw">return</span> <a id="103c10" class="tk">nanF</a>.<a id="103c15" class="tk">wordL</a>.<a id="103c21" class="tk">wordLreal</a>;</td></tr>
+<tr name="104" id="104">
+<td>104</td><td><span class="br">}</span></td></tr>
+<tr name="105" id="105">
+<td>105</td><td></td></tr>
+</table>
+</pre>
+</body>
+</html>

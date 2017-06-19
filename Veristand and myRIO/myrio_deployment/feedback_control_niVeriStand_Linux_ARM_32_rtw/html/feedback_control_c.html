@@ -1,0 +1,2508 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="./js/coder_app.js"></script>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="./rtwreport_utils.js"></script>
+<script type="text/javascript" src="./rtwannotate.js"></script>
+<link rel="stylesheet" type="text/css" href="./css/coder_app.css"/>
+</head>
+<body onload="srcFileOnload();">
+<pre id="code">
+<table class="code" id="codeTbl">
+<tr name="1" id="1">
+<td>1</td><td><span class="ct">/*</span></td></tr>
+<tr name="2" id="2">
+<td>2</td><td><span class="ct"> * feedback_control.c</span></td></tr>
+<tr name="3" id="3">
+<td>3</td><td><span class="ct"> *</span></td></tr>
+<tr name="4" id="4">
+<td>4</td><td><span class="ct"> * Academic License - for use in teaching, academic research, and meeting</span></td></tr>
+<tr name="5" id="5">
+<td>5</td><td><span class="ct"> * course requirements at degree granting institutions only.  Not for</span></td></tr>
+<tr name="6" id="6">
+<td>6</td><td><span class="ct"> * government, commercial, or other organizational use.</span></td></tr>
+<tr name="7" id="7">
+<td>7</td><td><span class="ct"> *</span></td></tr>
+<tr name="8" id="8">
+<td>8</td><td><span class="ct"> * Code generation for model "feedback_control".</span></td></tr>
+<tr name="9" id="9">
+<td>9</td><td><span class="ct"> *</span></td></tr>
+<tr name="10" id="10">
+<td>10</td><td><span class="ct"> * Model version              : 1.45</span></td></tr>
+<tr name="11" id="11">
+<td>11</td><td><span class="ct"> * Simulink Coder version : 8.10 (R2016a) 10-Feb-2016</span></td></tr>
+<tr name="12" id="12">
+<td>12</td><td><span class="ct"> * C source code generated on : Sun Jun 18 18:56:48 2017</span></td></tr>
+<tr name="13" id="13">
+<td>13</td><td><span class="ct"> *</span></td></tr>
+<tr name="14" id="14">
+<td>14</td><td><span class="ct"> * Target selection: NIVeriStand_Linux_ARM_32.tlc</span></td></tr>
+<tr name="15" id="15">
+<td>15</td><td><span class="ct"> * Note: GRT includes extra infrastructure and instrumentation for prototyping</span></td></tr>
+<tr name="16" id="16">
+<td>16</td><td><span class="ct"> * Embedded hardware selection: ARM Compatible-&gt;ARM 7</span></td></tr>
+<tr name="17" id="17">
+<td>17</td><td><span class="ct"> * Code generation objectives: Unspecified</span></td></tr>
+<tr name="18" id="18">
+<td>18</td><td><span class="ct"> * Validation result: Not run</span></td></tr>
+<tr name="19" id="19">
+<td>19</td><td><span class="ct"> */</span></td></tr>
+<tr name="20" id="20">
+<td>20</td><td></td></tr>
+<tr name="21" id="21">
+<td>21</td><td><span class="pp">#include "feedback_control.h"</span></td></tr>
+<tr name="22" id="22">
+<td>22</td><td><span class="pp">#include "feedback_control_private.h"</span></td></tr>
+<tr name="23" id="23">
+<td>23</td><td></td></tr>
+<tr name="24" id="24">
+<td>24</td><td><span class="ct">/* External inputs (root inport signals with auto storage) */</span></td></tr>
+<tr name="25" id="25">
+<td>25</td><td><a id="25c1" class="tk">ExtU_feedback_control_T</a> <a id="25c25" class="tk">feedback_control_U</a>;</td></tr>
+<tr name="26" id="26">
+<td>26</td><td></td></tr>
+<tr name="27" id="27">
+<td>27</td><td><span class="ct">/* External outputs (root outports fed by signals with auto storage) */</span></td></tr>
+<tr name="28" id="28">
+<td>28</td><td><a id="28c1" class="tk">ExtY_feedback_control_T</a> <a id="28c25" class="tk">feedback_control_Y</a>;</td></tr>
+<tr name="29" id="29">
+<td>29</td><td></td></tr>
+<tr name="30" id="30">
+<td>30</td><td><span class="ct">/* Real-time model */</span></td></tr>
+<tr name="31" id="31">
+<td>31</td><td><a id="31c1" class="tk">RT_MODEL_feedback_control_T</a> <a id="31c29" class="tk">feedback_control_M_</a>;</td></tr>
+<tr name="32" id="32">
+<td>32</td><td><a id="32c1" class="tk">RT_MODEL_feedback_control_T</a> <a id="32c29" class="tk">*</a><span class="kw">const</span> <a id="32c36" class="tk">feedback_control_M</a> = <a id="32c57" class="tk">&amp;</a><a id="32c58" class="tk">feedback_control_M_</a>;</td></tr>
+<tr name="33" id="33">
+<td>33</td><td></td></tr>
+<tr name="34" id="34">
+<td>34</td><td><span class="ct">/* Model output function */</span></td></tr>
+<tr name="35" id="35">
+<td>35</td><td><span class="kw">static</span> <span class="kw">void</span> <a id="35c13" class="tk">feedback_control_output</a>(<span class="kw">void</span>)</td></tr>
+<tr name="36" id="36">
+<td>36</td><td><span class="br">{</span></td></tr>
+<tr name="37" id="37">
+<td>37</td><td>  <a id="37c3" class="tk">real_T</a> <a id="37c10" class="tk">u0</a>;</td></tr>
+<tr name="38" id="38">
+<td>38</td><td></td></tr>
+<tr name="39" id="39">
+<td>39</td><td>  <span class="ct">/* Gain: '&lt;S1&gt;/Gain' incorporates:</span></td></tr>
+<tr name="40" id="40">
+<td>40</td><td><span class="ct">   *  Inport: '&lt;Root&gt;/Error[Deg]'</span></td></tr>
+<tr name="41" id="41">
+<td>41</td><td><span class="ct">   */</span></td></tr>
+<tr name="42" id="42">
+<td>42</td><td>  <a id="42c3" class="tk">u0</a> = 0.012 <a id="42c14" class="tk">*</a> <a id="42c16" class="tk">feedback_control_U</a>.<a id="42c35" class="tk">control_input</a>;</td></tr>
+<tr name="43" id="43">
+<td>43</td><td></td></tr>
+<tr name="44" id="44">
+<td>44</td><td>  <span class="ct">/* Saturate: '&lt;S1&gt;/Saturation' */</span></td></tr>
+<tr name="45" id="45">
+<td>45</td><td>  <span class="kw">if</span> (<a id="45c7" class="tk">u0</a> <a id="45c10" class="tk">&gt;</a> 1.0) <span class="br">{</span></td></tr>
+<tr name="46" id="46">
+<td>46</td><td>    <span class="ct">/* Outport: '&lt;Root&gt;/Coomand[V]' */</span></td></tr>
+<tr name="47" id="47">
+<td>47</td><td>    <a id="47c5" class="tk">feedback_control_Y</a>.<a id="47c24" class="tk">CoomandV</a> = 1.0;</td></tr>
+<tr name="48" id="48">
+<td>48</td><td>  <span class="br">}</span> <span class="kw">else</span> <span class="kw">if</span> (<a id="48c14" class="tk">u0</a> <a id="48c17" class="tk">&lt;</a> <a id="48c19" class="tk">-</a>1.0) <span class="br">{</span></td></tr>
+<tr name="49" id="49">
+<td>49</td><td>    <span class="ct">/* Outport: '&lt;Root&gt;/Coomand[V]' */</span></td></tr>
+<tr name="50" id="50">
+<td>50</td><td>    <a id="50c5" class="tk">feedback_control_Y</a>.<a id="50c24" class="tk">CoomandV</a> = <a id="50c35" class="tk">-</a>1.0;</td></tr>
+<tr name="51" id="51">
+<td>51</td><td>  <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="52" id="52">
+<td>52</td><td>    <span class="ct">/* Outport: '&lt;Root&gt;/Coomand[V]' */</span></td></tr>
+<tr name="53" id="53">
+<td>53</td><td>    <a id="53c5" class="tk">feedback_control_Y</a>.<a id="53c24" class="tk">CoomandV</a> = <a id="53c35" class="tk">u0</a>;</td></tr>
+<tr name="54" id="54">
+<td>54</td><td>  <span class="br">}</span></td></tr>
+<tr name="55" id="55">
+<td>55</td><td></td></tr>
+<tr name="56" id="56">
+<td>56</td><td>  <span class="ct">/* End of Saturate: '&lt;S1&gt;/Saturation' */</span></td></tr>
+<tr name="57" id="57">
+<td>57</td><td><span class="br">}</span></td></tr>
+<tr name="58" id="58">
+<td>58</td><td></td></tr>
+<tr name="59" id="59">
+<td>59</td><td><span class="ct">/* Model update function */</span></td></tr>
+<tr name="60" id="60">
+<td>60</td><td><span class="kw">static</span> <span class="kw">void</span> <a id="60c13" class="tk">feedback_control_update</a>(<span class="kw">void</span>)</td></tr>
+<tr name="61" id="61">
+<td>61</td><td><span class="br">{</span></td></tr>
+<tr name="62" id="62">
+<td>62</td><td>  <span class="ct">/* Update absolute time for base rate */</span></td></tr>
+<tr name="63" id="63">
+<td>63</td><td>  <span class="ct">/* The "clockTick0" counts the number of times the code of this task has</span></td></tr>
+<tr name="64" id="64">
+<td>64</td><td><span class="ct">   * been executed. The absolute time is the multiplication of "clockTick0"</span></td></tr>
+<tr name="65" id="65">
+<td>65</td><td><span class="ct">   * and "Timing.stepSize0". Size of "clockTick0" ensures timer will not</span></td></tr>
+<tr name="66" id="66">
+<td>66</td><td><span class="ct">   * overflow during the application lifespan selected.</span></td></tr>
+<tr name="67" id="67">
+<td>67</td><td><span class="ct">   * Timer of this task consists of two 32 bit unsigned integers.</span></td></tr>
+<tr name="68" id="68">
+<td>68</td><td><span class="ct">   * The two integers represent the low bits Timing.clockTick0 and the high bits</span></td></tr>
+<tr name="69" id="69">
+<td>69</td><td><span class="ct">   * Timing.clockTickH0. When the low bit overflows to 0, the high bits increment.</span></td></tr>
+<tr name="70" id="70">
+<td>70</td><td><span class="ct">   */</span></td></tr>
+<tr name="71" id="71">
+<td>71</td><td>  <span class="kw">if</span> (<a id="71c7" class="tk">!</a>(<a id="71c9" class="tk">++</a><a id="71c11" class="tk">feedback_control_M</a>-&gt;<a id="71c31" class="tk">Timing</a>.<a id="71c38" class="tk">clockTick0</a>)) <span class="br">{</span></td></tr>
+<tr name="72" id="72">
+<td>72</td><td>    <a id="72c5" class="tk">++</a><a id="72c7" class="tk">feedback_control_M</a>-&gt;<a id="72c27" class="tk">Timing</a>.<a id="72c34" class="tk">clockTickH0</a>;</td></tr>
+<tr name="73" id="73">
+<td>73</td><td>  <span class="br">}</span></td></tr>
+<tr name="74" id="74">
+<td>74</td><td></td></tr>
+<tr name="75" id="75">
+<td>75</td><td>  <a id="75c3" class="tk">feedback_control_M</a>-&gt;<a id="75c23" class="tk">Timing</a>.<a id="75c30" class="tk">t</a>[0] = <a id="75c37" class="tk">feedback_control_M</a>-&gt;<a id="75c57" class="tk">Timing</a>.<a id="75c64" class="tk">clockTick0</a> <a id="75c75" class="tk">*</a></td></tr>
+<tr name="76" id="76">
+<td>76</td><td>    <a id="76c5" class="tk">feedback_control_M</a>-&gt;<a id="76c25" class="tk">Timing</a>.<a id="76c32" class="tk">stepSize0</a> <a id="76c42" class="tk">+</a></td></tr>
+<tr name="77" id="77">
+<td>77</td><td>    <a id="77c5" class="tk">feedback_control_M</a>-&gt;<a id="77c25" class="tk">Timing</a>.<a id="77c32" class="tk">clockTickH0</a> <a id="77c44" class="tk">*</a></td></tr>
+<tr name="78" id="78">
+<td>78</td><td>    <a id="78c5" class="tk">feedback_control_M</a>-&gt;<a id="78c25" class="tk">Timing</a>.<a id="78c32" class="tk">stepSize0</a> <a id="78c42" class="tk">*</a> 4294967296.0;</td></tr>
+<tr name="79" id="79">
+<td>79</td><td><span class="br">}</span></td></tr>
+<tr name="80" id="80">
+<td>80</td><td></td></tr>
+<tr name="81" id="81">
+<td>81</td><td><span class="ct">/* Model initialize function */</span></td></tr>
+<tr name="82" id="82">
+<td>82</td><td><span class="kw">static</span> <span class="kw">void</span> <a id="82c13" class="tk">feedback_control_initialize</a>(<span class="kw">void</span>)</td></tr>
+<tr name="83" id="83">
+<td>83</td><td><span class="br">{</span></td></tr>
+<tr name="84" id="84">
+<td>84</td><td><span class="br">}</span></td></tr>
+<tr name="85" id="85">
+<td>85</td><td></td></tr>
+<tr name="86" id="86">
+<td>86</td><td><span class="ct">/* Model terminate function */</span></td></tr>
+<tr name="87" id="87">
+<td>87</td><td><span class="kw">static</span> <span class="kw">void</span> <a id="87c13" class="tk">feedback_control_terminate</a>(<span class="kw">void</span>)</td></tr>
+<tr name="88" id="88">
+<td>88</td><td><span class="br">{</span></td></tr>
+<tr name="89" id="89">
+<td>89</td><td>  <span class="ct">/* (no terminate code required) */</span></td></tr>
+<tr name="90" id="90">
+<td>90</td><td><span class="br">}</span></td></tr>
+<tr name="91" id="91">
+<td>91</td><td></td></tr>
+<tr name="92" id="92">
+<td>92</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="93" id="93">
+<td>93</td><td><span class="ct"> * Start of Classic call interface                                        *</span></td></tr>
+<tr name="94" id="94">
+<td>94</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="95" id="95">
+<td>95</td><td><span class="kw">void</span> <a id="95c6" class="tk">MdlOutputs</a>(<a id="95c17" class="tk">int_T</a> <a id="95c23" class="tk">tid</a>)</td></tr>
+<tr name="96" id="96">
+<td>96</td><td><span class="br">{</span></td></tr>
+<tr name="97" id="97">
+<td>97</td><td>  <a id="97c3" class="tk">feedback_control_output</a>();</td></tr>
+<tr name="98" id="98">
+<td>98</td><td>  <a id="98c3" class="tk">UNUSED_PARAMETER</a>(<a id="98c20" class="tk">tid</a>);</td></tr>
+<tr name="99" id="99">
+<td>99</td><td><span class="br">}</span></td></tr>
+<tr name="100" id="100">
+<td>100</td><td></td></tr>
+<tr name="101" id="101">
+<td>101</td><td><span class="kw">void</span> <a id="101c6" class="tk">MdlUpdate</a>(<a id="101c16" class="tk">int_T</a> <a id="101c22" class="tk">tid</a>)</td></tr>
+<tr name="102" id="102">
+<td>102</td><td><span class="br">{</span></td></tr>
+<tr name="103" id="103">
+<td>103</td><td>  <a id="103c3" class="tk">feedback_control_update</a>();</td></tr>
+<tr name="104" id="104">
+<td>104</td><td>  <a id="104c3" class="tk">UNUSED_PARAMETER</a>(<a id="104c20" class="tk">tid</a>);</td></tr>
+<tr name="105" id="105">
+<td>105</td><td><span class="br">}</span></td></tr>
+<tr name="106" id="106">
+<td>106</td><td></td></tr>
+<tr name="107" id="107">
+<td>107</td><td><span class="kw">void</span> <a id="107c6" class="tk">MdlInitializeSizes</a>(<span class="kw">void</span>)</td></tr>
+<tr name="108" id="108">
+<td>108</td><td><span class="br">{</span></td></tr>
+<tr name="109" id="109">
+<td>109</td><td><span class="br">}</span></td></tr>
+<tr name="110" id="110">
+<td>110</td><td></td></tr>
+<tr name="111" id="111">
+<td>111</td><td><span class="kw">void</span> <a id="111c6" class="tk">MdlInitializeSampleTimes</a>(<span class="kw">void</span>)</td></tr>
+<tr name="112" id="112">
+<td>112</td><td><span class="br">{</span></td></tr>
+<tr name="113" id="113">
+<td>113</td><td><span class="br">}</span></td></tr>
+<tr name="114" id="114">
+<td>114</td><td></td></tr>
+<tr name="115" id="115">
+<td>115</td><td><span class="kw">void</span> <a id="115c6" class="tk">MdlInitialize</a>(<span class="kw">void</span>)</td></tr>
+<tr name="116" id="116">
+<td>116</td><td><span class="br">{</span></td></tr>
+<tr name="117" id="117">
+<td>117</td><td><span class="br">}</span></td></tr>
+<tr name="118" id="118">
+<td>118</td><td></td></tr>
+<tr name="119" id="119">
+<td>119</td><td><span class="kw">void</span> <a id="119c6" class="tk">MdlStart</a>(<span class="kw">void</span>)</td></tr>
+<tr name="120" id="120">
+<td>120</td><td><span class="br">{</span></td></tr>
+<tr name="121" id="121">
+<td>121</td><td>  <a id="121c3" class="tk">feedback_control_initialize</a>();</td></tr>
+<tr name="122" id="122">
+<td>122</td><td><span class="br">}</span></td></tr>
+<tr name="123" id="123">
+<td>123</td><td></td></tr>
+<tr name="124" id="124">
+<td>124</td><td><span class="kw">void</span> <a id="124c6" class="tk">MdlTerminate</a>(<span class="kw">void</span>)</td></tr>
+<tr name="125" id="125">
+<td>125</td><td><span class="br">{</span></td></tr>
+<tr name="126" id="126">
+<td>126</td><td>  <a id="126c3" class="tk">feedback_control_terminate</a>();</td></tr>
+<tr name="127" id="127">
+<td>127</td><td><span class="br">}</span></td></tr>
+<tr name="128" id="128">
+<td>128</td><td></td></tr>
+<tr name="129" id="129">
+<td>129</td><td><span class="ct">/* Registration function */</span></td></tr>
+<tr name="130" id="130">
+<td>130</td><td><a id="130c1" class="tk">RT_MODEL_feedback_control_T</a> <a id="130c29" class="tk">*</a><a id="130c30" class="tk">feedback_control</a>(<span class="kw">void</span>)</td></tr>
+<tr name="131" id="131">
+<td>131</td><td><span class="br">{</span></td></tr>
+<tr name="132" id="132">
+<td>132</td><td>  <span class="ct">/* Registration code */</span></td></tr>
+<tr name="133" id="133">
+<td>133</td><td></td></tr>
+<tr name="134" id="134">
+<td>134</td><td>  <span class="ct">/* initialize non-finites */</span></td></tr>
+<tr name="135" id="135">
+<td>135</td><td>  <a id="135c3" class="tk">rt_InitInfAndNaN</a>(<span class="kw">sizeof</span>(<a id="135c27" class="tk">real_T</a>));</td></tr>
+<tr name="136" id="136">
+<td>136</td><td></td></tr>
+<tr name="137" id="137">
+<td>137</td><td>  <span class="ct">/* initialize real-time model */</span></td></tr>
+<tr name="138" id="138">
+<td>138</td><td>  (<span class="kw">void</span>) <a id="138c10" class="tk">memset</a>((<span class="kw">void</span> <a id="138c23" class="tk">*</a>)<a id="138c25" class="tk">feedback_control_M</a>, 0,</td></tr>
+<tr name="139" id="139">
+<td>139</td><td>                <span class="kw">sizeof</span>(<a id="139c24" class="tk">RT_MODEL_feedback_control_T</a>));</td></tr>
+<tr name="140" id="140">
+<td>140</td><td></td></tr>
+<tr name="141" id="141">
+<td>141</td><td>  <span class="ct">/* Initialize timing info */</span></td></tr>
+<tr name="142" id="142">
+<td>142</td><td>  <span class="br">{</span></td></tr>
+<tr name="143" id="143">
+<td>143</td><td>    <a id="143c5" class="tk">int_T</a> <a id="143c11" class="tk">*</a><a id="143c12" class="tk">mdlTsMap</a> = <a id="143c23" class="tk">feedback_control_M</a>-&gt;<a id="143c43" class="tk">Timing</a>.<a id="143c50" class="tk">sampleTimeTaskIDArray</a>;</td></tr>
+<tr name="144" id="144">
+<td>144</td><td>    <a id="144c5" class="tk">mdlTsMap</a>[0] = 0;</td></tr>
+<tr name="145" id="145">
+<td>145</td><td>    <a id="145c5" class="tk">feedback_control_M</a>-&gt;<a id="145c25" class="tk">Timing</a>.<a id="145c32" class="tk">sampleTimeTaskIDPtr</a> = (<a id="145c55" class="tk">&amp;</a><a id="145c56" class="tk">mdlTsMap</a>[0]);</td></tr>
+<tr name="146" id="146">
+<td>146</td><td>    <a id="146c5" class="tk">feedback_control_M</a>-&gt;<a id="146c25" class="tk">Timing</a>.<a id="146c32" class="tk">sampleTimes</a> =</td></tr>
+<tr name="147" id="147">
+<td>147</td><td>      (<a id="147c8" class="tk">&amp;</a><a id="147c9" class="tk">feedback_control_M</a>-&gt;<a id="147c29" class="tk">Timing</a>.<a id="147c36" class="tk">sampleTimesArray</a>[0]);</td></tr>
+<tr name="148" id="148">
+<td>148</td><td>    <a id="148c5" class="tk">feedback_control_M</a>-&gt;<a id="148c25" class="tk">Timing</a>.<a id="148c32" class="tk">offsetTimes</a> =</td></tr>
+<tr name="149" id="149">
+<td>149</td><td>      (<a id="149c8" class="tk">&amp;</a><a id="149c9" class="tk">feedback_control_M</a>-&gt;<a id="149c29" class="tk">Timing</a>.<a id="149c36" class="tk">offsetTimesArray</a>[0]);</td></tr>
+<tr name="150" id="150">
+<td>150</td><td></td></tr>
+<tr name="151" id="151">
+<td>151</td><td>    <span class="ct">/* task periods */</span></td></tr>
+<tr name="152" id="152">
+<td>152</td><td>    <a id="152c5" class="tk">feedback_control_M</a>-&gt;<a id="152c25" class="tk">Timing</a>.<a id="152c32" class="tk">sampleTimes</a>[0] = (0.001);</td></tr>
+<tr name="153" id="153">
+<td>153</td><td></td></tr>
+<tr name="154" id="154">
+<td>154</td><td>    <span class="ct">/* task offsets */</span></td></tr>
+<tr name="155" id="155">
+<td>155</td><td>    <a id="155c5" class="tk">feedback_control_M</a>-&gt;<a id="155c25" class="tk">Timing</a>.<a id="155c32" class="tk">offsetTimes</a>[0] = (0.0);</td></tr>
+<tr name="156" id="156">
+<td>156</td><td>  <span class="br">}</span></td></tr>
+<tr name="157" id="157">
+<td>157</td><td></td></tr>
+<tr name="158" id="158">
+<td>158</td><td>  <a id="158c3" class="tk">rtmSetTPtr</a>(<a id="158c14" class="tk">feedback_control_M</a>, <a id="158c34" class="tk">&amp;</a><a id="158c35" class="tk">feedback_control_M</a>-&gt;<a id="158c55" class="tk">Timing</a>.<a id="158c62" class="tk">tArray</a>[0]);</td></tr>
+<tr name="159" id="159">
+<td>159</td><td></td></tr>
+<tr name="160" id="160">
+<td>160</td><td>  <span class="br">{</span></td></tr>
+<tr name="161" id="161">
+<td>161</td><td>    <a id="161c5" class="tk">int_T</a> <a id="161c11" class="tk">*</a><a id="161c12" class="tk">mdlSampleHits</a> = <a id="161c28" class="tk">feedback_control_M</a>-&gt;<a id="161c48" class="tk">Timing</a>.<a id="161c55" class="tk">sampleHitArray</a>;</td></tr>
+<tr name="162" id="162">
+<td>162</td><td>    <a id="162c5" class="tk">mdlSampleHits</a>[0] = 1;</td></tr>
+<tr name="163" id="163">
+<td>163</td><td>    <a id="163c5" class="tk">feedback_control_M</a>-&gt;<a id="163c25" class="tk">Timing</a>.<a id="163c32" class="tk">sampleHits</a> = (<a id="163c46" class="tk">&amp;</a><a id="163c47" class="tk">mdlSampleHits</a>[0]);</td></tr>
+<tr name="164" id="164">
+<td>164</td><td>  <span class="br">}</span></td></tr>
+<tr name="165" id="165">
+<td>165</td><td></td></tr>
+<tr name="166" id="166">
+<td>166</td><td>  <a id="166c3" class="tk">rtmSetTFinal</a>(<a id="166c16" class="tk">feedback_control_M</a>, <a id="166c36" class="tk">-</a>1);</td></tr>
+<tr name="167" id="167">
+<td>167</td><td>  <a id="167c3" class="tk">feedback_control_M</a>-&gt;<a id="167c23" class="tk">Timing</a>.<a id="167c30" class="tk">stepSize0</a> = 0.001;</td></tr>
+<tr name="168" id="168">
+<td>168</td><td></td></tr>
+<tr name="169" id="169">
+<td>169</td><td>  <span class="ct">/* Setup for data logging */</span></td></tr>
+<tr name="170" id="170">
+<td>170</td><td>  <span class="br">{</span></td></tr>
+<tr name="171" id="171">
+<td>171</td><td>    <span class="kw">static</span> <a id="171c12" class="tk">RTWLogInfo</a> <a id="171c23" class="tk">rt_DataLoggingInfo</a>;</td></tr>
+<tr name="172" id="172">
+<td>172</td><td>    <a id="172c5" class="tk">rt_DataLoggingInfo</a>.<a id="172c24" class="tk">loggingInterval</a> = <a id="172c42" class="tk">NULL</a>;</td></tr>
+<tr name="173" id="173">
+<td>173</td><td>    <a id="173c5" class="tk">feedback_control_M</a>-&gt;<a id="173c25" class="tk">rtwLogInfo</a> = <a id="173c38" class="tk">&amp;</a><a id="173c39" class="tk">rt_DataLoggingInfo</a>;</td></tr>
+<tr name="174" id="174">
+<td>174</td><td>  <span class="br">}</span></td></tr>
+<tr name="175" id="175">
+<td>175</td><td></td></tr>
+<tr name="176" id="176">
+<td>176</td><td>  <span class="ct">/* Setup for data logging */</span></td></tr>
+<tr name="177" id="177">
+<td>177</td><td>  <span class="br">{</span></td></tr>
+<tr name="178" id="178">
+<td>178</td><td>    <a id="178c5" class="tk">rtliSetLogXSignalInfo</a>(<a id="178c27" class="tk">feedback_control_M</a>-&gt;<a id="178c47" class="tk">rtwLogInfo</a>, (<a id="178c60" class="tk">NULL</a>));</td></tr>
+<tr name="179" id="179">
+<td>179</td><td>    <a id="179c5" class="tk">rtliSetLogXSignalPtrs</a>(<a id="179c27" class="tk">feedback_control_M</a>-&gt;<a id="179c47" class="tk">rtwLogInfo</a>, (<a id="179c60" class="tk">NULL</a>));</td></tr>
+<tr name="180" id="180">
+<td>180</td><td>    <a id="180c5" class="tk">rtliSetLogT</a>(<a id="180c17" class="tk">feedback_control_M</a>-&gt;<a id="180c37" class="tk">rtwLogInfo</a>, "tout");</td></tr>
+<tr name="181" id="181">
+<td>181</td><td>    <a id="181c5" class="tk">rtliSetLogX</a>(<a id="181c17" class="tk">feedback_control_M</a>-&gt;<a id="181c37" class="tk">rtwLogInfo</a>, "");</td></tr>
+<tr name="182" id="182">
+<td>182</td><td>    <a id="182c5" class="tk">rtliSetLogXFinal</a>(<a id="182c22" class="tk">feedback_control_M</a>-&gt;<a id="182c42" class="tk">rtwLogInfo</a>, "");</td></tr>
+<tr name="183" id="183">
+<td>183</td><td>    <a id="183c5" class="tk">rtliSetLogVarNameModifier</a>(<a id="183c31" class="tk">feedback_control_M</a>-&gt;<a id="183c51" class="tk">rtwLogInfo</a>, "rt_");</td></tr>
+<tr name="184" id="184">
+<td>184</td><td>    <a id="184c5" class="tk">rtliSetLogFormat</a>(<a id="184c22" class="tk">feedback_control_M</a>-&gt;<a id="184c42" class="tk">rtwLogInfo</a>, 0);</td></tr>
+<tr name="185" id="185">
+<td>185</td><td>    <a id="185c5" class="tk">rtliSetLogMaxRows</a>(<a id="185c23" class="tk">feedback_control_M</a>-&gt;<a id="185c43" class="tk">rtwLogInfo</a>, 0);</td></tr>
+<tr name="186" id="186">
+<td>186</td><td>    <a id="186c5" class="tk">rtliSetLogDecimation</a>(<a id="186c26" class="tk">feedback_control_M</a>-&gt;<a id="186c46" class="tk">rtwLogInfo</a>, 1);</td></tr>
+<tr name="187" id="187">
+<td>187</td><td></td></tr>
+<tr name="188" id="188">
+<td>188</td><td>    <span class="ct">/*</span></td></tr>
+<tr name="189" id="189">
+<td>189</td><td><span class="ct">     * Set pointers to the data and signal info for each output</span></td></tr>
+<tr name="190" id="190">
+<td>190</td><td><span class="ct">     */</span></td></tr>
+<tr name="191" id="191">
+<td>191</td><td>    <span class="br">{</span></td></tr>
+<tr name="192" id="192">
+<td>192</td><td>      <span class="kw">static</span> <span class="kw">void</span> <a id="192c19" class="tk">*</a> <a id="192c21" class="tk">rt_LoggedOutputSignalPtrs</a>[] = <span class="br">{</span></td></tr>
+<tr name="193" id="193">
+<td>193</td><td>        <a id="193c9" class="tk">&amp;</a><a id="193c10" class="tk">feedback_control_Y</a>.<a id="193c29" class="tk">CoomandV</a></td></tr>
+<tr name="194" id="194">
+<td>194</td><td>      <span class="br">}</span>;</td></tr>
+<tr name="195" id="195">
+<td>195</td><td></td></tr>
+<tr name="196" id="196">
+<td>196</td><td>      <a id="196c7" class="tk">rtliSetLogYSignalPtrs</a>(<a id="196c29" class="tk">feedback_control_M</a>-&gt;<a id="196c49" class="tk">rtwLogInfo</a>, ((<a id="196c63" class="tk">LogSignalPtrsType</a>)</td></tr>
+<tr name="197" id="197">
+<td>197</td><td>        <a id="197c9" class="tk">rt_LoggedOutputSignalPtrs</a>));</td></tr>
+<tr name="198" id="198">
+<td>198</td><td>    <span class="br">}</span></td></tr>
+<tr name="199" id="199">
+<td>199</td><td></td></tr>
+<tr name="200" id="200">
+<td>200</td><td>    <span class="br">{</span></td></tr>
+<tr name="201" id="201">
+<td>201</td><td>      <span class="kw">static</span> <a id="201c14" class="tk">int_T</a> <a id="201c20" class="tk">rt_LoggedOutputWidths</a>[] = <span class="br">{</span></td></tr>
+<tr name="202" id="202">
+<td>202</td><td>        1</td></tr>
+<tr name="203" id="203">
+<td>203</td><td>      <span class="br">}</span>;</td></tr>
+<tr name="204" id="204">
+<td>204</td><td></td></tr>
+<tr name="205" id="205">
+<td>205</td><td>      <span class="kw">static</span> <a id="205c14" class="tk">int_T</a> <a id="205c20" class="tk">rt_LoggedOutputNumDimensions</a>[] = <span class="br">{</span></td></tr>
+<tr name="206" id="206">
+<td>206</td><td>        1</td></tr>
+<tr name="207" id="207">
+<td>207</td><td>      <span class="br">}</span>;</td></tr>
+<tr name="208" id="208">
+<td>208</td><td></td></tr>
+<tr name="209" id="209">
+<td>209</td><td>      <span class="kw">static</span> <a id="209c14" class="tk">int_T</a> <a id="209c20" class="tk">rt_LoggedOutputDimensions</a>[] = <span class="br">{</span></td></tr>
+<tr name="210" id="210">
+<td>210</td><td>        1</td></tr>
+<tr name="211" id="211">
+<td>211</td><td>      <span class="br">}</span>;</td></tr>
+<tr name="212" id="212">
+<td>212</td><td></td></tr>
+<tr name="213" id="213">
+<td>213</td><td>      <span class="kw">static</span> <a id="213c14" class="tk">boolean_T</a> <a id="213c24" class="tk">rt_LoggedOutputIsVarDims</a>[] = <span class="br">{</span></td></tr>
+<tr name="214" id="214">
+<td>214</td><td>        0</td></tr>
+<tr name="215" id="215">
+<td>215</td><td>      <span class="br">}</span>;</td></tr>
+<tr name="216" id="216">
+<td>216</td><td></td></tr>
+<tr name="217" id="217">
+<td>217</td><td>      <span class="kw">static</span> <span class="kw">void</span><a id="217c18" class="tk">*</a> <a id="217c20" class="tk">rt_LoggedCurrentSignalDimensions</a>[] = <span class="br">{</span></td></tr>
+<tr name="218" id="218">
+<td>218</td><td>        (<a id="218c10" class="tk">NULL</a>)</td></tr>
+<tr name="219" id="219">
+<td>219</td><td>      <span class="br">}</span>;</td></tr>
+<tr name="220" id="220">
+<td>220</td><td></td></tr>
+<tr name="221" id="221">
+<td>221</td><td>      <span class="kw">static</span> <a id="221c14" class="tk">int_T</a> <a id="221c20" class="tk">rt_LoggedCurrentSignalDimensionsSize</a>[] = <span class="br">{</span></td></tr>
+<tr name="222" id="222">
+<td>222</td><td>        4</td></tr>
+<tr name="223" id="223">
+<td>223</td><td>      <span class="br">}</span>;</td></tr>
+<tr name="224" id="224">
+<td>224</td><td></td></tr>
+<tr name="225" id="225">
+<td>225</td><td>      <span class="kw">static</span> <a id="225c14" class="tk">BuiltInDTypeId</a> <a id="225c29" class="tk">rt_LoggedOutputDataTypeIds</a>[] = <span class="br">{</span></td></tr>
+<tr name="226" id="226">
+<td>226</td><td>        <a id="226c9" class="tk">SS_DOUBLE</a></td></tr>
+<tr name="227" id="227">
+<td>227</td><td>      <span class="br">}</span>;</td></tr>
+<tr name="228" id="228">
+<td>228</td><td></td></tr>
+<tr name="229" id="229">
+<td>229</td><td>      <span class="kw">static</span> <a id="229c14" class="tk">int_T</a> <a id="229c20" class="tk">rt_LoggedOutputComplexSignals</a>[] = <span class="br">{</span></td></tr>
+<tr name="230" id="230">
+<td>230</td><td>        0</td></tr>
+<tr name="231" id="231">
+<td>231</td><td>      <span class="br">}</span>;</td></tr>
+<tr name="232" id="232">
+<td>232</td><td></td></tr>
+<tr name="233" id="233">
+<td>233</td><td>      <span class="kw">static</span> <span class="kw">const</span> <a id="233c20" class="tk">char_T</a> <a id="233c27" class="tk">*</a><a id="233c28" class="tk">rt_LoggedOutputLabels</a>[] = <span class="br">{</span></td></tr>
+<tr name="234" id="234">
+<td>234</td><td>        "control_output" <span class="br">}</span>;</td></tr>
+<tr name="235" id="235">
+<td>235</td><td></td></tr>
+<tr name="236" id="236">
+<td>236</td><td>      <span class="kw">static</span> <span class="kw">const</span> <a id="236c20" class="tk">char_T</a> <a id="236c27" class="tk">*</a><a id="236c28" class="tk">rt_LoggedOutputBlockNames</a>[] = <span class="br">{</span></td></tr>
+<tr name="237" id="237">
+<td>237</td><td>        "feedback_control/Coomand[V]" <span class="br">}</span>;</td></tr>
+<tr name="238" id="238">
+<td>238</td><td></td></tr>
+<tr name="239" id="239">
+<td>239</td><td>      <span class="kw">static</span> <a id="239c14" class="tk">RTWLogDataTypeConvert</a> <a id="239c36" class="tk">rt_RTWLogDataTypeConvert</a>[] = <span class="br">{</span></td></tr>
+<tr name="240" id="240">
+<td>240</td><td>        <span class="br">{</span> 0, <a id="240c14" class="tk">SS_DOUBLE</a>, <a id="240c25" class="tk">SS_DOUBLE</a>, 0, 0, 0, 1.0, 0, 0.0 <span class="br">}</span></td></tr>
+<tr name="241" id="241">
+<td>241</td><td>      <span class="br">}</span>;</td></tr>
+<tr name="242" id="242">
+<td>242</td><td></td></tr>
+<tr name="243" id="243">
+<td>243</td><td>      <span class="kw">static</span> <a id="243c14" class="tk">RTWLogSignalInfo</a> <a id="243c31" class="tk">rt_LoggedOutputSignalInfo</a>[] = <span class="br">{</span></td></tr>
+<tr name="244" id="244">
+<td>244</td><td>        <span class="br">{</span></td></tr>
+<tr name="245" id="245">
+<td>245</td><td>          1,</td></tr>
+<tr name="246" id="246">
+<td>246</td><td>          <a id="246c11" class="tk">rt_LoggedOutputWidths</a>,</td></tr>
+<tr name="247" id="247">
+<td>247</td><td>          <a id="247c11" class="tk">rt_LoggedOutputNumDimensions</a>,</td></tr>
+<tr name="248" id="248">
+<td>248</td><td>          <a id="248c11" class="tk">rt_LoggedOutputDimensions</a>,</td></tr>
+<tr name="249" id="249">
+<td>249</td><td>          <a id="249c11" class="tk">rt_LoggedOutputIsVarDims</a>,</td></tr>
+<tr name="250" id="250">
+<td>250</td><td>          <a id="250c11" class="tk">rt_LoggedCurrentSignalDimensions</a>,</td></tr>
+<tr name="251" id="251">
+<td>251</td><td>          <a id="251c11" class="tk">rt_LoggedCurrentSignalDimensionsSize</a>,</td></tr>
+<tr name="252" id="252">
+<td>252</td><td>          <a id="252c11" class="tk">rt_LoggedOutputDataTypeIds</a>,</td></tr>
+<tr name="253" id="253">
+<td>253</td><td>          <a id="253c11" class="tk">rt_LoggedOutputComplexSignals</a>,</td></tr>
+<tr name="254" id="254">
+<td>254</td><td>          (<a id="254c12" class="tk">NULL</a>),</td></tr>
+<tr name="255" id="255">
+<td>255</td><td></td></tr>
+<tr name="256" id="256">
+<td>256</td><td>          <span class="br">{</span> <a id="256c13" class="tk">rt_LoggedOutputLabels</a> <span class="br">}</span>,</td></tr>
+<tr name="257" id="257">
+<td>257</td><td>          (<a id="257c12" class="tk">NULL</a>),</td></tr>
+<tr name="258" id="258">
+<td>258</td><td>          (<a id="258c12" class="tk">NULL</a>),</td></tr>
+<tr name="259" id="259">
+<td>259</td><td>          (<a id="259c12" class="tk">NULL</a>),</td></tr>
+<tr name="260" id="260">
+<td>260</td><td></td></tr>
+<tr name="261" id="261">
+<td>261</td><td>          <span class="br">{</span> <a id="261c13" class="tk">rt_LoggedOutputBlockNames</a> <span class="br">}</span>,</td></tr>
+<tr name="262" id="262">
+<td>262</td><td></td></tr>
+<tr name="263" id="263">
+<td>263</td><td>          <span class="br">{</span> (<a id="263c14" class="tk">NULL</a>) <span class="br">}</span>,</td></tr>
+<tr name="264" id="264">
+<td>264</td><td>          (<a id="264c12" class="tk">NULL</a>),</td></tr>
+<tr name="265" id="265">
+<td>265</td><td>          <a id="265c11" class="tk">rt_RTWLogDataTypeConvert</a></td></tr>
+<tr name="266" id="266">
+<td>266</td><td>        <span class="br">}</span></td></tr>
+<tr name="267" id="267">
+<td>267</td><td>      <span class="br">}</span>;</td></tr>
+<tr name="268" id="268">
+<td>268</td><td></td></tr>
+<tr name="269" id="269">
+<td>269</td><td>      <a id="269c7" class="tk">rtliSetLogYSignalInfo</a>(<a id="269c29" class="tk">feedback_control_M</a>-&gt;<a id="269c49" class="tk">rtwLogInfo</a>,</td></tr>
+<tr name="270" id="270">
+<td>270</td><td>                            <a id="270c29" class="tk">rt_LoggedOutputSignalInfo</a>);</td></tr>
+<tr name="271" id="271">
+<td>271</td><td></td></tr>
+<tr name="272" id="272">
+<td>272</td><td>      <span class="ct">/* set currSigDims field */</span></td></tr>
+<tr name="273" id="273">
+<td>273</td><td>      <a id="273c7" class="tk">rt_LoggedCurrentSignalDimensions</a>[0] = <a id="273c45" class="tk">&amp;</a><a id="273c46" class="tk">rt_LoggedOutputWidths</a>[0];</td></tr>
+<tr name="274" id="274">
+<td>274</td><td>    <span class="br">}</span></td></tr>
+<tr name="275" id="275">
+<td>275</td><td></td></tr>
+<tr name="276" id="276">
+<td>276</td><td>    <a id="276c5" class="tk">rtliSetLogY</a>(<a id="276c17" class="tk">feedback_control_M</a>-&gt;<a id="276c37" class="tk">rtwLogInfo</a>, "yout");</td></tr>
+<tr name="277" id="277">
+<td>277</td><td>  <span class="br">}</span></td></tr>
+<tr name="278" id="278">
+<td>278</td><td></td></tr>
+<tr name="279" id="279">
+<td>279</td><td>  <a id="279c3" class="tk">feedback_control_M</a>-&gt;<a id="279c23" class="tk">solverInfoPtr</a> = (<a id="279c40" class="tk">&amp;</a><a id="279c41" class="tk">feedback_control_M</a>-&gt;<a id="279c61" class="tk">solverInfo</a>);</td></tr>
+<tr name="280" id="280">
+<td>280</td><td>  <a id="280c3" class="tk">feedback_control_M</a>-&gt;<a id="280c23" class="tk">Timing</a>.<a id="280c30" class="tk">stepSize</a> = (0.001);</td></tr>
+<tr name="281" id="281">
+<td>281</td><td>  <a id="281c3" class="tk">rtsiSetFixedStepSize</a>(<a id="281c24" class="tk">&amp;</a><a id="281c25" class="tk">feedback_control_M</a>-&gt;<a id="281c45" class="tk">solverInfo</a>, 0.001);</td></tr>
+<tr name="282" id="282">
+<td>282</td><td>  <a id="282c3" class="tk">rtsiSetSolverMode</a>(<a id="282c21" class="tk">&amp;</a><a id="282c22" class="tk">feedback_control_M</a>-&gt;<a id="282c42" class="tk">solverInfo</a>, <a id="282c54" class="tk">SOLVER_MODE_SINGLETASKING</a>);</td></tr>
+<tr name="283" id="283">
+<td>283</td><td></td></tr>
+<tr name="284" id="284">
+<td>284</td><td>  <span class="ct">/* external inputs */</span></td></tr>
+<tr name="285" id="285">
+<td>285</td><td>  <a id="285c3" class="tk">feedback_control_M</a>-&gt;<a id="285c23" class="tk">ModelData</a>.<a id="285c33" class="tk">inputs</a> = (((<span class="kw">void</span><a id="285c49" class="tk">*</a>)<a id="285c51" class="tk">&amp;</a><a id="285c52" class="tk">feedback_control_U</a>));</td></tr>
+<tr name="286" id="286">
+<td>286</td><td>  <a id="286c3" class="tk">feedback_control_U</a>.<a id="286c22" class="tk">control_input</a> = 0.0;</td></tr>
+<tr name="287" id="287">
+<td>287</td><td></td></tr>
+<tr name="288" id="288">
+<td>288</td><td>  <span class="ct">/* external outputs */</span></td></tr>
+<tr name="289" id="289">
+<td>289</td><td>  <a id="289c3" class="tk">feedback_control_M</a>-&gt;<a id="289c23" class="tk">ModelData</a>.<a id="289c33" class="tk">outputs</a> = (<a id="289c44" class="tk">&amp;</a><a id="289c45" class="tk">feedback_control_Y</a>);</td></tr>
+<tr name="290" id="290">
+<td>290</td><td>  <a id="290c3" class="tk">feedback_control_Y</a>.<a id="290c22" class="tk">CoomandV</a> = 0.0;</td></tr>
+<tr name="291" id="291">
+<td>291</td><td></td></tr>
+<tr name="292" id="292">
+<td>292</td><td>  <span class="ct">/* Initialize Sizes */</span></td></tr>
+<tr name="293" id="293">
+<td>293</td><td>  <a id="293c3" class="tk">feedback_control_M</a>-&gt;<a id="293c23" class="tk">Sizes</a>.<a id="293c29" class="tk">numContStates</a> = (0);<span class="ct">/* Number of continuous states */</span></td></tr>
+<tr name="294" id="294">
+<td>294</td><td>  <a id="294c3" class="tk">feedback_control_M</a>-&gt;<a id="294c23" class="tk">Sizes</a>.<a id="294c29" class="tk">numY</a> = (1);<span class="ct">/* Number of model outputs */</span></td></tr>
+<tr name="295" id="295">
+<td>295</td><td>  <a id="295c3" class="tk">feedback_control_M</a>-&gt;<a id="295c23" class="tk">Sizes</a>.<a id="295c29" class="tk">numU</a> = (1);<span class="ct">/* Number of model inputs */</span></td></tr>
+<tr name="296" id="296">
+<td>296</td><td>  <a id="296c3" class="tk">feedback_control_M</a>-&gt;<a id="296c23" class="tk">Sizes</a>.<a id="296c29" class="tk">sysDirFeedThru</a> = (1);<span class="ct">/* The model is direct feedthrough */</span></td></tr>
+<tr name="297" id="297">
+<td>297</td><td>  <a id="297c3" class="tk">feedback_control_M</a>-&gt;<a id="297c23" class="tk">Sizes</a>.<a id="297c29" class="tk">numSampTimes</a> = (1);<span class="ct">/* Number of sample times */</span></td></tr>
+<tr name="298" id="298">
+<td>298</td><td>  <a id="298c3" class="tk">feedback_control_M</a>-&gt;<a id="298c23" class="tk">Sizes</a>.<a id="298c29" class="tk">numBlocks</a> = (3);<span class="ct">/* Number of blocks */</span></td></tr>
+<tr name="299" id="299">
+<td>299</td><td>  <a id="299c3" class="tk">feedback_control_M</a>-&gt;<a id="299c23" class="tk">Sizes</a>.<a id="299c29" class="tk">numBlockIO</a> = (0);<span class="ct">/* Number of block outputs */</span></td></tr>
+<tr name="300" id="300">
+<td>300</td><td>  <span class="kw">return</span> <a id="300c10" class="tk">feedback_control_M</a>;</td></tr>
+<tr name="301" id="301">
+<td>301</td><td><span class="br">}</span></td></tr>
+<tr name="302" id="302">
+<td>302</td><td></td></tr>
+<tr name="303" id="303">
+<td>303</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="304" id="304">
+<td>304</td><td><span class="ct"> * End of Classic call interface                                          *</span></td></tr>
+<tr name="305" id="305">
+<td>305</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="306" id="306">
+<td>306</td><td></td></tr>
+<tr name="307" id="307">
+<td>307</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="308" id="308">
+<td>308</td><td><span class="ct"> * NI VeriStand Model Framework code generation</span></td></tr>
+<tr name="309" id="309">
+<td>309</td><td><span class="ct"> *</span></td></tr>
+<tr name="310" id="310">
+<td>310</td><td><span class="ct"> * Model : feedback_control</span></td></tr>
+<tr name="311" id="311">
+<td>311</td><td><span class="ct"> * Model version : 1.45</span></td></tr>
+<tr name="312" id="312">
+<td>312</td><td><span class="ct"> * VeriStand Model Framework version : 2016.0.0.72 (2016)</span></td></tr>
+<tr name="313" id="313">
+<td>313</td><td><span class="ct"> * Source generated on : Sun Jun 18 18:56:48 2017</span></td></tr>
+<tr name="314" id="314">
+<td>314</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="315" id="315">
+<td>315</td><td></td></tr>
+<tr name="316" id="316">
+<td>316</td><td><span class="ct">/* This file contains automatically generated code for functions</span></td></tr>
+<tr name="317" id="317">
+<td>317</td><td><span class="ct"> * to update the inports and outports of a Simulink/Realtime Workshop</span></td></tr>
+<tr name="318" id="318">
+<td>318</td><td><span class="ct"> * model. Calls to these functions should be made before each step is taken</span></td></tr>
+<tr name="319" id="319">
+<td>319</td><td><span class="ct"> * (inports, call SetExternalInputs) and after each step is taken</span></td></tr>
+<tr name="320" id="320">
+<td>320</td><td><span class="ct"> * (outports, call SetExternalOutputs.)</span></td></tr>
+<tr name="321" id="321">
+<td>321</td><td><span class="ct"> */</span></td></tr>
+<tr name="322" id="322">
+<td>322</td><td><span class="pp">#ifdef</span> <a id="322c8" class="tk">NI_ROOTMODEL_feedback_control</a></td></tr>
+<tr name="323" id="323">
+<td>323</td><td><span class="pp">#include "ni_modelframework_ex.h"</span></td></tr>
+<tr name="324" id="324">
+<td>324</td><td><span class="pp">#include &lt;stddef.h&gt;</span></td></tr>
+<tr name="325" id="325">
+<td>325</td><td><span class="pp">#include &lt;stdlib.h&gt;</span></td></tr>
+<tr name="326" id="326">
+<td>326</td><td><span class="pp">#include &lt;float.h&gt;</span></td></tr>
+<tr name="327" id="327">
+<td>327</td><td><span class="pp">#include &lt;math.h&gt;</span></td></tr>
+<tr name="328" id="328">
+<td>328</td><td></td></tr>
+<tr name="329" id="329">
+<td>329</td><td><span class="kw">unsigned</span> <span class="kw">char</span> <a id="329c15" class="tk">ReadSideDirtyFlag</a> = 0, <a id="329c38" class="tk">WriteSideDirtyFlag</a> = 0;</td></tr>
+<tr name="330" id="330">
+<td>330</td><td></td></tr>
+<tr name="331" id="331">
+<td>331</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="332" id="332">
+<td>332</td><td><span class="ct"> * Function: NIRT_GetValueByDataType</span></td></tr>
+<tr name="333" id="333">
+<td>333</td><td><span class="ct"> *</span></td></tr>
+<tr name="334" id="334">
+<td>334</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="335" id="335">
+<td>335</td><td><span class="ct"> *		Converting to and from double and datatypes used in the model</span></td></tr>
+<tr name="336" id="336">
+<td>336</td><td><span class="ct"> *</span></td></tr>
+<tr name="337" id="337">
+<td>337</td><td><span class="ct"> * Output Parameters</span></td></tr>
+<tr name="338" id="338">
+<td>338</td><td><span class="ct"> *      ptr : address to the source</span></td></tr>
+<tr name="339" id="339">
+<td>339</td><td><span class="ct"> *      subindex : index value if vector</span></td></tr>
+<tr name="340" id="340">
+<td>340</td><td><span class="ct"> *      type   : the source's data type</span></td></tr>
+<tr name="341" id="341">
+<td>341</td><td><span class="ct"> *      Complex : true if a complex data type</span></td></tr>
+<tr name="342" id="342">
+<td>342</td><td><span class="ct"> *</span></td></tr>
+<tr name="343" id="343">
+<td>343</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="344" id="344">
+<td>344</td><td><span class="ct"> *     Return value: 0 if no error</span></td></tr>
+<tr name="345" id="345">
+<td>345</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="346" id="346">
+<td>346</td><td><span class="kw">double</span> <a id="346c8" class="tk">NIRT_GetValueByDataType</a>(<span class="kw">void</span><a id="346c36" class="tk">*</a> <a id="346c38" class="tk">ptr</a>, <a id="346c43" class="tk">int32_t</a> <a id="346c51" class="tk">subindex</a>, <a id="346c61" class="tk">int32_t</a> <a id="346c69" class="tk">type</a>,</td></tr>
+<tr name="347" id="347">
+<td>347</td><td>  <a id="347c3" class="tk">int32_t</a> <a id="347c11" class="tk">Complex</a>)</td></tr>
+<tr name="348" id="348">
+<td>348</td><td><span class="br">{</span></td></tr>
+<tr name="349" id="349">
+<td>349</td><td>  <span class="kw">switch</span> (<a id="349c11" class="tk">type</a>)</td></tr>
+<tr name="350" id="350">
+<td>350</td><td>  <span class="br">{</span></td></tr>
+<tr name="351" id="351">
+<td>351</td><td>   <span class="kw">case</span> 0<a id="351c10" class="tk">:</a></td></tr>
+<tr name="352" id="352">
+<td>352</td><td>    <span class="kw">return</span> (<span class="kw">double</span>)(((<a id="352c23" class="tk">real_T</a><a id="352c29" class="tk">*</a>)<a id="352c31" class="tk">ptr</a>)[<a id="352c36" class="tk">subindex</a>]);</td></tr>
+<tr name="353" id="353">
+<td>353</td><td></td></tr>
+<tr name="354" id="354">
+<td>354</td><td>   <span class="kw">case</span> 1<a id="354c10" class="tk">:</a></td></tr>
+<tr name="355" id="355">
+<td>355</td><td>    <span class="kw">return</span> (<span class="kw">double</span>)(((<a id="355c23" class="tk">real32_T</a><a id="355c31" class="tk">*</a>)<a id="355c33" class="tk">ptr</a>)[<a id="355c38" class="tk">subindex</a>]);</td></tr>
+<tr name="356" id="356">
+<td>356</td><td></td></tr>
+<tr name="357" id="357">
+<td>357</td><td>   <span class="kw">case</span> 2<a id="357c10" class="tk">:</a></td></tr>
+<tr name="358" id="358">
+<td>358</td><td>    <span class="kw">return</span> (<span class="kw">double</span>)(((<a id="358c23" class="tk">int8_T</a><a id="358c29" class="tk">*</a>)<a id="358c31" class="tk">ptr</a>)[<a id="358c36" class="tk">subindex</a>]);</td></tr>
+<tr name="359" id="359">
+<td>359</td><td></td></tr>
+<tr name="360" id="360">
+<td>360</td><td>   <span class="kw">case</span> 3<a id="360c10" class="tk">:</a></td></tr>
+<tr name="361" id="361">
+<td>361</td><td>    <span class="kw">return</span> (<span class="kw">double</span>)(((<a id="361c23" class="tk">uint8_T</a><a id="361c30" class="tk">*</a>)<a id="361c32" class="tk">ptr</a>)[<a id="361c37" class="tk">subindex</a>]);</td></tr>
+<tr name="362" id="362">
+<td>362</td><td></td></tr>
+<tr name="363" id="363">
+<td>363</td><td>   <span class="kw">case</span> 4<a id="363c10" class="tk">:</a></td></tr>
+<tr name="364" id="364">
+<td>364</td><td>    <span class="kw">return</span> (<span class="kw">double</span>)(((<a id="364c23" class="tk">int16_T</a><a id="364c30" class="tk">*</a>)<a id="364c32" class="tk">ptr</a>)[<a id="364c37" class="tk">subindex</a>]);</td></tr>
+<tr name="365" id="365">
+<td>365</td><td></td></tr>
+<tr name="366" id="366">
+<td>366</td><td>   <span class="kw">case</span> 5<a id="366c10" class="tk">:</a></td></tr>
+<tr name="367" id="367">
+<td>367</td><td>    <span class="kw">return</span> (<span class="kw">double</span>)(((<a id="367c23" class="tk">uint16_T</a><a id="367c31" class="tk">*</a>)<a id="367c33" class="tk">ptr</a>)[<a id="367c38" class="tk">subindex</a>]);</td></tr>
+<tr name="368" id="368">
+<td>368</td><td></td></tr>
+<tr name="369" id="369">
+<td>369</td><td>   <span class="kw">case</span> 6<a id="369c10" class="tk">:</a></td></tr>
+<tr name="370" id="370">
+<td>370</td><td>    <span class="kw">return</span> (<span class="kw">double</span>)(((<a id="370c23" class="tk">int32_T</a><a id="370c30" class="tk">*</a>)<a id="370c32" class="tk">ptr</a>)[<a id="370c37" class="tk">subindex</a>]);</td></tr>
+<tr name="371" id="371">
+<td>371</td><td></td></tr>
+<tr name="372" id="372">
+<td>372</td><td>   <span class="kw">case</span> 7<a id="372c10" class="tk">:</a></td></tr>
+<tr name="373" id="373">
+<td>373</td><td>    <span class="kw">return</span> (<span class="kw">double</span>)(((<a id="373c23" class="tk">uint32_T</a><a id="373c31" class="tk">*</a>)<a id="373c33" class="tk">ptr</a>)[<a id="373c38" class="tk">subindex</a>]);</td></tr>
+<tr name="374" id="374">
+<td>374</td><td></td></tr>
+<tr name="375" id="375">
+<td>375</td><td>   <span class="kw">case</span> 8<a id="375c10" class="tk">:</a></td></tr>
+<tr name="376" id="376">
+<td>376</td><td>    <span class="kw">return</span> (<span class="kw">double</span>)(((<a id="376c23" class="tk">boolean_T</a><a id="376c32" class="tk">*</a>)<a id="376c34" class="tk">ptr</a>)[<a id="376c39" class="tk">subindex</a>]);</td></tr>
+<tr name="377" id="377">
+<td>377</td><td></td></tr>
+<tr name="378" id="378">
+<td>378</td><td>   <span class="kw">case</span> 10<a id="378c11" class="tk">:</a></td></tr>
+<tr name="379" id="379">
+<td>379</td><td>    <span class="kw">return</span> <a id="379c12" class="tk">NIRT_GetValueByDataType</a>(<a id="379c36" class="tk">ptr</a>,<a id="379c40" class="tk">subindex</a>,6,<a id="379c51" class="tk">Complex</a>);</td></tr>
+<tr name="380" id="380">
+<td>380</td><td></td></tr>
+<tr name="381" id="381">
+<td>381</td><td>   <span class="kw">case</span> 13<a id="381c11" class="tk">:</a></td></tr>
+<tr name="382" id="382">
+<td>382</td><td>    <span class="kw">return</span> <a id="382c12" class="tk">NIRT_GetValueByDataType</a>(<a id="382c36" class="tk">ptr</a>,<a id="382c40" class="tk">subindex</a>,7,<a id="382c51" class="tk">Complex</a>);</td></tr>
+<tr name="383" id="383">
+<td>383</td><td></td></tr>
+<tr name="384" id="384">
+<td>384</td><td>   <span class="kw">case</span> 15<a id="384c11" class="tk">:</a></td></tr>
+<tr name="385" id="385">
+<td>385</td><td>    <span class="kw">return</span> <a id="385c12" class="tk">NIRT_GetValueByDataType</a>(<a id="385c36" class="tk">ptr</a>,<a id="385c40" class="tk">subindex</a>,6,<a id="385c51" class="tk">Complex</a>);</td></tr>
+<tr name="386" id="386">
+<td>386</td><td></td></tr>
+<tr name="387" id="387">
+<td>387</td><td>   <span class="kw">case</span> 16<a id="387c11" class="tk">:</a></td></tr>
+<tr name="388" id="388">
+<td>388</td><td>    <span class="kw">return</span> <a id="388c12" class="tk">NIRT_GetValueByDataType</a>(<a id="388c36" class="tk">ptr</a>,<a id="388c40" class="tk">subindex</a>,6,<a id="388c51" class="tk">Complex</a>);</td></tr>
+<tr name="389" id="389">
+<td>389</td><td></td></tr>
+<tr name="390" id="390">
+<td>390</td><td>   <span class="kw">case</span> 17<a id="390c11" class="tk">:</a></td></tr>
+<tr name="391" id="391">
+<td>391</td><td>    <span class="kw">return</span> (( <span class="kw">double</span> <a id="391c22" class="tk">*</a>)<a id="391c24" class="tk">ptr</a>)[<a id="391c29" class="tk">subindex</a>];</td></tr>
+<tr name="392" id="392">
+<td>392</td><td></td></tr>
+<tr name="393" id="393">
+<td>393</td><td>   <span class="kw">case</span> 18<a id="393c11" class="tk">:</a></td></tr>
+<tr name="394" id="394">
+<td>394</td><td>    <span class="kw">return</span> (( <span class="kw">double</span> <a id="394c22" class="tk">*</a>)<a id="394c24" class="tk">ptr</a>)[<a id="394c29" class="tk">subindex</a>];</td></tr>
+<tr name="395" id="395">
+<td>395</td><td></td></tr>
+<tr name="396" id="396">
+<td>396</td><td>   <span class="kw">case</span> 19<a id="396c11" class="tk">:</a></td></tr>
+<tr name="397" id="397">
+<td>397</td><td>    <span class="kw">return</span> (( <span class="kw">double</span> <a id="397c22" class="tk">*</a>)<a id="397c24" class="tk">ptr</a>)[<a id="397c29" class="tk">subindex</a>];</td></tr>
+<tr name="398" id="398">
+<td>398</td><td></td></tr>
+<tr name="399" id="399">
+<td>399</td><td>   <span class="kw">case</span> 20<a id="399c11" class="tk">:</a></td></tr>
+<tr name="400" id="400">
+<td>400</td><td>    <span class="kw">return</span> <a id="400c12" class="tk">NIRT_GetValueByDataType</a>(<a id="400c36" class="tk">ptr</a>,<a id="400c40" class="tk">subindex</a>,0,<a id="400c51" class="tk">Complex</a>);</td></tr>
+<tr name="401" id="401">
+<td>401</td><td></td></tr>
+<tr name="402" id="402">
+<td>402</td><td>   <span class="kw">case</span> 21<a id="402c11" class="tk">:</a></td></tr>
+<tr name="403" id="403">
+<td>403</td><td>    <span class="kw">return</span> <a id="403c12" class="tk">NIRT_GetValueByDataType</a>(<a id="403c36" class="tk">ptr</a>,<a id="403c40" class="tk">subindex</a>,0,<a id="403c51" class="tk">Complex</a>);</td></tr>
+<tr name="404" id="404">
+<td>404</td><td>  <span class="br">}</span></td></tr>
+<tr name="405" id="405">
+<td>405</td><td></td></tr>
+<tr name="406" id="406">
+<td>406</td><td>  <span class="ct">// return ((double *)ptr)[subindex];</span></td></tr>
+<tr name="407" id="407">
+<td>407</td><td>  <span class="kw">return</span> <a id="407c10" class="tk">rtNaN</a>;</td></tr>
+<tr name="408" id="408">
+<td>408</td><td><span class="br">}</span></td></tr>
+<tr name="409" id="409">
+<td>409</td><td></td></tr>
+<tr name="410" id="410">
+<td>410</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="411" id="411">
+<td>411</td><td><span class="ct"> * Function: NIRT_SetValueByDataType</span></td></tr>
+<tr name="412" id="412">
+<td>412</td><td><span class="ct"> *</span></td></tr>
+<tr name="413" id="413">
+<td>413</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="414" id="414">
+<td>414</td><td><span class="ct"> *		Converting to and from double and datatypes used in the model</span></td></tr>
+<tr name="415" id="415">
+<td>415</td><td><span class="ct"> *</span></td></tr>
+<tr name="416" id="416">
+<td>416</td><td><span class="ct"> * Output Parameters</span></td></tr>
+<tr name="417" id="417">
+<td>417</td><td><span class="ct"> *      ptr : address to the destination</span></td></tr>
+<tr name="418" id="418">
+<td>418</td><td><span class="ct"> *      subindex : index value if vector</span></td></tr>
+<tr name="419" id="419">
+<td>419</td><td><span class="ct"> *      value : value to set on the destination</span></td></tr>
+<tr name="420" id="420">
+<td>420</td><td><span class="ct"> *      type   : the destination's data type</span></td></tr>
+<tr name="421" id="421">
+<td>421</td><td><span class="ct"> *      Complex : true if a complex data type</span></td></tr>
+<tr name="422" id="422">
+<td>422</td><td><span class="ct"> *</span></td></tr>
+<tr name="423" id="423">
+<td>423</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="424" id="424">
+<td>424</td><td><span class="ct"> *     Return value: 0 if no error</span></td></tr>
+<tr name="425" id="425">
+<td>425</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="426" id="426">
+<td>426</td><td><a id="426c1" class="tk">int32_t</a> <a id="426c9" class="tk">NIRT_SetValueByDataType</a>(<span class="kw">void</span><a id="426c37" class="tk">*</a> <a id="426c39" class="tk">ptr</a>, <a id="426c44" class="tk">int32_t</a> <a id="426c52" class="tk">subindex</a>, <span class="kw">double</span> <a id="426c69" class="tk">value</a>,</td></tr>
+<tr name="427" id="427">
+<td>427</td><td>  <a id="427c3" class="tk">int32_t</a> <a id="427c11" class="tk">type</a>, <a id="427c17" class="tk">int32_t</a> <a id="427c25" class="tk">Complex</a>)</td></tr>
+<tr name="428" id="428">
+<td>428</td><td><span class="br">{</span></td></tr>
+<tr name="429" id="429">
+<td>429</td><td>  <span class="ct">//Complex is only used for R14.3 and down</span></td></tr>
+<tr name="430" id="430">
+<td>430</td><td>  <span class="kw">switch</span> (<a id="430c11" class="tk">type</a>)</td></tr>
+<tr name="431" id="431">
+<td>431</td><td>  <span class="br">{</span></td></tr>
+<tr name="432" id="432">
+<td>432</td><td>   <span class="kw">case</span> 0<a id="432c10" class="tk">:</a></td></tr>
+<tr name="433" id="433">
+<td>433</td><td>    ((<a id="433c7" class="tk">real_T</a> <a id="433c14" class="tk">*</a>)<a id="433c16" class="tk">ptr</a>)[<a id="433c21" class="tk">subindex</a>] = (<a id="433c34" class="tk">real_T</a>)<a id="433c41" class="tk">value</a>;</td></tr>
+<tr name="434" id="434">
+<td>434</td><td>    <span class="kw">return</span> <a id="434c12" class="tk">NI_OK</a>;</td></tr>
+<tr name="435" id="435">
+<td>435</td><td></td></tr>
+<tr name="436" id="436">
+<td>436</td><td>   <span class="kw">case</span> 1<a id="436c10" class="tk">:</a></td></tr>
+<tr name="437" id="437">
+<td>437</td><td>    ((<a id="437c7" class="tk">real32_T</a> <a id="437c16" class="tk">*</a>)<a id="437c18" class="tk">ptr</a>)[<a id="437c23" class="tk">subindex</a>] = (<a id="437c36" class="tk">real32_T</a>)<a id="437c45" class="tk">value</a>;</td></tr>
+<tr name="438" id="438">
+<td>438</td><td>    <span class="kw">return</span> <a id="438c12" class="tk">NI_OK</a>;</td></tr>
+<tr name="439" id="439">
+<td>439</td><td></td></tr>
+<tr name="440" id="440">
+<td>440</td><td>   <span class="kw">case</span> 2<a id="440c10" class="tk">:</a></td></tr>
+<tr name="441" id="441">
+<td>441</td><td>    ((<a id="441c7" class="tk">int8_T</a> <a id="441c14" class="tk">*</a>)<a id="441c16" class="tk">ptr</a>)[<a id="441c21" class="tk">subindex</a>] = (<a id="441c34" class="tk">int8_T</a>)<a id="441c41" class="tk">value</a>;</td></tr>
+<tr name="442" id="442">
+<td>442</td><td>    <span class="kw">return</span> <a id="442c12" class="tk">NI_OK</a>;</td></tr>
+<tr name="443" id="443">
+<td>443</td><td></td></tr>
+<tr name="444" id="444">
+<td>444</td><td>   <span class="kw">case</span> 3<a id="444c10" class="tk">:</a></td></tr>
+<tr name="445" id="445">
+<td>445</td><td>    ((<a id="445c7" class="tk">uint8_T</a> <a id="445c15" class="tk">*</a>)<a id="445c17" class="tk">ptr</a>)[<a id="445c22" class="tk">subindex</a>] = (<a id="445c35" class="tk">uint8_T</a>)<a id="445c43" class="tk">value</a>;</td></tr>
+<tr name="446" id="446">
+<td>446</td><td>    <span class="kw">return</span> <a id="446c12" class="tk">NI_OK</a>;</td></tr>
+<tr name="447" id="447">
+<td>447</td><td></td></tr>
+<tr name="448" id="448">
+<td>448</td><td>   <span class="kw">case</span> 4<a id="448c10" class="tk">:</a></td></tr>
+<tr name="449" id="449">
+<td>449</td><td>    ((<a id="449c7" class="tk">int16_T</a> <a id="449c15" class="tk">*</a>)<a id="449c17" class="tk">ptr</a>)[<a id="449c22" class="tk">subindex</a>] = (<a id="449c35" class="tk">int16_T</a>)<a id="449c43" class="tk">value</a>;</td></tr>
+<tr name="450" id="450">
+<td>450</td><td>    <span class="kw">return</span> <a id="450c12" class="tk">NI_OK</a>;</td></tr>
+<tr name="451" id="451">
+<td>451</td><td></td></tr>
+<tr name="452" id="452">
+<td>452</td><td>   <span class="kw">case</span> 5<a id="452c10" class="tk">:</a></td></tr>
+<tr name="453" id="453">
+<td>453</td><td>    ((<a id="453c7" class="tk">uint16_T</a> <a id="453c16" class="tk">*</a>)<a id="453c18" class="tk">ptr</a>)[<a id="453c23" class="tk">subindex</a>] = (<a id="453c36" class="tk">uint16_T</a>)<a id="453c45" class="tk">value</a>;</td></tr>
+<tr name="454" id="454">
+<td>454</td><td>    <span class="kw">return</span> <a id="454c12" class="tk">NI_OK</a>;</td></tr>
+<tr name="455" id="455">
+<td>455</td><td></td></tr>
+<tr name="456" id="456">
+<td>456</td><td>   <span class="kw">case</span> 6<a id="456c10" class="tk">:</a></td></tr>
+<tr name="457" id="457">
+<td>457</td><td>    ((<a id="457c7" class="tk">int32_T</a> <a id="457c15" class="tk">*</a>)<a id="457c17" class="tk">ptr</a>)[<a id="457c22" class="tk">subindex</a>] = (<a id="457c35" class="tk">int32_T</a>)<a id="457c43" class="tk">value</a>;</td></tr>
+<tr name="458" id="458">
+<td>458</td><td>    <span class="kw">return</span> <a id="458c12" class="tk">NI_OK</a>;</td></tr>
+<tr name="459" id="459">
+<td>459</td><td></td></tr>
+<tr name="460" id="460">
+<td>460</td><td>   <span class="kw">case</span> 7<a id="460c10" class="tk">:</a></td></tr>
+<tr name="461" id="461">
+<td>461</td><td>    ((<a id="461c7" class="tk">uint32_T</a> <a id="461c16" class="tk">*</a>)<a id="461c18" class="tk">ptr</a>)[<a id="461c23" class="tk">subindex</a>] = (<a id="461c36" class="tk">uint32_T</a>)<a id="461c45" class="tk">value</a>;</td></tr>
+<tr name="462" id="462">
+<td>462</td><td>    <span class="kw">return</span> <a id="462c12" class="tk">NI_OK</a>;</td></tr>
+<tr name="463" id="463">
+<td>463</td><td></td></tr>
+<tr name="464" id="464">
+<td>464</td><td>   <span class="kw">case</span> 8<a id="464c10" class="tk">:</a></td></tr>
+<tr name="465" id="465">
+<td>465</td><td>    ((<a id="465c7" class="tk">boolean_T</a> <a id="465c17" class="tk">*</a>)<a id="465c19" class="tk">ptr</a>)[<a id="465c24" class="tk">subindex</a>] = (<a id="465c37" class="tk">boolean_T</a>)<a id="465c47" class="tk">value</a>;</td></tr>
+<tr name="466" id="466">
+<td>466</td><td>    <span class="kw">return</span> <a id="466c12" class="tk">NI_OK</a>;</td></tr>
+<tr name="467" id="467">
+<td>467</td><td></td></tr>
+<tr name="468" id="468">
+<td>468</td><td>   <span class="kw">case</span> 10<a id="468c11" class="tk">:</a></td></tr>
+<tr name="469" id="469">
+<td>469</td><td>    <span class="ct">//Type is renamed. Call SetValueByDataType on its contained type</span></td></tr>
+<tr name="470" id="470">
+<td>470</td><td>    <span class="kw">return</span> <a id="470c12" class="tk">NIRT_SetValueByDataType</a>(<a id="470c36" class="tk">ptr</a>, <a id="470c41" class="tk">subindex</a>, <a id="470c51" class="tk">value</a>, 6, <a id="470c61" class="tk">Complex</a>);</td></tr>
+<tr name="471" id="471">
+<td>471</td><td></td></tr>
+<tr name="472" id="472">
+<td>472</td><td>   <span class="kw">case</span> 13<a id="472c11" class="tk">:</a></td></tr>
+<tr name="473" id="473">
+<td>473</td><td>    <span class="ct">//Type is matrix. Call SetValueByDataType on its contained type</span></td></tr>
+<tr name="474" id="474">
+<td>474</td><td>    <span class="kw">return</span> <a id="474c12" class="tk">NIRT_SetValueByDataType</a>(<a id="474c36" class="tk">ptr</a>, <a id="474c41" class="tk">subindex</a>, <a id="474c51" class="tk">value</a>, 7, <a id="474c61" class="tk">Complex</a>);</td></tr>
+<tr name="475" id="475">
+<td>475</td><td></td></tr>
+<tr name="476" id="476">
+<td>476</td><td>   <span class="kw">case</span> 15<a id="476c11" class="tk">:</a></td></tr>
+<tr name="477" id="477">
+<td>477</td><td>    <span class="ct">//Type is enum. Call SetValueByDataType on its contained type</span></td></tr>
+<tr name="478" id="478">
+<td>478</td><td>    <span class="kw">return</span> <a id="478c12" class="tk">NIRT_SetValueByDataType</a>(<a id="478c36" class="tk">ptr</a>, <a id="478c41" class="tk">subindex</a>, <a id="478c51" class="tk">value</a>, 6, <a id="478c61" class="tk">Complex</a>);</td></tr>
+<tr name="479" id="479">
+<td>479</td><td></td></tr>
+<tr name="480" id="480">
+<td>480</td><td>   <span class="kw">case</span> 16<a id="480c11" class="tk">:</a></td></tr>
+<tr name="481" id="481">
+<td>481</td><td>    <span class="ct">//Type is enum. Call SetValueByDataType on its contained type</span></td></tr>
+<tr name="482" id="482">
+<td>482</td><td>    <span class="kw">return</span> <a id="482c12" class="tk">NIRT_SetValueByDataType</a>(<a id="482c36" class="tk">ptr</a>, <a id="482c41" class="tk">subindex</a>, <a id="482c51" class="tk">value</a>, 6, <a id="482c61" class="tk">Complex</a>);</td></tr>
+<tr name="483" id="483">
+<td>483</td><td></td></tr>
+<tr name="484" id="484">
+<td>484</td><td>   <span class="kw">case</span> 20<a id="484c11" class="tk">:</a></td></tr>
+<tr name="485" id="485">
+<td>485</td><td>    <span class="ct">//Type is matrix. Call SetValueByDataType on its contained type</span></td></tr>
+<tr name="486" id="486">
+<td>486</td><td>    <span class="kw">return</span> <a id="486c12" class="tk">NIRT_SetValueByDataType</a>(<a id="486c36" class="tk">ptr</a>, <a id="486c41" class="tk">subindex</a>, <a id="486c51" class="tk">value</a>, 0, <a id="486c61" class="tk">Complex</a>);</td></tr>
+<tr name="487" id="487">
+<td>487</td><td></td></tr>
+<tr name="488" id="488">
+<td>488</td><td>   <span class="kw">case</span> 21<a id="488c11" class="tk">:</a></td></tr>
+<tr name="489" id="489">
+<td>489</td><td>    <span class="ct">//Type is matrix. Call SetValueByDataType on its contained type</span></td></tr>
+<tr name="490" id="490">
+<td>490</td><td>    <span class="kw">return</span> <a id="490c12" class="tk">NIRT_SetValueByDataType</a>(<a id="490c36" class="tk">ptr</a>, <a id="490c41" class="tk">subindex</a>, <a id="490c51" class="tk">value</a>, 0, <a id="490c61" class="tk">Complex</a>);</td></tr>
+<tr name="491" id="491">
+<td>491</td><td>  <span class="br">}</span></td></tr>
+<tr name="492" id="492">
+<td>492</td><td></td></tr>
+<tr name="493" id="493">
+<td>493</td><td>  <span class="ct">//No matching datatype conversion</span></td></tr>
+<tr name="494" id="494">
+<td>494</td><td>  <span class="kw">return</span> <a id="494c10" class="tk">NI_ERROR</a>;</td></tr>
+<tr name="495" id="495">
+<td>495</td><td><span class="br">}</span></td></tr>
+<tr name="496" id="496">
+<td>496</td><td></td></tr>
+<tr name="497" id="497">
+<td>497</td><td><span class="kw">extern</span> <a id="497c8" class="tk">feedback_control_rtModel</a> <a id="497c33" class="tk">*</a><a id="497c34" class="tk">S</a>;</td></tr>
+<tr name="498" id="498">
+<td>498</td><td><span class="kw">extern</span> <a id="498c8" class="tk">_SITexportglobals</a> <a id="498c26" class="tk">SITexportglobals</a>;</td></tr>
+<tr name="499" id="499">
+<td>499</td><td></td></tr>
+<tr name="500" id="500">
+<td>500</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="501" id="501">
+<td>501</td><td><span class="ct"> * Function: SetExternalInputs</span></td></tr>
+<tr name="502" id="502">
+<td>502</td><td><span class="ct"> *</span></td></tr>
+<tr name="503" id="503">
+<td>503</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="504" id="504">
+<td>504</td><td><span class="ct"> *		Set data to model ports on the specified task</span></td></tr>
+<tr name="505" id="505">
+<td>505</td><td><span class="ct"> *</span></td></tr>
+<tr name="506" id="506">
+<td>506</td><td><span class="ct"> * Input Parameters</span></td></tr>
+<tr name="507" id="507">
+<td>507</td><td><span class="ct"> *      data : data to set</span></td></tr>
+<tr name="508" id="508">
+<td>508</td><td><span class="ct"> *      TaskSampleHit : task id</span></td></tr>
+<tr name="509" id="509">
+<td>509</td><td><span class="ct"> *</span></td></tr>
+<tr name="510" id="510">
+<td>510</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="511" id="511">
+<td>511</td><td><span class="ct"> *     Return value: 0 if no error</span></td></tr>
+<tr name="512" id="512">
+<td>512</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="513" id="513">
+<td>513</td><td><span class="kw">void</span> <a id="513c6" class="tk">SetExternalInputs</a>(<span class="kw">double</span><a id="513c30" class="tk">*</a> <a id="513c32" class="tk">data</a>, <a id="513c38" class="tk">int_T</a><a id="513c43" class="tk">*</a> <a id="513c45" class="tk">TaskSampleHit</a>)</td></tr>
+<tr name="514" id="514">
+<td>514</td><td><span class="br">{</span></td></tr>
+<tr name="515" id="515">
+<td>515</td><td>  <span class="kw">int</span> <a id="515c7" class="tk">index</a> = 0, <a id="515c18" class="tk">count</a> = 0;</td></tr>
+<tr name="516" id="516">
+<td>516</td><td>  <a id="516c3" class="tk">ExtU_feedback_control_T</a> <a id="516c27" class="tk">*</a><a id="516c28" class="tk">rtIN</a> = (<a id="516c36" class="tk">ExtU_feedback_control_T</a><a id="516c59" class="tk">*</a>) <a id="516c62" class="tk">S</a>-&gt;<a id="516c65" class="tk">ModelData</a>.<a id="516c75" class="tk">inputs</a>;</td></tr>
+<tr name="517" id="517">
+<td>517</td><td>  <span class="kw">if</span> (<a id="517c7" class="tk">TaskSampleHit</a>[0]) <span class="br">{</span>              <span class="ct">// sample and hold</span></td></tr>
+<tr name="518" id="518">
+<td>518</td><td>    <span class="ct">/* rtIN-&gt;control_input Type real_T -&gt; 0 Width [1, 1] */</span></td></tr>
+<tr name="519" id="519">
+<td>519</td><td>    <a id="519c5" class="tk">NIRT_SetValueByDataType</a>(<a id="519c29" class="tk">&amp;</a><a id="519c30" class="tk">rtIN</a>-&gt;<a id="519c36" class="tk">control_input</a>, 0, <a id="519c54" class="tk">data</a>[<a id="519c59" class="tk">index</a><a id="519c64" class="tk">++</a>], 0, 0);</td></tr>
+<tr name="520" id="520">
+<td>520</td><td>  <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span>                             <span class="ct">// hold this input--skip over it in the input buffer</span></td></tr>
+<tr name="521" id="521">
+<td>521</td><td>    <a id="521c5" class="tk">index</a> <a id="521c11" class="tk">+=</a> 1;</td></tr>
+<tr name="522" id="522">
+<td>522</td><td>  <span class="br">}</span></td></tr>
+<tr name="523" id="523">
+<td>523</td><td></td></tr>
+<tr name="524" id="524">
+<td>524</td><td>  <a id="524c3" class="tk">UNUSED_PARAMETER</a>(<a id="524c20" class="tk">count</a>);</td></tr>
+<tr name="525" id="525">
+<td>525</td><td><span class="br">}</span>                                      <span class="ct">/* of SetExternalInputs */</span></td></tr>
+<tr name="526" id="526">
+<td>526</td><td></td></tr>
+<tr name="527" id="527">
+<td>527</td><td><a id="527c1" class="tk">int32_t</a> <a id="527c9" class="tk">NumInputPorts</a>(<span class="kw">void</span>)</td></tr>
+<tr name="528" id="528">
+<td>528</td><td><span class="br">{</span></td></tr>
+<tr name="529" id="529">
+<td>529</td><td>  <span class="kw">return</span> 1;</td></tr>
+<tr name="530" id="530">
+<td>530</td><td><span class="br">}</span></td></tr>
+<tr name="531" id="531">
+<td>531</td><td></td></tr>
+<tr name="532" id="532">
+<td>532</td><td><a id="532c1" class="tk">int32_t</a> <a id="532c9" class="tk">NumOutputPorts</a>(<span class="kw">void</span>)</td></tr>
+<tr name="533" id="533">
+<td>533</td><td><span class="br">{</span></td></tr>
+<tr name="534" id="534">
+<td>534</td><td>  <span class="kw">return</span> 1;</td></tr>
+<tr name="535" id="535">
+<td>535</td><td><span class="br">}</span></td></tr>
+<tr name="536" id="536">
+<td>536</td><td></td></tr>
+<tr name="537" id="537">
+<td>537</td><td><span class="kw">double</span> <a id="537c8" class="tk">ni_extout</a>[1];</td></tr>
+<tr name="538" id="538">
+<td>538</td><td></td></tr>
+<tr name="539" id="539">
+<td>539</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="540" id="540">
+<td>540</td><td><span class="ct"> * Function: SetExternalOutputs</span></td></tr>
+<tr name="541" id="541">
+<td>541</td><td><span class="ct"> *</span></td></tr>
+<tr name="542" id="542">
+<td>542</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="543" id="543">
+<td>543</td><td><span class="ct"> *		Set data to model ports on the specified task</span></td></tr>
+<tr name="544" id="544">
+<td>544</td><td><span class="ct"> *</span></td></tr>
+<tr name="545" id="545">
+<td>545</td><td><span class="ct"> * Input Parameters</span></td></tr>
+<tr name="546" id="546">
+<td>546</td><td><span class="ct"> *      data : data to set</span></td></tr>
+<tr name="547" id="547">
+<td>547</td><td><span class="ct"> *      TaskSampleHit : task id</span></td></tr>
+<tr name="548" id="548">
+<td>548</td><td><span class="ct"> *</span></td></tr>
+<tr name="549" id="549">
+<td>549</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="550" id="550">
+<td>550</td><td><span class="ct"> *     Return value: 0 if no error</span></td></tr>
+<tr name="551" id="551">
+<td>551</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="552" id="552">
+<td>552</td><td><span class="kw">void</span> <a id="552c6" class="tk">SetExternalOutputs</a>(<span class="kw">double</span><a id="552c31" class="tk">*</a> <a id="552c33" class="tk">data</a>, <a id="552c39" class="tk">int_T</a><a id="552c44" class="tk">*</a> <a id="552c46" class="tk">TaskSampleHit</a>)</td></tr>
+<tr name="553" id="553">
+<td>553</td><td><span class="br">{</span></td></tr>
+<tr name="554" id="554">
+<td>554</td><td>  <span class="kw">int</span> <a id="554c7" class="tk">index</a> = 0, <a id="554c18" class="tk">count</a> = 0;</td></tr>
+<tr name="555" id="555">
+<td>555</td><td>  <a id="555c3" class="tk">ExtY_feedback_control_T</a><a id="555c26" class="tk">*</a> <a id="555c28" class="tk">rtOUT</a> = (<a id="555c37" class="tk">ExtY_feedback_control_T</a><a id="555c60" class="tk">*</a>)</td></tr>
+<tr name="556" id="556">
+<td>556</td><td>    <a id="556c5" class="tk">S</a>-&gt;<a id="556c8" class="tk">ModelData</a>.<a id="556c18" class="tk">outputs</a>;</td></tr>
+<tr name="557" id="557">
+<td>557</td><td>  <span class="kw">if</span> (<a id="557c7" class="tk">TaskSampleHit</a>[0]) <span class="br">{</span>              <span class="ct">// sample and hold</span></td></tr>
+<tr name="558" id="558">
+<td>558</td><td>    <span class="ct">/* rtOUT-&gt;CoomandV has width [1, 1] type real_T -&gt; 0 */</span></td></tr>
+<tr name="559" id="559">
+<td>559</td><td>    <a id="559c5" class="tk">ni_extout</a>[<a id="559c15" class="tk">index</a><a id="559c20" class="tk">++</a>] = <a id="559c26" class="tk">NIRT_GetValueByDataType</a>(<a id="559c50" class="tk">&amp;</a>(<a id="559c52" class="tk">rtOUT</a>-&gt;<a id="559c59" class="tk">CoomandV</a>), 0, 0, 0);</td></tr>
+<tr name="560" id="560">
+<td>560</td><td>  <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="561" id="561">
+<td>561</td><td>    <a id="561c5" class="tk">index</a> <a id="561c11" class="tk">+=</a> 1;</td></tr>
+<tr name="562" id="562">
+<td>562</td><td>  <span class="br">}</span></td></tr>
+<tr name="563" id="563">
+<td>563</td><td></td></tr>
+<tr name="564" id="564">
+<td>564</td><td>  <span class="kw">if</span> (<a id="564c7" class="tk">data</a> <a id="564c12" class="tk">!=</a> <a id="564c15" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="565" id="565">
+<td>565</td><td>    <a id="565c5" class="tk">memcpy</a>(<a id="565c12" class="tk">&amp;</a><a id="565c13" class="tk">data</a>[0], <a id="565c22" class="tk">&amp;</a><a id="565c23" class="tk">ni_extout</a>[0], <span class="kw">sizeof</span>(<a id="565c44" class="tk">ni_extout</a>));</td></tr>
+<tr name="566" id="566">
+<td>566</td><td>  <span class="br">}</span></td></tr>
+<tr name="567" id="567">
+<td>567</td><td></td></tr>
+<tr name="568" id="568">
+<td>568</td><td>  <a id="568c3" class="tk">UNUSED_PARAMETER</a>(<a id="568c20" class="tk">count</a>);</td></tr>
+<tr name="569" id="569">
+<td>569</td><td><span class="br">}</span></td></tr>
+<tr name="570" id="570">
+<td>570</td><td></td></tr>
+<tr name="571" id="571">
+<td>571</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="572" id="572">
+<td>572</td><td><span class="ct"> * Function: NI_InitExternalOutputs</span></td></tr>
+<tr name="573" id="573">
+<td>573</td><td><span class="ct"> *</span></td></tr>
+<tr name="574" id="574">
+<td>574</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="575" id="575">
+<td>575</td><td><span class="ct"> *		Initialize model ports</span></td></tr>
+<tr name="576" id="576">
+<td>576</td><td><span class="ct"> *</span></td></tr>
+<tr name="577" id="577">
+<td>577</td><td><span class="ct"> * Output Parameters</span></td></tr>
+<tr name="578" id="578">
+<td>578</td><td><span class="ct"> *</span></td></tr>
+<tr name="579" id="579">
+<td>579</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="580" id="580">
+<td>580</td><td><span class="ct"> *     Return value: 0 if no error</span></td></tr>
+<tr name="581" id="581">
+<td>581</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="582" id="582">
+<td>582</td><td><a id="582c1" class="tk">int32_t</a> <a id="582c9" class="tk">NI_InitExternalOutputs</a>()</td></tr>
+<tr name="583" id="583">
+<td>583</td><td><span class="br">{</span></td></tr>
+<tr name="584" id="584">
+<td>584</td><td>  <span class="kw">int</span> <a id="584c7" class="tk">index</a> = 0, <a id="584c18" class="tk">count</a> = 0;</td></tr>
+<tr name="585" id="585">
+<td>585</td><td>  <a id="585c3" class="tk">ExtY_feedback_control_T</a><a id="585c26" class="tk">*</a> <a id="585c28" class="tk">rtOUT</a> = (<a id="585c37" class="tk">ExtY_feedback_control_T</a><a id="585c60" class="tk">*</a>)</td></tr>
+<tr name="586" id="586">
+<td>586</td><td>    <a id="586c5" class="tk">S</a>-&gt;<a id="586c8" class="tk">ModelData</a>.<a id="586c18" class="tk">outputs</a>;</td></tr>
+<tr name="587" id="587">
+<td>587</td><td></td></tr>
+<tr name="588" id="588">
+<td>588</td><td>  <span class="ct">/* rtOUT-&gt;CoomandV has width 1 -&gt; [1, 1] type 0 -&gt; 0 */</span></td></tr>
+<tr name="589" id="589">
+<td>589</td><td>  <a id="589c3" class="tk">ni_extout</a>[<a id="589c13" class="tk">index</a><a id="589c18" class="tk">++</a>] = <a id="589c24" class="tk">NIRT_GetValueByDataType</a>(<a id="589c48" class="tk">&amp;</a>(<a id="589c50" class="tk">rtOUT</a>-&gt;<a id="589c57" class="tk">CoomandV</a>), 0, 0, 0);</td></tr>
+<tr name="590" id="590">
+<td>590</td><td>  <a id="590c3" class="tk">UNUSED_PARAMETER</a>(<a id="590c20" class="tk">count</a>);</td></tr>
+<tr name="591" id="591">
+<td>591</td><td>  <span class="kw">return</span> <a id="591c10" class="tk">NI_OK</a>;</td></tr>
+<tr name="592" id="592">
+<td>592</td><td><span class="br">}</span></td></tr>
+<tr name="593" id="593">
+<td>593</td><td></td></tr>
+<tr name="594" id="594">
+<td>594</td><td><span class="ct">/* All elements by default (including scalars) have 2 dimensions [1,1] */</span></td></tr>
+<tr name="595" id="595">
+<td>595</td><td><span class="kw">static</span> <a id="595c8" class="tk">NI_Parameter</a> <a id="595c21" class="tk">NI_ParamList</a>[] <a id="595c36" class="tk">DataSection</a>(".NIVS.paramlist") =</td></tr>
+<tr name="596" id="596">
+<td>596</td><td><span class="br">{</span></td></tr>
+<tr name="597" id="597">
+<td>597</td><td>  <span class="br">{</span> 0, "", 0, 0, 0, 0, 0, 0 <span class="br">}</span></td></tr>
+<tr name="598" id="598">
+<td>598</td><td><span class="br">}</span>;</td></tr>
+<tr name="599" id="599">
+<td>599</td><td></td></tr>
+<tr name="600" id="600">
+<td>600</td><td><span class="kw">static</span> <a id="600c8" class="tk">int32_t</a> <a id="600c16" class="tk">NI_ParamListSize</a> <a id="600c33" class="tk">DataSection</a>(".NIVS.paramlistsize") = 0;</td></tr>
+<tr name="601" id="601">
+<td>601</td><td><span class="kw">static</span> <a id="601c8" class="tk">int32_t</a> <a id="601c16" class="tk">NI_ParamDimList</a>[] <a id="601c34" class="tk">DataSection</a>(".NIVS.paramdimlist") =</td></tr>
+<tr name="602" id="602">
+<td>602</td><td><span class="br">{</span></td></tr>
+<tr name="603" id="603">
+<td>603</td><td>  0</td></tr>
+<tr name="604" id="604">
+<td>604</td><td><span class="br">}</span>;</td></tr>
+<tr name="605" id="605">
+<td>605</td><td></td></tr>
+<tr name="606" id="606">
+<td>606</td><td><span class="kw">static</span> <a id="606c8" class="tk">NI_Signal</a> <a id="606c18" class="tk">NI_SigList</a>[] <a id="606c31" class="tk">DataSection</a>(".NIVS.siglist") =</td></tr>
+<tr name="607" id="607">
+<td>607</td><td><span class="br">{</span></td></tr>
+<tr name="608" id="608">
+<td>608</td><td>  <span class="br">{</span> 0, "feedback_control/Error[Deg]", 0, "control_input", <a id="608c59" class="tk">offsetof</a></td></tr>
+<tr name="609" id="609">
+<td>609</td><td>    (<a id="609c6" class="tk">ExtU_feedback_control_T</a>, <a id="609c31" class="tk">control_input</a>) <a id="609c46" class="tk">+</a> (0<a id="609c50" class="tk">*</a><span class="kw">sizeof</span>(<a id="609c58" class="tk">real_T</a>)), <a id="609c68" class="tk">EXTIO_SIG</a>, 0,</td></tr>
+<tr name="610" id="610">
+<td>610</td><td>    1, 2, 0, 0 <span class="br">}</span>,</td></tr>
+<tr name="611" id="611">
+<td>611</td><td></td></tr>
+<tr name="612" id="612">
+<td>612</td><td>  <span class="br">{</span> <a id="612c5" class="tk">-</a>1, "", <a id="612c13" class="tk">-</a>1, "", 0, 0, 0 <span class="br">}</span></td></tr>
+<tr name="613" id="613">
+<td>613</td><td><span class="br">}</span>;</td></tr>
+<tr name="614" id="614">
+<td>614</td><td></td></tr>
+<tr name="615" id="615">
+<td>615</td><td><span class="kw">static</span> <a id="615c8" class="tk">int32_t</a> <a id="615c16" class="tk">NI_SigListSize</a> <a id="615c31" class="tk">DataSection</a>(".NIVS.siglistsize") = 1;</td></tr>
+<tr name="616" id="616">
+<td>616</td><td><span class="kw">static</span> <a id="616c8" class="tk">int32_t</a> <a id="616c16" class="tk">NI_VirtualBlockSources</a>[1];</td></tr>
+<tr name="617" id="617">
+<td>617</td><td><span class="kw">static</span> <a id="617c8" class="tk">int32_t</a> <a id="617c16" class="tk">NI_SigDimList</a>[] <a id="617c32" class="tk">DataSection</a>(".NIVS.sigdimlist") =</td></tr>
+<tr name="618" id="618">
+<td>618</td><td><span class="br">{</span> 1, 1</td></tr>
+<tr name="619" id="619">
+<td>619</td><td><span class="br">}</span>;</td></tr>
+<tr name="620" id="620">
+<td>620</td><td></td></tr>
+<tr name="621" id="621">
+<td>621</td><td><span class="kw">static</span> <a id="621c8" class="tk">int32_t</a> <a id="621c16" class="tk">NI_ExtListSize</a> <a id="621c31" class="tk">DataSection</a>(".NIVS.extlistsize") = 2;</td></tr>
+<tr name="622" id="622">
+<td>622</td><td><span class="kw">static</span> <a id="622c8" class="tk">NI_ExternalIO</a> <a id="622c22" class="tk">NI_ExtList</a>[] <a id="622c35" class="tk">DataSection</a>(".NIVS.extlist") =</td></tr>
+<tr name="623" id="623">
+<td>623</td><td><span class="br">{</span></td></tr>
+<tr name="624" id="624">
+<td>624</td><td>  <span class="br">{</span> 1, "Error[Deg]", 0, <a id="624c25" class="tk">EXT_IN</a>, 1, 1, 1 <span class="br">}</span>,</td></tr>
+<tr name="625" id="625">
+<td>625</td><td></td></tr>
+<tr name="626" id="626">
+<td>626</td><td>  <span class="br">{</span> 1, "Coomand[V]", 0, <a id="626c25" class="tk">EXT_OUT</a>, 1, 1, 1 <span class="br">}</span>,</td></tr>
+<tr name="627" id="627">
+<td>627</td><td></td></tr>
+<tr name="628" id="628">
+<td>628</td><td>  <span class="br">{</span> <a id="628c5" class="tk">-</a>1, "", 0, 0, 0, 0, 0 <span class="br">}</span></td></tr>
+<tr name="629" id="629">
+<td>629</td><td><span class="br">}</span>;</td></tr>
+<tr name="630" id="630">
+<td>630</td><td></td></tr>
+<tr name="631" id="631">
+<td>631</td><td><span class="ct">/* This Task List is generated to allow access to the task specs without</span></td></tr>
+<tr name="632" id="632">
+<td>632</td><td><span class="ct"> * initializing the model.</span></td></tr>
+<tr name="633" id="633">
+<td>633</td><td><span class="ct"> * 0th entry is for scheduler (base rate)</span></td></tr>
+<tr name="634" id="634">
+<td>634</td><td><span class="ct"> * rest for multirate model's tasks.</span></td></tr>
+<tr name="635" id="635">
+<td>635</td><td><span class="ct"> */</span></td></tr>
+<tr name="636" id="636">
+<td>636</td><td><a id="636c1" class="tk">NI_Task</a> <a id="636c9" class="tk">NI_TaskList</a>[] <a id="636c23" class="tk">DataSection</a>(".NIVS.tasklist") =</td></tr>
+<tr name="637" id="637">
+<td>637</td><td><span class="br">{</span></td></tr>
+<tr name="638" id="638">
+<td>638</td><td>  <span class="br">{</span> 0, 0.001, 0 <span class="br">}</span></td></tr>
+<tr name="639" id="639">
+<td>639</td><td><span class="br">}</span>;</td></tr>
+<tr name="640" id="640">
+<td>640</td><td></td></tr>
+<tr name="641" id="641">
+<td>641</td><td><a id="641c1" class="tk">int32_t</a> <a id="641c9" class="tk">NI_NumTasks</a> <a id="641c21" class="tk">DataSection</a>(".NIVS.numtasks") = 1;</td></tr>
+<tr name="642" id="642">
+<td>642</td><td><span class="kw">static</span> <span class="kw">const</span> <span class="kw">char</span><a id="642c18" class="tk">*</a> <a id="642c20" class="tk">NI_CompiledModelName</a> <a id="642c41" class="tk">DataSection</a>(".NIVS.compiledmodelname") =</td></tr>
+<tr name="643" id="643">
+<td>643</td><td>  "feedback_control";</td></tr>
+<tr name="644" id="644">
+<td>644</td><td><span class="kw">static</span> <span class="kw">const</span> <span class="kw">char</span><a id="644c18" class="tk">*</a> <a id="644c20" class="tk">NI_CompiledModelVersion</a> = "1.45";</td></tr>
+<tr name="645" id="645">
+<td>645</td><td><span class="kw">static</span> <span class="kw">const</span> <span class="kw">char</span><a id="645c18" class="tk">*</a> <a id="645c20" class="tk">NI_CompiledModelDateTime</a> = "Sun Jun 18 18:56:48 2017";</td></tr>
+<tr name="646" id="646">
+<td>646</td><td><span class="kw">static</span> <span class="kw">const</span> <span class="kw">char</span><a id="646c18" class="tk">*</a> <a id="646c20" class="tk">NI_builder</a> <a id="646c31" class="tk">DataSection</a>(".NIVS.builder") =</td></tr>
+<tr name="647" id="647">
+<td>647</td><td>  "NI Model Framework 2016.0.0.72 (2016) for Simulink Coder 8.10 (R2016a)";</td></tr>
+<tr name="648" id="648">
+<td>648</td><td><span class="kw">static</span> <span class="kw">const</span> <span class="kw">char</span><a id="648c18" class="tk">*</a> <a id="648c20" class="tk">NI_BuilderVersion</a> <a id="648c38" class="tk">DataSection</a>(".NIVS.builderversion") =</td></tr>
+<tr name="649" id="649">
+<td>649</td><td>  "2016.0.0.72";</td></tr>
+<tr name="650" id="650">
+<td>650</td><td></td></tr>
+<tr name="651" id="651">
+<td>651</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="652" id="652">
+<td>652</td><td><span class="ct"> * Function: NIRT_GetBuildInfo</span></td></tr>
+<tr name="653" id="653">
+<td>653</td><td><span class="ct"> *</span></td></tr>
+<tr name="654" id="654">
+<td>654</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="655" id="655">
+<td>655</td><td><span class="ct"> *	Get the DLL versioning etc information.</span></td></tr>
+<tr name="656" id="656">
+<td>656</td><td><span class="ct"> *</span></td></tr>
+<tr name="657" id="657">
+<td>657</td><td><span class="ct"> * Output Parameters:</span></td></tr>
+<tr name="658" id="658">
+<td>658</td><td><span class="ct"> *	detail	: String containing model build information.</span></td></tr>
+<tr name="659" id="659">
+<td>659</td><td><span class="ct"> *	len		: the build info string length. If a value of "-1" is specified, the minimum buffer size of "detail" is returned as its value.</span></td></tr>
+<tr name="660" id="660">
+<td>660</td><td><span class="ct"> *</span></td></tr>
+<tr name="661" id="661">
+<td>661</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="662" id="662">
+<td>662</td><td><span class="ct"> *	NI_OK if no error</span></td></tr>
+<tr name="663" id="663">
+<td>663</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="664" id="664">
+<td>664</td><td><a id="664c1" class="tk">DLL_EXPORT</a> <a id="664c12" class="tk">int32_t</a> <a id="664c20" class="tk">NIRT_GetBuildInfo</a>(<span class="kw">char</span><a id="664c42" class="tk">*</a> <a id="664c44" class="tk">detail</a>, <a id="664c52" class="tk">int32_t</a><a id="664c59" class="tk">*</a> <a id="664c61" class="tk">len</a>)</td></tr>
+<tr name="665" id="665">
+<td>665</td><td><span class="br">{</span></td></tr>
+<tr name="666" id="666">
+<td>666</td><td>  <a id="666c3" class="tk">int32_t</a> <a id="666c11" class="tk">msgLength</a> = 0;</td></tr>
+<tr name="667" id="667">
+<td>667</td><td>  <span class="kw">char</span> <a id="667c8" class="tk">*</a><a id="667c9" class="tk">msgBuffer</a> = <a id="667c21" class="tk">NULL</a>;</td></tr>
+<tr name="668" id="668">
+<td>668</td><td></td></tr>
+<tr name="669" id="669">
+<td>669</td><td>  <span class="ct">/* Message */</span></td></tr>
+<tr name="670" id="670">
+<td>670</td><td>  <span class="kw">const</span> <span class="kw">char</span> <a id="670c14" class="tk">msg</a>[] =</td></tr>
+<tr name="671" id="671">
+<td>671</td><td>    "%s\nModel Name: %s\nModel Version: %s\nVeriStand Model Framework Version: %s\nCompiled On: %s";</td></tr>
+<tr name="672" id="672">
+<td>672</td><td></td></tr>
+<tr name="673" id="673">
+<td>673</td><td>  <span class="ct">/* There are no console properties to set for VxWorks, because the console is simply serial output data.</span></td></tr>
+<tr name="674" id="674">
+<td>674</td><td><span class="ct">     Just do printf for VxWorks and ignore all console properties. */</span></td></tr>
+<tr name="675" id="675">
+<td>675</td><td><span class="pp">#if</span> <a id="675c5" class="tk">!</a> <a id="675c7" class="tk">defined</a> (<a id="675c16" class="tk">VXWORKS</a>) <a id="675c25" class="tk">&amp;&amp;</a> <a id="675c28" class="tk">!</a> <a id="675c30" class="tk">defined</a> (<a id="675c39" class="tk">kNIOSLinux</a>)</td></tr>
+<tr name="676" id="676">
+<td>676</td><td></td></tr>
+<tr name="677" id="677">
+<td>677</td><td>  <a id="677c3" class="tk">HANDLE</a> <a id="677c10" class="tk">hStdout</a> = <a id="677c20" class="tk">GetStdHandle</a>(<a id="677c33" class="tk">STD_OUTPUT_HANDLE</a>);</td></tr>
+<tr name="678" id="678">
+<td>678</td><td>  <a id="678c3" class="tk">SetConsoleTextAttribute</a>(<a id="678c27" class="tk">hStdout</a>, <a id="678c36" class="tk">FOREGROUND_INTENSITY</a> <a id="678c57" class="tk">|</a> <a id="678c59" class="tk">FOREGROUND_BLUE</a> <a id="678c75" class="tk">|</a></td></tr>
+<tr name="679" id="679">
+<td>679</td><td>    <a id="679c5" class="tk">FOREGROUND_GREEN</a> <a id="679c22" class="tk">|</a> <a id="679c24" class="tk">FOREGROUND_RED</a>);</td></tr>
+<tr name="680" id="680">
+<td>680</td><td></td></tr>
+<tr name="681" id="681">
+<td>681</td><td><span class="pp">#endif</span></td></tr>
+<tr name="682" id="682">
+<td>682</td><td></td></tr>
+<tr name="683" id="683">
+<td>683</td><td>  <span class="ct">/* Print to screen */</span></td></tr>
+<tr name="684" id="684">
+<td>684</td><td>  <a id="684c3" class="tk">printf</a>("\n*******************************************************************************\n");</td></tr>
+<tr name="685" id="685">
+<td>685</td><td>  <a id="685c3" class="tk">msgLength</a> = <a id="685c15" class="tk">printf</a>(<a id="685c22" class="tk">msg</a>, <a id="685c27" class="tk">NI_builder</a>, <a id="685c39" class="tk">NI_CompiledModelName</a>,</td></tr>
+<tr name="686" id="686">
+<td>686</td><td>                     <a id="686c22" class="tk">NI_CompiledModelVersion</a>, <a id="686c47" class="tk">NI_BuilderVersion</a>,</td></tr>
+<tr name="687" id="687">
+<td>687</td><td>                     <a id="687c22" class="tk">NI_CompiledModelDateTime</a>);</td></tr>
+<tr name="688" id="688">
+<td>688</td><td>  <a id="688c3" class="tk">printf</a>("\n*******************************************************************************\n");</td></tr>
+<tr name="689" id="689">
+<td>689</td><td></td></tr>
+<tr name="690" id="690">
+<td>690</td><td><span class="pp">#if</span> <a id="690c5" class="tk">!</a> <a id="690c7" class="tk">defined</a> (<a id="690c16" class="tk">VXWORKS</a>) <a id="690c25" class="tk">&amp;&amp;</a> <a id="690c28" class="tk">!</a> <a id="690c30" class="tk">defined</a> (<a id="690c39" class="tk">kNIOSLinux</a>)</td></tr>
+<tr name="691" id="691">
+<td>691</td><td></td></tr>
+<tr name="692" id="692">
+<td>692</td><td>  <a id="692c3" class="tk">SetConsoleTextAttribute</a>(<a id="692c27" class="tk">hStdout</a>, <a id="692c36" class="tk">FOREGROUND_BLUE</a> <a id="692c52" class="tk">|</a> <a id="692c54" class="tk">FOREGROUND_GREEN</a> <a id="692c71" class="tk">|</a></td></tr>
+<tr name="693" id="693">
+<td>693</td><td>    <a id="693c5" class="tk">FOREGROUND_RED</a>);</td></tr>
+<tr name="694" id="694">
+<td>694</td><td></td></tr>
+<tr name="695" id="695">
+<td>695</td><td><span class="pp">#endif</span></td></tr>
+<tr name="696" id="696">
+<td>696</td><td></td></tr>
+<tr name="697" id="697">
+<td>697</td><td>  <span class="kw">if</span> (<a id="697c7" class="tk">*</a><a id="697c8" class="tk">len</a> <a id="697c12" class="tk">==</a> <a id="697c15" class="tk">-</a>1) <span class="br">{</span></td></tr>
+<tr name="698" id="698">
+<td>698</td><td>    <span class="ct">/* Return the required minimum buffer size */</span></td></tr>
+<tr name="699" id="699">
+<td>699</td><td>    <a id="699c5" class="tk">*</a><a id="699c6" class="tk">len</a> = <a id="699c12" class="tk">msgLength</a>;</td></tr>
+<tr name="700" id="700">
+<td>700</td><td>  <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="701" id="701">
+<td>701</td><td>    <span class="ct">/* allocate the buffer */</span></td></tr>
+<tr name="702" id="702">
+<td>702</td><td>    <a id="702c5" class="tk">msgBuffer</a> = (<span class="kw">char</span><a id="702c22" class="tk">*</a>)<a id="702c24" class="tk">calloc</a>(<a id="702c31" class="tk">msgLength</a> <a id="702c41" class="tk">+</a> 1, <span class="kw">sizeof</span>(<span class="kw">char</span>));</td></tr>
+<tr name="703" id="703">
+<td>703</td><td>    <a id="703c5" class="tk">sprintf</a> (<a id="703c14" class="tk">msgBuffer</a>, <a id="703c25" class="tk">msg</a>, <a id="703c30" class="tk">NI_builder</a>, <a id="703c42" class="tk">NI_CompiledModelName</a>,</td></tr>
+<tr name="704" id="704">
+<td>704</td><td>             <a id="704c14" class="tk">NI_CompiledModelVersion</a>, <a id="704c39" class="tk">NI_BuilderVersion</a>,</td></tr>
+<tr name="705" id="705">
+<td>705</td><td>             <a id="705c14" class="tk">NI_CompiledModelDateTime</a>);</td></tr>
+<tr name="706" id="706">
+<td>706</td><td>    <span class="kw">if</span> (<a id="706c9" class="tk">*</a><a id="706c10" class="tk">len</a> <a id="706c14" class="tk">&gt;=</a> <a id="706c17" class="tk">msgLength</a>) <span class="br">{</span></td></tr>
+<tr name="707" id="707">
+<td>707</td><td>      <a id="707c7" class="tk">*</a><a id="707c8" class="tk">len</a> = <a id="707c14" class="tk">msgLength</a> <a id="707c24" class="tk">+</a> 1;</td></tr>
+<tr name="708" id="708">
+<td>708</td><td>    <span class="br">}</span></td></tr>
+<tr name="709" id="709">
+<td>709</td><td></td></tr>
+<tr name="710" id="710">
+<td>710</td><td>    <span class="ct">/* Copy into external buffer */</span></td></tr>
+<tr name="711" id="711">
+<td>711</td><td>    <a id="711c5" class="tk">strncpy</a>(<a id="711c13" class="tk">detail</a>, <a id="711c21" class="tk">msgBuffer</a>, <a id="711c32" class="tk">*</a><a id="711c33" class="tk">len</a>);</td></tr>
+<tr name="712" id="712">
+<td>712</td><td></td></tr>
+<tr name="713" id="713">
+<td>713</td><td>    <span class="ct">/* Release memory */</span></td></tr>
+<tr name="714" id="714">
+<td>714</td><td>    <a id="714c5" class="tk">free</a>(<a id="714c10" class="tk">msgBuffer</a>);</td></tr>
+<tr name="715" id="715">
+<td>715</td><td>  <span class="br">}</span></td></tr>
+<tr name="716" id="716">
+<td>716</td><td></td></tr>
+<tr name="717" id="717">
+<td>717</td><td>  <span class="kw">return</span> <a id="717c10" class="tk">NI_OK</a>;</td></tr>
+<tr name="718" id="718">
+<td>718</td><td><span class="br">}</span></td></tr>
+<tr name="719" id="719">
+<td>719</td><td></td></tr>
+<tr name="720" id="720">
+<td>720</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="721" id="721">
+<td>721</td><td><span class="ct"> * Function: NIRT_GetSignalSpec</span></td></tr>
+<tr name="722" id="722">
+<td>722</td><td><span class="ct"> *</span></td></tr>
+<tr name="723" id="723">
+<td>723</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="724" id="724">
+<td>724</td><td><span class="ct"> *	If index == -1, lookup parameter by the ID.</span></td></tr>
+<tr name="725" id="725">
+<td>725</td><td><span class="ct"> *	If ID_len == 0 or if ID == null, return number of parameters in model.</span></td></tr>
+<tr name="726" id="726">
+<td>726</td><td><span class="ct"> *	Otherwise, lookup parameter by index, and return the information.</span></td></tr>
+<tr name="727" id="727">
+<td>727</td><td><span class="ct"> *</span></td></tr>
+<tr name="728" id="728">
+<td>728</td><td><span class="ct"> * Input/Output Parameters:</span></td></tr>
+<tr name="729" id="729">
+<td>729</td><td><span class="ct"> *	index		: index of the signal (in/out)</span></td></tr>
+<tr name="730" id="730">
+<td>730</td><td><span class="ct"> *	ID			: ID of signal to be looked up (in), ID of signal at index (out)</span></td></tr>
+<tr name="731" id="731">
+<td>731</td><td><span class="ct"> *	ID_len		: length of input ID(in), length of ID (out)</span></td></tr>
+<tr name="732" id="732">
+<td>732</td><td><span class="ct"> *	bnlen		: length of buffer blkname (in), length of output blkname (out)</span></td></tr>
+<tr name="733" id="733">
+<td>733</td><td><span class="ct"> *	snlen		: length of buffer signame (in), length of output signame (out)</span></td></tr>
+<tr name="734" id="734">
+<td>734</td><td><span class="ct"> *</span></td></tr>
+<tr name="735" id="735">
+<td>735</td><td><span class="ct"> * Output Parameters:</span></td></tr>
+<tr name="736" id="736">
+<td>736</td><td><span class="ct"> *	blkname		: Name of the source block for the signal</span></td></tr>
+<tr name="737" id="737">
+<td>737</td><td><span class="ct"> *	portnum		: port number of the block that is the source of the signal (0 indexed)</span></td></tr>
+<tr name="738" id="738">
+<td>738</td><td><span class="ct"> *	signame		: Name of the signal</span></td></tr>
+<tr name="739" id="739">
+<td>739</td><td><span class="ct"> *	datatype	: same as with parameters. Currently assuming all data to be double.</span></td></tr>
+<tr name="740" id="740">
+<td>740</td><td><span class="ct"> *	dims		: The port's dimension of length 'numdims'.</span></td></tr>
+<tr name="741" id="741">
+<td>741</td><td><span class="ct"> *	numdims		: the port's number of dimensions. If a value of "-1" is specified, the minimum buffer size of "dims" is returned as its value.</span></td></tr>
+<tr name="742" id="742">
+<td>742</td><td><span class="ct"> *</span></td></tr>
+<tr name="743" id="743">
+<td>743</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="744" id="744">
+<td>744</td><td><span class="ct"> *	NI_OK if no error(if sigidx == -1, number of signals)</span></td></tr>
+<tr name="745" id="745">
+<td>745</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="746" id="746">
+<td>746</td><td><a id="746c1" class="tk">DLL_EXPORT</a> <a id="746c12" class="tk">int32_t</a> <a id="746c20" class="tk">NIRT_GetSignalSpec</a>(<a id="746c39" class="tk">int32_t</a><a id="746c46" class="tk">*</a> <a id="746c48" class="tk">sidx</a>, <span class="kw">char</span><a id="746c58" class="tk">*</a> <a id="746c60" class="tk">ID</a>, <a id="746c64" class="tk">int32_t</a><a id="746c71" class="tk">*</a> <a id="746c73" class="tk">ID_len</a>,</td></tr>
+<tr name="747" id="747">
+<td>747</td><td>  <span class="kw">char</span><a id="747c7" class="tk">*</a> <a id="747c9" class="tk">blkname</a>, <a id="747c18" class="tk">int32_t</a> <a id="747c26" class="tk">*</a><a id="747c27" class="tk">bnlen</a>,</td></tr>
+<tr name="748" id="748">
+<td>748</td><td>  <a id="748c3" class="tk">int32_t</a> <a id="748c11" class="tk">*</a><a id="748c12" class="tk">portnum</a>, <span class="kw">char</span><a id="748c25" class="tk">*</a> <a id="748c27" class="tk">signame</a>, <a id="748c36" class="tk">int32_t</a> <a id="748c44" class="tk">*</a><a id="748c45" class="tk">snlen</a>, <a id="748c52" class="tk">int32_t</a> <a id="748c60" class="tk">*</a><a id="748c61" class="tk">dattype</a>, <a id="748c70" class="tk">int32_t</a><a id="748c77" class="tk">*</a></td></tr>
+<tr name="749" id="749">
+<td>749</td><td>  <a id="749c3" class="tk">dims</a>, <a id="749c9" class="tk">int32_t</a><a id="749c16" class="tk">*</a> <a id="749c18" class="tk">numdim</a>)</td></tr>
+<tr name="750" id="750">
+<td>750</td><td><span class="br">{</span></td></tr>
+<tr name="751" id="751">
+<td>751</td><td>  <a id="751c3" class="tk">int32_t</a> <a id="751c11" class="tk">sigidx</a> = <a id="751c20" class="tk">*</a><a id="751c21" class="tk">sidx</a>;</td></tr>
+<tr name="752" id="752">
+<td>752</td><td>  <a id="752c3" class="tk">int32_t</a> <a id="752c11" class="tk">i</a> = 0;</td></tr>
+<tr name="753" id="753">
+<td>753</td><td>  <span class="kw">char</span> <a id="753c8" class="tk">*</a><a id="753c9" class="tk">addr</a> = <a id="753c16" class="tk">NULL</a>;</td></tr>
+<tr name="754" id="754">
+<td>754</td><td>  <span class="kw">char</span> <a id="754c8" class="tk">*</a><a id="754c9" class="tk">IDblk</a> = 0;</td></tr>
+<tr name="755" id="755">
+<td>755</td><td>  <a id="755c3" class="tk">int32_t</a> <a id="755c11" class="tk">IDport</a> = 0;</td></tr>
+<tr name="756" id="756">
+<td>756</td><td>  <span class="kw">if</span> (<a id="756c7" class="tk">sigidx</a> <a id="756c14" class="tk">&lt;</a> 0) <span class="br">{</span></td></tr>
+<tr name="757" id="757">
+<td>757</td><td>    <span class="ct">/* check if ID has been specified. */</span></td></tr>
+<tr name="758" id="758">
+<td>758</td><td>    <span class="kw">if</span> ((<a id="758c10" class="tk">ID</a> <a id="758c13" class="tk">!=</a> <a id="758c16" class="tk">NULL</a>) <a id="758c22" class="tk">&amp;&amp;</a> (<a id="758c26" class="tk">ID_len</a> <a id="758c33" class="tk">!=</a> <a id="758c36" class="tk">NULL</a>) <a id="758c42" class="tk">&amp;&amp;</a> (<a id="758c46" class="tk">*</a><a id="758c47" class="tk">ID_len</a> <a id="758c54" class="tk">&gt;</a> 0)) <span class="br">{</span></td></tr>
+<tr name="759" id="759">
+<td>759</td><td>      <span class="ct">/* parse ID into blkname and port */</span></td></tr>
+<tr name="760" id="760">
+<td>760</td><td>      <a id="760c7" class="tk">addr</a> = <a id="760c14" class="tk">strrchr</a>(<a id="760c22" class="tk">ID</a>, ':');</td></tr>
+<tr name="761" id="761">
+<td>761</td><td>      <span class="kw">if</span> (<a id="761c11" class="tk">addr</a> <a id="761c16" class="tk">==</a> <a id="761c19" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="762" id="762">
+<td>762</td><td>        <span class="kw">return</span> <a id="762c16" class="tk">NI_SigListSize</a>;</td></tr>
+<tr name="763" id="763">
+<td>763</td><td>      <span class="br">}</span></td></tr>
+<tr name="764" id="764">
+<td>764</td><td></td></tr>
+<tr name="765" id="765">
+<td>765</td><td>      <span class="ct">/* Calculate the char offset into the string after the port */</span></td></tr>
+<tr name="766" id="766">
+<td>766</td><td>      <a id="766c7" class="tk">i</a> = <a id="766c11" class="tk">addr</a> <a id="766c16" class="tk">-</a> <a id="766c18" class="tk">ID</a>;</td></tr>
+<tr name="767" id="767">
+<td>767</td><td></td></tr>
+<tr name="768" id="768">
+<td>768</td><td>      <span class="ct">/* malformed ID */</span></td></tr>
+<tr name="769" id="769">
+<td>769</td><td>      <span class="kw">if</span> (<a id="769c11" class="tk">i</a><a id="769c12" class="tk">&lt;=</a>0) <span class="br">{</span></td></tr>
+<tr name="770" id="770">
+<td>770</td><td>        <span class="kw">return</span> <a id="770c16" class="tk">NI_SigListSize</a>;</td></tr>
+<tr name="771" id="771">
+<td>771</td><td>      <span class="br">}</span></td></tr>
+<tr name="772" id="772">
+<td>772</td><td></td></tr>
+<tr name="773" id="773">
+<td>773</td><td>      <a id="773c7" class="tk">IDblk</a> = <a id="773c15" class="tk">ID</a>;</td></tr>
+<tr name="774" id="774">
+<td>774</td><td>      <a id="774c7" class="tk">IDport</a> = <a id="774c16" class="tk">atoi</a>(<a id="774c21" class="tk">ID</a><a id="774c23" class="tk">+</a><a id="774c24" class="tk">i</a><a id="774c25" class="tk">+</a>1);</td></tr>
+<tr name="775" id="775">
+<td>775</td><td></td></tr>
+<tr name="776" id="776">
+<td>776</td><td>      <span class="ct">/* lookup the table for matching ID */</span></td></tr>
+<tr name="777" id="777">
+<td>777</td><td>      <span class="kw">for</span> (<a id="777c12" class="tk">i</a>=0; <a id="777c17" class="tk">i</a><a id="777c18" class="tk">&lt;</a><a id="777c19" class="tk">NI_SigListSize</a>; <a id="777c35" class="tk">i</a><a id="777c36" class="tk">++</a>) <span class="br">{</span></td></tr>
+<tr name="778" id="778">
+<td>778</td><td>        <span class="ct">/* 11 to accomodate ':','/', port number and null character */</span></td></tr>
+<tr name="779" id="779">
+<td>779</td><td>        <span class="kw">char</span> <a id="779c14" class="tk">*</a><a id="779c15" class="tk">tempID</a> = (<span class="kw">char</span> <a id="779c30" class="tk">*</a>)<a id="779c32" class="tk">calloc</a>(<a id="779c39" class="tk">strlen</a>(<a id="779c46" class="tk">NI_SigList</a>[<a id="779c57" class="tk">i</a>].<a id="779c60" class="tk">blockname</a>)<a id="779c70" class="tk">+</a><a id="779c71" class="tk">strlen</a></td></tr>
+<tr name="780" id="780">
+<td>780</td><td>          (<a id="780c12" class="tk">NI_SigList</a>[<a id="780c23" class="tk">i</a>].<a id="780c26" class="tk">signalname</a>) <a id="780c38" class="tk">+</a> 11, <span class="kw">sizeof</span>(<span class="kw">char</span>));</td></tr>
+<tr name="781" id="781">
+<td>781</td><td>        <span class="kw">if</span> (<a id="781c13" class="tk">strlen</a>(<a id="781c20" class="tk">NI_SigList</a>[<a id="781c31" class="tk">i</a>].<a id="781c34" class="tk">signalname</a>)<a id="781c45" class="tk">&gt;</a>0) <span class="br">{</span></td></tr>
+<tr name="782" id="782">
+<td>782</td><td>          <a id="782c11" class="tk">sprintf</a>(<a id="782c19" class="tk">tempID</a>,"%s:%d%s%s",<a id="782c38" class="tk">NI_SigList</a>[<a id="782c49" class="tk">i</a>].<a id="782c52" class="tk">blockname</a>,<a id="782c62" class="tk">NI_SigList</a>[<a id="782c73" class="tk">i</a>].</td></tr>
+<tr name="783" id="783">
+<td>783</td><td>                  <a id="783c19" class="tk">portno</a><a id="783c25" class="tk">+</a>1,"/",<a id="783c32" class="tk">NI_SigList</a>[<a id="783c43" class="tk">i</a>].<a id="783c46" class="tk">signalname</a>);</td></tr>
+<tr name="784" id="784">
+<td>784</td><td>        <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="785" id="785">
+<td>785</td><td>          <a id="785c11" class="tk">sprintf</a>(<a id="785c19" class="tk">tempID</a>,"%s:%d",<a id="785c34" class="tk">NI_SigList</a>[<a id="785c45" class="tk">i</a>].<a id="785c48" class="tk">blockname</a>,<a id="785c58" class="tk">NI_SigList</a>[<a id="785c69" class="tk">i</a>].<a id="785c72" class="tk">portno</a><a id="785c78" class="tk">+</a>1);</td></tr>
+<tr name="786" id="786">
+<td>786</td><td>        <span class="br">}</span></td></tr>
+<tr name="787" id="787">
+<td>787</td><td></td></tr>
+<tr name="788" id="788">
+<td>788</td><td>        <span class="kw">if</span> (<a id="788c13" class="tk">!</a><a id="788c14" class="tk">strcmp</a>(<a id="788c21" class="tk">IDblk</a>,<a id="788c27" class="tk">tempID</a>) <a id="788c35" class="tk">&amp;&amp;</a> <a id="788c38" class="tk">IDport</a><a id="788c44" class="tk">==</a>(<a id="788c47" class="tk">NI_SigList</a>[<a id="788c58" class="tk">i</a>].<a id="788c61" class="tk">portno</a><a id="788c67" class="tk">+</a>1)) <span class="br">{</span></td></tr>
+<tr name="789" id="789">
+<td>789</td><td>          <span class="kw">break</span>;</td></tr>
+<tr name="790" id="790">
+<td>790</td><td>        <span class="br">}</span></td></tr>
+<tr name="791" id="791">
+<td>791</td><td></td></tr>
+<tr name="792" id="792">
+<td>792</td><td>        <a id="792c9" class="tk">free</a>(<a id="792c14" class="tk">tempID</a>);</td></tr>
+<tr name="793" id="793">
+<td>793</td><td>      <span class="br">}</span></td></tr>
+<tr name="794" id="794">
+<td>794</td><td></td></tr>
+<tr name="795" id="795">
+<td>795</td><td>      <span class="kw">if</span> (<a id="795c11" class="tk">i</a> <a id="795c13" class="tk">&lt;</a> <a id="795c15" class="tk">NI_SigListSize</a>) <span class="br">{</span></td></tr>
+<tr name="796" id="796">
+<td>796</td><td>        <a id="796c9" class="tk">sigidx</a> = <a id="796c18" class="tk">*</a><a id="796c19" class="tk">sidx</a> = <a id="796c26" class="tk">i</a>;</td></tr>
+<tr name="797" id="797">
+<td>797</td><td>      <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="798" id="798">
+<td>798</td><td>        <span class="kw">return</span> <a id="798c16" class="tk">NI_SigListSize</a>;</td></tr>
+<tr name="799" id="799">
+<td>799</td><td>      <span class="br">}</span></td></tr>
+<tr name="800" id="800">
+<td>800</td><td>    <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="801" id="801">
+<td>801</td><td>      <span class="ct">// no index or ID specified.</span></td></tr>
+<tr name="802" id="802">
+<td>802</td><td>      <span class="kw">return</span> <a id="802c14" class="tk">NI_SigListSize</a>;</td></tr>
+<tr name="803" id="803">
+<td>803</td><td>    <span class="br">}</span></td></tr>
+<tr name="804" id="804">
+<td>804</td><td>  <span class="br">}</span></td></tr>
+<tr name="805" id="805">
+<td>805</td><td></td></tr>
+<tr name="806" id="806">
+<td>806</td><td>  <span class="kw">if</span> (<a id="806c7" class="tk">sigidx</a><a id="806c13" class="tk">&gt;=</a>0 <a id="806c17" class="tk">&amp;&amp;</a> <a id="806c20" class="tk">sigidx</a><a id="806c26" class="tk">&lt;</a><a id="806c27" class="tk">NI_SigListSize</a>) <span class="br">{</span></td></tr>
+<tr name="807" id="807">
+<td>807</td><td>    <span class="kw">if</span> (<a id="807c9" class="tk">ID</a> <a id="807c12" class="tk">!=</a> <a id="807c15" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="808" id="808">
+<td>808</td><td>      <span class="ct">// no need for return string to be null terminated!</span></td></tr>
+<tr name="809" id="809">
+<td>809</td><td>      <span class="ct">/* 11 to accomodate ':','/', port number and null character */</span></td></tr>
+<tr name="810" id="810">
+<td>810</td><td>      <span class="kw">char</span> <a id="810c12" class="tk">*</a><a id="810c13" class="tk">tempID</a> = (<span class="kw">char</span> <a id="810c28" class="tk">*</a>)<a id="810c30" class="tk">calloc</a>(<a id="810c37" class="tk">strlen</a>(<a id="810c44" class="tk">NI_SigList</a>[<a id="810c55" class="tk">sigidx</a>].<a id="810c63" class="tk">blockname</a>)<a id="810c73" class="tk">+</a><a id="810c74" class="tk">strlen</a></td></tr>
+<tr name="811" id="811">
+<td>811</td><td>        (<a id="811c10" class="tk">NI_SigList</a>[<a id="811c21" class="tk">sigidx</a>].<a id="811c29" class="tk">signalname</a>)<a id="811c40" class="tk">+</a> 11, <span class="kw">sizeof</span>(<span class="kw">char</span>));</td></tr>
+<tr name="812" id="812">
+<td>812</td><td>      <span class="kw">if</span> (<a id="812c11" class="tk">strlen</a>(<a id="812c18" class="tk">NI_SigList</a>[<a id="812c29" class="tk">sigidx</a>].<a id="812c37" class="tk">signalname</a>)<a id="812c48" class="tk">&gt;</a>0) <span class="br">{</span></td></tr>
+<tr name="813" id="813">
+<td>813</td><td>        <a id="813c9" class="tk">sprintf</a>(<a id="813c17" class="tk">tempID</a>,"%s:%d%s%s",<a id="813c36" class="tk">NI_SigList</a>[<a id="813c47" class="tk">sigidx</a>].<a id="813c55" class="tk">blockname</a>,</td></tr>
+<tr name="814" id="814">
+<td>814</td><td>                <a id="814c17" class="tk">NI_SigList</a>[<a id="814c28" class="tk">sigidx</a>].<a id="814c36" class="tk">portno</a><a id="814c42" class="tk">+</a>1,"/",<a id="814c49" class="tk">NI_SigList</a>[<a id="814c60" class="tk">sigidx</a>].<a id="814c68" class="tk">signalname</a>);</td></tr>
+<tr name="815" id="815">
+<td>815</td><td>      <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="816" id="816">
+<td>816</td><td>        <a id="816c9" class="tk">sprintf</a>(<a id="816c17" class="tk">tempID</a>,"%s:%d",<a id="816c32" class="tk">NI_SigList</a>[<a id="816c43" class="tk">sigidx</a>].<a id="816c51" class="tk">blockname</a>,<a id="816c61" class="tk">NI_SigList</a>[<a id="816c72" class="tk">sigidx</a>].</td></tr>
+<tr name="817" id="817">
+<td>817</td><td>                <a id="817c17" class="tk">portno</a><a id="817c23" class="tk">+</a>1);</td></tr>
+<tr name="818" id="818">
+<td>818</td><td>      <span class="br">}</span></td></tr>
+<tr name="819" id="819">
+<td>819</td><td></td></tr>
+<tr name="820" id="820">
+<td>820</td><td>      <span class="kw">if</span> ((<a id="820c12" class="tk">int32_t</a>)<a id="820c20" class="tk">strlen</a>(<a id="820c27" class="tk">tempID</a>)<a id="820c34" class="tk">&lt;</a><a id="820c35" class="tk">*</a><a id="820c36" class="tk">ID_len</a>) <span class="br">{</span></td></tr>
+<tr name="821" id="821">
+<td>821</td><td>        <a id="821c9" class="tk">*</a><a id="821c10" class="tk">ID_len</a> = <a id="821c19" class="tk">strlen</a>(<a id="821c26" class="tk">tempID</a>);</td></tr>
+<tr name="822" id="822">
+<td>822</td><td>      <span class="br">}</span></td></tr>
+<tr name="823" id="823">
+<td>823</td><td></td></tr>
+<tr name="824" id="824">
+<td>824</td><td>      <a id="824c7" class="tk">strncpy</a>(<a id="824c15" class="tk">ID</a>, <a id="824c19" class="tk">tempID</a>, <a id="824c27" class="tk">*</a><a id="824c28" class="tk">ID_len</a>);</td></tr>
+<tr name="825" id="825">
+<td>825</td><td>      <a id="825c7" class="tk">free</a>(<a id="825c12" class="tk">tempID</a>);</td></tr>
+<tr name="826" id="826">
+<td>826</td><td>    <span class="br">}</span></td></tr>
+<tr name="827" id="827">
+<td>827</td><td></td></tr>
+<tr name="828" id="828">
+<td>828</td><td>    <span class="kw">if</span> (<a id="828c9" class="tk">blkname</a> <a id="828c17" class="tk">!=</a> <a id="828c20" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="829" id="829">
+<td>829</td><td>      <span class="ct">// no need for return string to be null terminated!</span></td></tr>
+<tr name="830" id="830">
+<td>830</td><td>      <span class="kw">if</span> ((<a id="830c12" class="tk">int32_t</a>)<a id="830c20" class="tk">strlen</a>(<a id="830c27" class="tk">NI_SigList</a>[<a id="830c38" class="tk">sigidx</a>].<a id="830c46" class="tk">blockname</a>)<a id="830c56" class="tk">&lt;</a><a id="830c57" class="tk">*</a><a id="830c58" class="tk">bnlen</a>) <span class="br">{</span></td></tr>
+<tr name="831" id="831">
+<td>831</td><td>        <a id="831c9" class="tk">*</a><a id="831c10" class="tk">bnlen</a> = <a id="831c18" class="tk">strlen</a>(<a id="831c25" class="tk">NI_SigList</a>[<a id="831c36" class="tk">sigidx</a>].<a id="831c44" class="tk">blockname</a>);</td></tr>
+<tr name="832" id="832">
+<td>832</td><td>      <span class="br">}</span></td></tr>
+<tr name="833" id="833">
+<td>833</td><td></td></tr>
+<tr name="834" id="834">
+<td>834</td><td>      <a id="834c7" class="tk">strncpy</a>(<a id="834c15" class="tk">blkname</a>, <a id="834c24" class="tk">NI_SigList</a>[<a id="834c35" class="tk">sigidx</a>].<a id="834c43" class="tk">blockname</a>, <a id="834c54" class="tk">*</a><a id="834c55" class="tk">bnlen</a>);</td></tr>
+<tr name="835" id="835">
+<td>835</td><td>    <span class="br">}</span></td></tr>
+<tr name="836" id="836">
+<td>836</td><td></td></tr>
+<tr name="837" id="837">
+<td>837</td><td>    <span class="kw">if</span> (<a id="837c9" class="tk">signame</a> <a id="837c17" class="tk">!=</a> <a id="837c20" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="838" id="838">
+<td>838</td><td>      <span class="ct">// no need for return string to be null terminated!</span></td></tr>
+<tr name="839" id="839">
+<td>839</td><td>      <span class="kw">if</span> ((<a id="839c12" class="tk">int32_t</a>)<a id="839c20" class="tk">strlen</a>(<a id="839c27" class="tk">NI_SigList</a>[<a id="839c38" class="tk">sigidx</a>].<a id="839c46" class="tk">signalname</a>)<a id="839c57" class="tk">&lt;</a><a id="839c58" class="tk">*</a><a id="839c59" class="tk">snlen</a>) <span class="br">{</span></td></tr>
+<tr name="840" id="840">
+<td>840</td><td>        <a id="840c9" class="tk">*</a><a id="840c10" class="tk">snlen</a> = <a id="840c18" class="tk">strlen</a>(<a id="840c25" class="tk">NI_SigList</a>[<a id="840c36" class="tk">sigidx</a>].<a id="840c44" class="tk">signalname</a>);</td></tr>
+<tr name="841" id="841">
+<td>841</td><td>      <span class="br">}</span></td></tr>
+<tr name="842" id="842">
+<td>842</td><td></td></tr>
+<tr name="843" id="843">
+<td>843</td><td>      <a id="843c7" class="tk">strncpy</a>(<a id="843c15" class="tk">signame</a>, <a id="843c24" class="tk">NI_SigList</a>[<a id="843c35" class="tk">sigidx</a>].<a id="843c43" class="tk">signalname</a>, <a id="843c55" class="tk">*</a><a id="843c56" class="tk">snlen</a>);</td></tr>
+<tr name="844" id="844">
+<td>844</td><td>    <span class="br">}</span></td></tr>
+<tr name="845" id="845">
+<td>845</td><td></td></tr>
+<tr name="846" id="846">
+<td>846</td><td>    <span class="kw">if</span> (<a id="846c9" class="tk">portnum</a> <a id="846c17" class="tk">!=</a> <a id="846c20" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="847" id="847">
+<td>847</td><td>      <a id="847c7" class="tk">*</a><a id="847c8" class="tk">portnum</a> = <a id="847c18" class="tk">NI_SigList</a>[<a id="847c29" class="tk">sigidx</a>].<a id="847c37" class="tk">portno</a>;</td></tr>
+<tr name="848" id="848">
+<td>848</td><td>    <span class="br">}</span></td></tr>
+<tr name="849" id="849">
+<td>849</td><td></td></tr>
+<tr name="850" id="850">
+<td>850</td><td>    <span class="kw">if</span> (<a id="850c9" class="tk">dattype</a> <a id="850c17" class="tk">!=</a> <a id="850c20" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="851" id="851">
+<td>851</td><td>      <a id="851c7" class="tk">*</a><a id="851c8" class="tk">dattype</a> = <a id="851c18" class="tk">NI_SigList</a>[<a id="851c29" class="tk">sigidx</a>].<a id="851c37" class="tk">datatype</a>;</td></tr>
+<tr name="852" id="852">
+<td>852</td><td>    <span class="br">}</span></td></tr>
+<tr name="853" id="853">
+<td>853</td><td></td></tr>
+<tr name="854" id="854">
+<td>854</td><td>    <span class="kw">if</span> (<a id="854c9" class="tk">numdim</a> <a id="854c16" class="tk">!=</a> <a id="854c19" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="855" id="855">
+<td>855</td><td>      <span class="kw">if</span> (<a id="855c11" class="tk">*</a><a id="855c12" class="tk">numdim</a> <a id="855c19" class="tk">==</a> <a id="855c22" class="tk">-</a>1) <span class="br">{</span></td></tr>
+<tr name="856" id="856">
+<td>856</td><td>        <a id="856c9" class="tk">*</a><a id="856c10" class="tk">numdim</a> = <a id="856c19" class="tk">NI_SigList</a>[<a id="856c30" class="tk">sigidx</a>].<a id="856c38" class="tk">numofdims</a>;</td></tr>
+<tr name="857" id="857">
+<td>857</td><td>      <span class="br">}</span> <span class="kw">else</span> <span class="kw">if</span> (<a id="857c18" class="tk">dims</a> <a id="857c23" class="tk">!=</a> <a id="857c26" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="858" id="858">
+<td>858</td><td>        <span class="kw">for</span> (<a id="858c14" class="tk">i</a>=0;<a id="858c18" class="tk">i</a> <a id="858c20" class="tk">&lt;</a> <a id="858c22" class="tk">*</a><a id="858c23" class="tk">numdim</a>; <a id="858c31" class="tk">i</a><a id="858c32" class="tk">++</a>) <span class="br">{</span></td></tr>
+<tr name="859" id="859">
+<td>859</td><td>          <a id="859c11" class="tk">dims</a>[<a id="859c16" class="tk">i</a>] = <a id="859c21" class="tk">NI_SigDimList</a>[<a id="859c35" class="tk">NI_SigList</a>[<a id="859c46" class="tk">sigidx</a>].<a id="859c54" class="tk">dimListOffset</a> <a id="859c68" class="tk">+</a><a id="859c69" class="tk">i</a>];</td></tr>
+<tr name="860" id="860">
+<td>860</td><td>        <span class="br">}</span></td></tr>
+<tr name="861" id="861">
+<td>861</td><td>      <span class="br">}</span></td></tr>
+<tr name="862" id="862">
+<td>862</td><td>    <span class="br">}</span></td></tr>
+<tr name="863" id="863">
+<td>863</td><td></td></tr>
+<tr name="864" id="864">
+<td>864</td><td>    <span class="kw">return</span> <a id="864c12" class="tk">NI_OK</a>;</td></tr>
+<tr name="865" id="865">
+<td>865</td><td>  <span class="br">}</span></td></tr>
+<tr name="866" id="866">
+<td>866</td><td></td></tr>
+<tr name="867" id="867">
+<td>867</td><td>  <span class="kw">return</span> <a id="867c10" class="tk">NI_SigListSize</a>;</td></tr>
+<tr name="868" id="868">
+<td>868</td><td><span class="br">}</span></td></tr>
+<tr name="869" id="869">
+<td>869</td><td></td></tr>
+<tr name="870" id="870">
+<td>870</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="871" id="871">
+<td>871</td><td><span class="ct"> * Function: NIRT_GetParameterIndices</span></td></tr>
+<tr name="872" id="872">
+<td>872</td><td><span class="ct"> *</span></td></tr>
+<tr name="873" id="873">
+<td>873</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="874" id="874">
+<td>874</td><td><span class="ct"> *	Returns an array of indices to tunable parameters</span></td></tr>
+<tr name="875" id="875">
+<td>875</td><td><span class="ct"> *</span></td></tr>
+<tr name="876" id="876">
+<td>876</td><td><span class="ct"> * Output Parameters:</span></td></tr>
+<tr name="877" id="877">
+<td>877</td><td><span class="ct"> *	indices	: buffer to store the parameter indices of length "len"</span></td></tr>
+<tr name="878" id="878">
+<td>878</td><td><span class="ct"> *	len		: returns the number of indices. If a value of "-1" is specified, the minimum buffer size of "indices" is returned as its value.</span></td></tr>
+<tr name="879" id="879">
+<td>879</td><td><span class="ct"> *</span></td></tr>
+<tr name="880" id="880">
+<td>880</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="881" id="881">
+<td>881</td><td><span class="ct"> *	NI_OK if no error</span></td></tr>
+<tr name="882" id="882">
+<td>882</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="883" id="883">
+<td>883</td><td><a id="883c1" class="tk">DLL_EXPORT</a> <a id="883c12" class="tk">int32_t</a> <a id="883c20" class="tk">NIRT_GetParameterIndices</a>(<a id="883c45" class="tk">int32_t</a><a id="883c52" class="tk">*</a> <a id="883c54" class="tk">indices</a>, <a id="883c63" class="tk">int32_t</a><a id="883c70" class="tk">*</a> <a id="883c72" class="tk">len</a>)</td></tr>
+<tr name="884" id="884">
+<td>884</td><td><span class="br">{</span></td></tr>
+<tr name="885" id="885">
+<td>885</td><td>  <a id="885c3" class="tk">int32_t</a> <a id="885c11" class="tk">i</a>;</td></tr>
+<tr name="886" id="886">
+<td>886</td><td>  <span class="kw">if</span> ((<a id="886c8" class="tk">len</a> <a id="886c12" class="tk">==</a> <a id="886c15" class="tk">NULL</a>) <a id="886c21" class="tk">||</a> (<a id="886c25" class="tk">indices</a> <a id="886c33" class="tk">==</a> <a id="886c36" class="tk">NULL</a>)) <span class="br">{</span></td></tr>
+<tr name="887" id="887">
+<td>887</td><td>    <span class="kw">return</span> <a id="887c12" class="tk">NI_ERROR</a>;</td></tr>
+<tr name="888" id="888">
+<td>888</td><td>  <span class="br">}</span></td></tr>
+<tr name="889" id="889">
+<td>889</td><td></td></tr>
+<tr name="890" id="890">
+<td>890</td><td>  <span class="kw">if</span> (<a id="890c7" class="tk">*</a><a id="890c8" class="tk">len</a> <a id="890c12" class="tk">==</a> <a id="890c15" class="tk">-</a>1) <span class="br">{</span></td></tr>
+<tr name="891" id="891">
+<td>891</td><td>    <a id="891c5" class="tk">*</a><a id="891c6" class="tk">len</a> = <a id="891c12" class="tk">NI_ParamListSize</a>;</td></tr>
+<tr name="892" id="892">
+<td>892</td><td>  <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="893" id="893">
+<td>893</td><td>    <span class="kw">for</span> (<a id="893c10" class="tk">i</a>=0; (<a id="893c16" class="tk">i</a> <a id="893c18" class="tk">&lt;</a> <a id="893c20" class="tk">NI_ParamListSize</a>) <a id="893c38" class="tk">&amp;&amp;</a> (<a id="893c42" class="tk">i</a> <a id="893c44" class="tk">&lt;</a> <a id="893c46" class="tk">*</a><a id="893c47" class="tk">len</a>); <a id="893c53" class="tk">i</a><a id="893c54" class="tk">++</a>) <span class="br">{</span></td></tr>
+<tr name="894" id="894">
+<td>894</td><td>      <a id="894c7" class="tk">indices</a>[<a id="894c15" class="tk">i</a>] = <a id="894c20" class="tk">NI_ParamList</a>[<a id="894c33" class="tk">i</a>].<a id="894c36" class="tk">idx</a>;</td></tr>
+<tr name="895" id="895">
+<td>895</td><td>    <span class="br">}</span></td></tr>
+<tr name="896" id="896">
+<td>896</td><td></td></tr>
+<tr name="897" id="897">
+<td>897</td><td>    <a id="897c5" class="tk">*</a><a id="897c6" class="tk">len</a> = <a id="897c12" class="tk">i</a>;</td></tr>
+<tr name="898" id="898">
+<td>898</td><td>  <span class="br">}</span></td></tr>
+<tr name="899" id="899">
+<td>899</td><td></td></tr>
+<tr name="900" id="900">
+<td>900</td><td>  <span class="kw">return</span> <a id="900c10" class="tk">NI_OK</a>;</td></tr>
+<tr name="901" id="901">
+<td>901</td><td><span class="br">}</span></td></tr>
+<tr name="902" id="902">
+<td>902</td><td></td></tr>
+<tr name="903" id="903">
+<td>903</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="904" id="904">
+<td>904</td><td><span class="ct"> * Function: NIRT_GetParameterSpec</span></td></tr>
+<tr name="905" id="905">
+<td>905</td><td><span class="ct"> *</span></td></tr>
+<tr name="906" id="906">
+<td>906</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="907" id="907">
+<td>907</td><td><span class="ct"> *	If index == -1, lookup parameter by the ID.</span></td></tr>
+<tr name="908" id="908">
+<td>908</td><td><span class="ct"> *	If ID_len == 0 or if ID == null, return number of parameters in model.</span></td></tr>
+<tr name="909" id="909">
+<td>909</td><td><span class="ct"> *	Otherwise, lookup parameter by index, and return the information.</span></td></tr>
+<tr name="910" id="910">
+<td>910</td><td><span class="ct"> *</span></td></tr>
+<tr name="911" id="911">
+<td>911</td><td><span class="ct"> * Input/Output Parameters:</span></td></tr>
+<tr name="912" id="912">
+<td>912</td><td><span class="ct"> *	paramidx	: index of the parameter(in/out). If a value of "-1" is specified, the parameter's ID is used instead</span></td></tr>
+<tr name="913" id="913">
+<td>913</td><td><span class="ct"> *	ID			: ID of parameter to be looked up (in), ID of parameter at index (out)</span></td></tr>
+<tr name="914" id="914">
+<td>914</td><td><span class="ct"> *	ID_len		: length of input ID (in), length of ID (out)</span></td></tr>
+<tr name="915" id="915">
+<td>915</td><td><span class="ct"> *	pnlen		: length of buffer paramname(in), length of the returned paramname (out)</span></td></tr>
+<tr name="916" id="916">
+<td>916</td><td><span class="ct"> *	numdim		: length of buffer dimension(in), length of output dimension (out). If a value of "-1" is specified, the minimum buffer size of "dims" is returned as its value</span></td></tr>
+<tr name="917" id="917">
+<td>917</td><td><span class="ct"> *</span></td></tr>
+<tr name="918" id="918">
+<td>918</td><td><span class="ct"> * Output Parameters:</span></td></tr>
+<tr name="919" id="919">
+<td>919</td><td><span class="ct"> *	paramname	: Name of the parameter</span></td></tr>
+<tr name="920" id="920">
+<td>920</td><td><span class="ct"> *	datatype	: datatype of the parameter (currently assuming 0: double, .. )</span></td></tr>
+<tr name="921" id="921">
+<td>921</td><td><span class="ct"> *	dims		: array of dimensions with length 'numdim'</span></td></tr>
+<tr name="922" id="922">
+<td>922</td><td><span class="ct"> *</span></td></tr>
+<tr name="923" id="923">
+<td>923</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="924" id="924">
+<td>924</td><td><span class="ct"> *	NI_OK if no error (if paramidx == -1, number of tunable parameters)</span></td></tr>
+<tr name="925" id="925">
+<td>925</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="926" id="926">
+<td>926</td><td><a id="926c1" class="tk">DLL_EXPORT</a> <a id="926c12" class="tk">int32_t</a> <a id="926c20" class="tk">NIRT_GetParameterSpec</a>(<a id="926c42" class="tk">int32_t</a><a id="926c49" class="tk">*</a> <a id="926c51" class="tk">pidx</a>, <span class="kw">char</span><a id="926c61" class="tk">*</a> <a id="926c63" class="tk">ID</a>, <a id="926c67" class="tk">int32_t</a><a id="926c74" class="tk">*</a></td></tr>
+<tr name="927" id="927">
+<td>927</td><td>  <a id="927c3" class="tk">ID_len</a>, <span class="kw">char</span><a id="927c15" class="tk">*</a> <a id="927c17" class="tk">paramname</a>, <a id="927c28" class="tk">int32_t</a> <a id="927c36" class="tk">*</a><a id="927c37" class="tk">pnlen</a>,</td></tr>
+<tr name="928" id="928">
+<td>928</td><td>  <a id="928c3" class="tk">int32_t</a> <a id="928c11" class="tk">*</a><a id="928c12" class="tk">dattype</a>, <a id="928c21" class="tk">int32_t</a><a id="928c28" class="tk">*</a> <a id="928c30" class="tk">dims</a>, <a id="928c36" class="tk">int32_t</a><a id="928c43" class="tk">*</a> <a id="928c45" class="tk">numdim</a>)</td></tr>
+<tr name="929" id="929">
+<td>929</td><td><span class="br">{</span></td></tr>
+<tr name="930" id="930">
+<td>930</td><td>  <a id="930c3" class="tk">int32_t</a> <a id="930c11" class="tk">i</a> = 0;</td></tr>
+<tr name="931" id="931">
+<td>931</td><td>  <a id="931c3" class="tk">int32_t</a> <a id="931c11" class="tk">paramidx</a> = <a id="931c22" class="tk">*</a><a id="931c23" class="tk">pidx</a>;</td></tr>
+<tr name="932" id="932">
+<td>932</td><td>  <span class="kw">if</span> (<a id="932c7" class="tk">paramidx</a> <a id="932c16" class="tk">&lt;</a> 0) <span class="br">{</span></td></tr>
+<tr name="933" id="933">
+<td>933</td><td>    <span class="ct">// check if ID has been specified.</span></td></tr>
+<tr name="934" id="934">
+<td>934</td><td>    <span class="kw">if</span> ((<a id="934c10" class="tk">ID</a> <a id="934c13" class="tk">!=</a> <a id="934c16" class="tk">NULL</a>) <a id="934c22" class="tk">&amp;&amp;</a> (<a id="934c26" class="tk">ID_len</a> <a id="934c33" class="tk">!=</a> <a id="934c36" class="tk">NULL</a>) <a id="934c42" class="tk">&amp;&amp;</a> (<a id="934c46" class="tk">*</a><a id="934c47" class="tk">ID_len</a> <a id="934c54" class="tk">&gt;</a> 0) ) <span class="br">{</span></td></tr>
+<tr name="935" id="935">
+<td>935</td><td>      <span class="ct">// lookup the table for matching ID</span></td></tr>
+<tr name="936" id="936">
+<td>936</td><td>      <span class="kw">for</span> (<a id="936c12" class="tk">i</a>=0; <a id="936c17" class="tk">i</a> <a id="936c19" class="tk">&lt;</a> <a id="936c21" class="tk">NI_ParamListSize</a>; <a id="936c39" class="tk">i</a><a id="936c40" class="tk">++</a>) <span class="br">{</span></td></tr>
+<tr name="937" id="937">
+<td>937</td><td>        <span class="kw">if</span> (<a id="937c13" class="tk">strcmp</a>(<a id="937c20" class="tk">ID</a>,<a id="937c23" class="tk">NI_ParamList</a>[<a id="937c36" class="tk">i</a>].<a id="937c39" class="tk">paramname</a>) <a id="937c50" class="tk">==</a> 0) <span class="br">{</span></td></tr>
+<tr name="938" id="938">
+<td>938</td><td>          <span class="ct">/* found matching string */</span></td></tr>
+<tr name="939" id="939">
+<td>939</td><td>          <span class="kw">break</span>;</td></tr>
+<tr name="940" id="940">
+<td>940</td><td>        <span class="br">}</span></td></tr>
+<tr name="941" id="941">
+<td>941</td><td>      <span class="br">}</span></td></tr>
+<tr name="942" id="942">
+<td>942</td><td></td></tr>
+<tr name="943" id="943">
+<td>943</td><td>      <span class="kw">if</span> (<a id="943c11" class="tk">i</a> <a id="943c13" class="tk">&lt;</a> <a id="943c15" class="tk">NI_ParamListSize</a>) <span class="br">{</span></td></tr>
+<tr name="944" id="944">
+<td>944</td><td>        <span class="ct">/* note the index into the rtParamAttribs */</span></td></tr>
+<tr name="945" id="945">
+<td>945</td><td>        <a id="945c9" class="tk">paramidx</a> = <a id="945c20" class="tk">*</a><a id="945c21" class="tk">pidx</a> = <a id="945c28" class="tk">i</a>;</td></tr>
+<tr name="946" id="946">
+<td>946</td><td>      <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="947" id="947">
+<td>947</td><td>        <span class="kw">return</span> <a id="947c16" class="tk">NI_ParamListSize</a>;</td></tr>
+<tr name="948" id="948">
+<td>948</td><td>      <span class="br">}</span></td></tr>
+<tr name="949" id="949">
+<td>949</td><td>    <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="950" id="950">
+<td>950</td><td>      <span class="ct">// no index or ID specified.</span></td></tr>
+<tr name="951" id="951">
+<td>951</td><td>      <span class="kw">return</span> <a id="951c14" class="tk">NI_ParamListSize</a>;</td></tr>
+<tr name="952" id="952">
+<td>952</td><td>    <span class="br">}</span></td></tr>
+<tr name="953" id="953">
+<td>953</td><td>  <span class="br">}</span></td></tr>
+<tr name="954" id="954">
+<td>954</td><td></td></tr>
+<tr name="955" id="955">
+<td>955</td><td>  <span class="kw">if</span> ((<a id="955c8" class="tk">paramidx</a> <a id="955c17" class="tk">&gt;=</a> 0) <a id="955c23" class="tk">&amp;&amp;</a> (<a id="955c27" class="tk">paramidx</a><a id="955c35" class="tk">&lt;</a><a id="955c36" class="tk">NI_ParamListSize</a>)) <span class="br">{</span></td></tr>
+<tr name="956" id="956">
+<td>956</td><td>    <span class="kw">if</span> (<a id="956c9" class="tk">ID</a> <a id="956c12" class="tk">!=</a> <a id="956c15" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="957" id="957">
+<td>957</td><td>      <span class="kw">if</span> ((<a id="957c12" class="tk">int32_t</a>)<a id="957c20" class="tk">strlen</a>(<a id="957c27" class="tk">NI_ParamList</a>[<a id="957c40" class="tk">paramidx</a>].<a id="957c50" class="tk">paramname</a>) <a id="957c61" class="tk">&lt;</a> <a id="957c63" class="tk">*</a><a id="957c64" class="tk">ID_len</a>) <span class="br">{</span></td></tr>
+<tr name="958" id="958">
+<td>958</td><td>        <a id="958c9" class="tk">*</a><a id="958c10" class="tk">ID_len</a> = <a id="958c19" class="tk">strlen</a>(<a id="958c26" class="tk">NI_ParamList</a>[<a id="958c39" class="tk">paramidx</a>].<a id="958c49" class="tk">paramname</a>);</td></tr>
+<tr name="959" id="959">
+<td>959</td><td>      <span class="br">}</span></td></tr>
+<tr name="960" id="960">
+<td>960</td><td></td></tr>
+<tr name="961" id="961">
+<td>961</td><td>      <a id="961c7" class="tk">strncpy</a>(<a id="961c15" class="tk">ID</a>, <a id="961c19" class="tk">NI_ParamList</a>[<a id="961c32" class="tk">paramidx</a>].<a id="961c42" class="tk">paramname</a>, <a id="961c53" class="tk">*</a><a id="961c54" class="tk">ID_len</a>);</td></tr>
+<tr name="962" id="962">
+<td>962</td><td>    <span class="br">}</span></td></tr>
+<tr name="963" id="963">
+<td>963</td><td></td></tr>
+<tr name="964" id="964">
+<td>964</td><td>    <span class="kw">if</span> (<a id="964c9" class="tk">paramname</a> <a id="964c19" class="tk">!=</a> <a id="964c22" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="965" id="965">
+<td>965</td><td>      <span class="ct">/* no need for return string to be null terminated! */</span></td></tr>
+<tr name="966" id="966">
+<td>966</td><td>      <span class="kw">if</span> ((<a id="966c12" class="tk">int32_t</a>)<a id="966c20" class="tk">strlen</a>(<a id="966c27" class="tk">NI_ParamList</a>[<a id="966c40" class="tk">paramidx</a>].<a id="966c50" class="tk">paramname</a>) <a id="966c61" class="tk">&lt;</a> <a id="966c63" class="tk">*</a><a id="966c64" class="tk">pnlen</a>) <span class="br">{</span></td></tr>
+<tr name="967" id="967">
+<td>967</td><td>        <a id="967c9" class="tk">*</a><a id="967c10" class="tk">pnlen</a> = <a id="967c18" class="tk">strlen</a>(<a id="967c25" class="tk">NI_ParamList</a>[<a id="967c38" class="tk">paramidx</a>].<a id="967c48" class="tk">paramname</a>);</td></tr>
+<tr name="968" id="968">
+<td>968</td><td>      <span class="br">}</span></td></tr>
+<tr name="969" id="969">
+<td>969</td><td></td></tr>
+<tr name="970" id="970">
+<td>970</td><td>      <a id="970c7" class="tk">strncpy</a>(<a id="970c15" class="tk">paramname</a>, <a id="970c26" class="tk">NI_ParamList</a>[<a id="970c39" class="tk">paramidx</a>].<a id="970c49" class="tk">paramname</a>, <a id="970c60" class="tk">*</a><a id="970c61" class="tk">pnlen</a>);</td></tr>
+<tr name="971" id="971">
+<td>971</td><td>    <span class="br">}</span></td></tr>
+<tr name="972" id="972">
+<td>972</td><td></td></tr>
+<tr name="973" id="973">
+<td>973</td><td>    <span class="kw">if</span> (<a id="973c9" class="tk">dattype</a> <a id="973c17" class="tk">!=</a> <a id="973c20" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="974" id="974">
+<td>974</td><td>      <a id="974c7" class="tk">*</a><a id="974c8" class="tk">dattype</a> = <a id="974c18" class="tk">NI_ParamList</a>[<a id="974c31" class="tk">paramidx</a>].<a id="974c41" class="tk">datatype</a>;</td></tr>
+<tr name="975" id="975">
+<td>975</td><td>    <span class="br">}</span></td></tr>
+<tr name="976" id="976">
+<td>976</td><td></td></tr>
+<tr name="977" id="977">
+<td>977</td><td>    <span class="kw">if</span> (<a id="977c9" class="tk">numdim</a> <a id="977c16" class="tk">!=</a> <a id="977c19" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="978" id="978">
+<td>978</td><td>      <span class="kw">if</span> (<a id="978c11" class="tk">*</a><a id="978c12" class="tk">numdim</a> <a id="978c19" class="tk">==</a> <a id="978c22" class="tk">-</a>1) <span class="br">{</span></td></tr>
+<tr name="979" id="979">
+<td>979</td><td>        <a id="979c9" class="tk">*</a><a id="979c10" class="tk">numdim</a> = <a id="979c19" class="tk">NI_ParamList</a>[<a id="979c32" class="tk">paramidx</a>].<a id="979c42" class="tk">numofdims</a>;</td></tr>
+<tr name="980" id="980">
+<td>980</td><td>      <span class="br">}</span> <span class="kw">else</span> <span class="kw">if</span> (<a id="980c18" class="tk">dims</a> <a id="980c23" class="tk">!=</a> <a id="980c26" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="981" id="981">
+<td>981</td><td>        <span class="kw">for</span> (<a id="981c14" class="tk">i</a> = 0; <a id="981c21" class="tk">i</a> <a id="981c23" class="tk">&lt;</a> <a id="981c25" class="tk">*</a><a id="981c26" class="tk">numdim</a>; <a id="981c34" class="tk">i</a><a id="981c35" class="tk">++</a>) <span class="br">{</span></td></tr>
+<tr name="982" id="982">
+<td>982</td><td>          <a id="982c11" class="tk">dims</a>[<a id="982c16" class="tk">i</a>] = <a id="982c21" class="tk">NI_ParamDimList</a>[<a id="982c37" class="tk">NI_ParamList</a>[<a id="982c50" class="tk">paramidx</a>].<a id="982c60" class="tk">dimListOffset</a> <a id="982c74" class="tk">+</a> <a id="982c76" class="tk">i</a>];</td></tr>
+<tr name="983" id="983">
+<td>983</td><td>        <span class="br">}</span></td></tr>
+<tr name="984" id="984">
+<td>984</td><td>      <span class="br">}</span></td></tr>
+<tr name="985" id="985">
+<td>985</td><td>    <span class="br">}</span></td></tr>
+<tr name="986" id="986">
+<td>986</td><td></td></tr>
+<tr name="987" id="987">
+<td>987</td><td>    <span class="kw">return</span> <a id="987c12" class="tk">NI_OK</a>;</td></tr>
+<tr name="988" id="988">
+<td>988</td><td>  <span class="br">}</span></td></tr>
+<tr name="989" id="989">
+<td>989</td><td></td></tr>
+<tr name="990" id="990">
+<td>990</td><td>  <span class="kw">return</span> <a id="990c10" class="tk">NI_ParamListSize</a>;</td></tr>
+<tr name="991" id="991">
+<td>991</td><td><span class="br">}</span></td></tr>
+<tr name="992" id="992">
+<td>992</td><td></td></tr>
+<tr name="993" id="993">
+<td>993</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="994" id="994">
+<td>994</td><td><span class="ct"> * Function: NIRT_GetExtIOSpec</span></td></tr>
+<tr name="995" id="995">
+<td>995</td><td><span class="ct"> *</span></td></tr>
+<tr name="996" id="996">
+<td>996</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="997" id="997">
+<td>997</td><td><span class="ct"> *	Returns the model's inport or outport specification</span></td></tr>
+<tr name="998" id="998">
+<td>998</td><td><span class="ct"> *</span></td></tr>
+<tr name="999" id="999">
+<td>999</td><td><span class="ct"> * Input Parameters:</span></td></tr>
+<tr name="1000" id="1000">
+<td>1000</td><td><span class="ct"> *	index	: index of the task</span></td></tr>
+<tr name="1001" id="1001">
+<td>1001</td><td><span class="ct"> *</span></td></tr>
+<tr name="1002" id="1002">
+<td>1002</td><td><span class="ct"> * Output Parameters:</span></td></tr>
+<tr name="1003" id="1003">
+<td>1003</td><td><span class="ct"> *	idx		: idx of the IO.</span></td></tr>
+<tr name="1004" id="1004">
+<td>1004</td><td><span class="ct"> *	name	: Name of the IO block</span></td></tr>
+<tr name="1005" id="1005">
+<td>1005</td><td><span class="ct"> *	tid		: task id</span></td></tr>
+<tr name="1006" id="1006">
+<td>1006</td><td><span class="ct"> *	type	: EXT_IN or EXT_OUT</span></td></tr>
+<tr name="1007" id="1007">
+<td>1007</td><td><span class="ct"> *	dims	: The port's dimension of length 'numdims'.</span></td></tr>
+<tr name="1008" id="1008">
+<td>1008</td><td><span class="ct"> *	numdims : the port's number of dimensions. If a value of "-1" is specified, the minimum buffer size of "dims" is returned as its value.</span></td></tr>
+<tr name="1009" id="1009">
+<td>1009</td><td><span class="ct"> *</span></td></tr>
+<tr name="1010" id="1010">
+<td>1010</td><td><span class="ct"> * Returns</span></td></tr>
+<tr name="1011" id="1011">
+<td>1011</td><td><span class="ct"> *	NI_OK if no error. (if index == -1, return number of tasks in the model)</span></td></tr>
+<tr name="1012" id="1012">
+<td>1012</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="1013" id="1013">
+<td>1013</td><td><a id="1013c1" class="tk">DLL_EXPORT</a> <a id="1013c12" class="tk">int32_t</a> <a id="1013c20" class="tk">NIRT_GetExtIOSpec</a>(<a id="1013c38" class="tk">int32_t</a> <a id="1013c46" class="tk">index</a>, <a id="1013c53" class="tk">int32_t</a> <a id="1013c61" class="tk">*</a><a id="1013c62" class="tk">idx</a>, <span class="kw">char</span><a id="1013c71" class="tk">*</a> <a id="1013c73" class="tk">name</a>,</td></tr>
+<tr name="1014" id="1014">
+<td>1014</td><td>  <a id="1014c3" class="tk">int32_t</a><a id="1014c10" class="tk">*</a> <a id="1014c12" class="tk">tid</a>, <a id="1014c17" class="tk">int32_t</a> <a id="1014c25" class="tk">*</a><a id="1014c26" class="tk">type</a>, <a id="1014c32" class="tk">int32_t</a> <a id="1014c40" class="tk">*</a><a id="1014c41" class="tk">dims</a>, <a id="1014c47" class="tk">int32_t</a><a id="1014c54" class="tk">*</a> <a id="1014c56" class="tk">numdims</a>)</td></tr>
+<tr name="1015" id="1015">
+<td>1015</td><td><span class="br">{</span></td></tr>
+<tr name="1016" id="1016">
+<td>1016</td><td>  <span class="kw">if</span> (<a id="1016c7" class="tk">index</a> <a id="1016c13" class="tk">==</a> <a id="1016c16" class="tk">-</a>1) <span class="br">{</span></td></tr>
+<tr name="1017" id="1017">
+<td>1017</td><td>    <span class="kw">return</span> <a id="1017c12" class="tk">NI_ExtListSize</a>;</td></tr>
+<tr name="1018" id="1018">
+<td>1018</td><td>  <span class="br">}</span></td></tr>
+<tr name="1019" id="1019">
+<td>1019</td><td></td></tr>
+<tr name="1020" id="1020">
+<td>1020</td><td>  <span class="kw">if</span> (<a id="1020c7" class="tk">idx</a> <a id="1020c11" class="tk">!=</a> <a id="1020c14" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="1021" id="1021">
+<td>1021</td><td>    <a id="1021c5" class="tk">*</a><a id="1021c6" class="tk">idx</a> = <a id="1021c12" class="tk">NI_ExtList</a>[<a id="1021c23" class="tk">index</a>].<a id="1021c30" class="tk">idx</a>;</td></tr>
+<tr name="1022" id="1022">
+<td>1022</td><td>  <span class="br">}</span></td></tr>
+<tr name="1023" id="1023">
+<td>1023</td><td></td></tr>
+<tr name="1024" id="1024">
+<td>1024</td><td>  <span class="kw">if</span> (<a id="1024c7" class="tk">name</a> <a id="1024c12" class="tk">!=</a> <a id="1024c15" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="1025" id="1025">
+<td>1025</td><td>    <a id="1025c5" class="tk">int32_t</a> <a id="1025c13" class="tk">sz</a> = <a id="1025c18" class="tk">strlen</a>(<a id="1025c25" class="tk">name</a>);</td></tr>
+<tr name="1026" id="1026">
+<td>1026</td><td>    <a id="1026c5" class="tk">strncpy</a>(<a id="1026c13" class="tk">name</a>, <a id="1026c19" class="tk">NI_ExtList</a>[<a id="1026c30" class="tk">index</a>].<a id="1026c37" class="tk">name</a>, <a id="1026c43" class="tk">sz</a><a id="1026c45" class="tk">-</a>1);</td></tr>
+<tr name="1027" id="1027">
+<td>1027</td><td>    <a id="1027c5" class="tk">name</a>[<a id="1027c10" class="tk">sz</a><a id="1027c12" class="tk">-</a>1]= 0;</td></tr>
+<tr name="1028" id="1028">
+<td>1028</td><td>  <span class="br">}</span></td></tr>
+<tr name="1029" id="1029">
+<td>1029</td><td></td></tr>
+<tr name="1030" id="1030">
+<td>1030</td><td>  <span class="kw">if</span> (<a id="1030c7" class="tk">tid</a> <a id="1030c11" class="tk">!=</a> <a id="1030c14" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="1031" id="1031">
+<td>1031</td><td>    <a id="1031c5" class="tk">*</a><a id="1031c6" class="tk">tid</a> = <a id="1031c12" class="tk">NI_ExtList</a>[<a id="1031c23" class="tk">index</a>].<a id="1031c30" class="tk">TID</a>;</td></tr>
+<tr name="1032" id="1032">
+<td>1032</td><td>  <span class="br">}</span></td></tr>
+<tr name="1033" id="1033">
+<td>1033</td><td></td></tr>
+<tr name="1034" id="1034">
+<td>1034</td><td>  <span class="kw">if</span> (<a id="1034c7" class="tk">type</a> <a id="1034c12" class="tk">!=</a> <a id="1034c15" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="1035" id="1035">
+<td>1035</td><td>    <a id="1035c5" class="tk">*</a><a id="1035c6" class="tk">type</a> = <a id="1035c13" class="tk">NI_ExtList</a>[<a id="1035c24" class="tk">index</a>].<a id="1035c31" class="tk">type</a>;</td></tr>
+<tr name="1036" id="1036">
+<td>1036</td><td>  <span class="br">}</span></td></tr>
+<tr name="1037" id="1037">
+<td>1037</td><td></td></tr>
+<tr name="1038" id="1038">
+<td>1038</td><td>  <span class="kw">if</span> (<a id="1038c7" class="tk">numdims</a> <a id="1038c15" class="tk">!=</a> <a id="1038c18" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="1039" id="1039">
+<td>1039</td><td>    <span class="kw">if</span> (<a id="1039c9" class="tk">*</a><a id="1039c10" class="tk">numdims</a> <a id="1039c18" class="tk">==</a> <a id="1039c21" class="tk">-</a>1) <span class="br">{</span></td></tr>
+<tr name="1040" id="1040">
+<td>1040</td><td>      <a id="1040c7" class="tk">*</a><a id="1040c8" class="tk">numdims</a> = 2;</td></tr>
+<tr name="1041" id="1041">
+<td>1041</td><td>    <span class="br">}</span> <span class="kw">else</span> <span class="kw">if</span> (<a id="1041c16" class="tk">numdims</a> <a id="1041c24" class="tk">!=</a> <a id="1041c27" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="1042" id="1042">
+<td>1042</td><td>      <span class="ct">/* Return port dimensions */</span></td></tr>
+<tr name="1043" id="1043">
+<td>1043</td><td>      <a id="1043c7" class="tk">dims</a>[0] = <a id="1043c17" class="tk">NI_ExtList</a>[<a id="1043c28" class="tk">index</a>].<a id="1043c35" class="tk">dimX</a>;</td></tr>
+<tr name="1044" id="1044">
+<td>1044</td><td>      <a id="1044c7" class="tk">dims</a>[1] = <a id="1044c17" class="tk">NI_ExtList</a>[<a id="1044c28" class="tk">index</a>].<a id="1044c35" class="tk">dimY</a>;</td></tr>
+<tr name="1045" id="1045">
+<td>1045</td><td>    <span class="br">}</span></td></tr>
+<tr name="1046" id="1046">
+<td>1046</td><td>  <span class="br">}</span></td></tr>
+<tr name="1047" id="1047">
+<td>1047</td><td></td></tr>
+<tr name="1048" id="1048">
+<td>1048</td><td>  <span class="kw">return</span> <a id="1048c10" class="tk">NI_OK</a>;</td></tr>
+<tr name="1049" id="1049">
+<td>1049</td><td><span class="br">}</span></td></tr>
+<tr name="1050" id="1050">
+<td>1050</td><td></td></tr>
+<tr name="1051" id="1051">
+<td>1051</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="1052" id="1052">
+<td>1052</td><td><span class="ct"> * Function: NI_ProbeOneSignal</span></td></tr>
+<tr name="1053" id="1053">
+<td>1053</td><td><span class="ct"> *</span></td></tr>
+<tr name="1054" id="1054">
+<td>1054</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="1055" id="1055">
+<td>1055</td><td><span class="ct"> *		Helper function to probe one signal. baseaddr must NOT be VIRTUAL_SIG</span></td></tr>
+<tr name="1056" id="1056">
+<td>1056</td><td><span class="ct"> *</span></td></tr>
+<tr name="1057" id="1057">
+<td>1057</td><td><span class="ct"> * Output Parameters</span></td></tr>
+<tr name="1058" id="1058">
+<td>1058</td><td><span class="ct"> *</span></td></tr>
+<tr name="1059" id="1059">
+<td>1059</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="1060" id="1060">
+<td>1060</td><td><span class="ct"> *     Return value: Returns the last index value probed in a vector signal</span></td></tr>
+<tr name="1061" id="1061">
+<td>1061</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="1062" id="1062">
+<td>1062</td><td><span class="kw">static</span> <a id="1062c8" class="tk">int32_t</a> <a id="1062c16" class="tk">NI_ProbeOneSignal</a>(<a id="1062c34" class="tk">int32_t</a> <a id="1062c42" class="tk">idx</a>, <span class="kw">double</span> <a id="1062c54" class="tk">*</a><a id="1062c55" class="tk">value</a>, <a id="1062c62" class="tk">int32_t</a> <a id="1062c70" class="tk">len</a>,</td></tr>
+<tr name="1063" id="1063">
+<td>1063</td><td>  <a id="1063c3" class="tk">int32_t</a> <a id="1063c11" class="tk">*</a><a id="1063c12" class="tk">count</a>, <a id="1063c19" class="tk">int32_t</a> <a id="1063c27" class="tk">vOffset</a>, <a id="1063c36" class="tk">int32_t</a> <a id="1063c44" class="tk">vLength</a>)</td></tr>
+<tr name="1064" id="1064">
+<td>1064</td><td><span class="br">{</span></td></tr>
+<tr name="1065" id="1065">
+<td>1065</td><td>  <span class="kw">if</span> (<a id="1065c7" class="tk">NI_SigList</a>[<a id="1065c18" class="tk">idx</a>].<a id="1065c23" class="tk">baseaddr</a> <a id="1065c32" class="tk">==</a> <a id="1065c35" class="tk">VIRTUAL_SIG</a>) <span class="br">{</span></td></tr>
+<tr name="1066" id="1066">
+<td>1066</td><td>    <a id="1066c5" class="tk">SetSITErrorMessage</a>("NI_ProbeOneSignal: Received request to probe a virtual signal, but was expecting a ground source. Ignoring virtual signal probe. Report this behavior to National Instruments.",</td></tr>
+<tr name="1067" id="1067">
+<td>1067</td><td>                       0);</td></tr>
+<tr name="1068" id="1068">
+<td>1068</td><td>    <span class="kw">return</span> 0;</td></tr>
+<tr name="1069" id="1069">
+<td>1069</td><td>  <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="1070" id="1070">
+<td>1070</td><td>    <span class="kw">char</span> <a id="1070c10" class="tk">*</a><a id="1070c11" class="tk">ptr</a> = (<span class="kw">char</span><a id="1070c22" class="tk">*</a>)((<a id="1070c26" class="tk">NI_SigList</a>[<a id="1070c37" class="tk">idx</a>].<a id="1070c42" class="tk">baseaddr</a> <a id="1070c51" class="tk">==</a> <a id="1070c54" class="tk">BLOCKIO_SIG</a>) <a id="1070c67" class="tk">?</a></td></tr>
+<tr name="1071" id="1071">
+<td>1071</td><td>                        <a id="1071c25" class="tk">S</a>-&gt;<a id="1071c28" class="tk">ModelData</a>.<a id="1071c38" class="tk">blockIO</a> <a id="1071c46" class="tk">:</a> <a id="1071c48" class="tk">S</a>-&gt;<a id="1071c51" class="tk">ModelData</a>.<a id="1071c61" class="tk">inputs</a>) <a id="1071c69" class="tk">+</a> (<a id="1071c72" class="tk">uintptr_t</a>)</td></tr>
+<tr name="1072" id="1072">
+<td>1072</td><td>      <a id="1072c7" class="tk">NI_SigList</a>[<a id="1072c18" class="tk">idx</a>].<a id="1072c23" class="tk">addr</a>;</td></tr>
+<tr name="1073" id="1073">
+<td>1073</td><td>    <a id="1073c5" class="tk">int32_t</a> <a id="1073c13" class="tk">subindex</a> = (<a id="1073c25" class="tk">vLength</a> <a id="1073c33" class="tk">==</a> <a id="1073c36" class="tk">-</a>1) <a id="1073c40" class="tk">?</a> 0 <a id="1073c44" class="tk">:</a> <a id="1073c46" class="tk">vOffset</a>;</td></tr>
+<tr name="1074" id="1074">
+<td>1074</td><td>    <a id="1074c5" class="tk">int32_t</a> <a id="1074c13" class="tk">sublength</a> = (<a id="1074c26" class="tk">vLength</a> <a id="1074c34" class="tk">==</a> <a id="1074c37" class="tk">-</a>1) <a id="1074c41" class="tk">?</a> <a id="1074c43" class="tk">NI_SigList</a>[<a id="1074c54" class="tk">idx</a>].<a id="1074c59" class="tk">width</a> <a id="1074c65" class="tk">:</a> (<a id="1074c68" class="tk">vLength</a> <a id="1074c76" class="tk">+</a></td></tr>
+<tr name="1075" id="1075">
+<td>1075</td><td>      <a id="1075c7" class="tk">vOffset</a>);</td></tr>
+<tr name="1076" id="1076">
+<td>1076</td><td>    <span class="kw">while</span> ((<a id="1076c13" class="tk">subindex</a> <a id="1076c22" class="tk">&lt;</a> <a id="1076c24" class="tk">sublength</a>) <a id="1076c35" class="tk">&amp;&amp;</a> (<a id="1076c39" class="tk">*</a><a id="1076c40" class="tk">count</a> <a id="1076c46" class="tk">&lt;</a> <a id="1076c48" class="tk">len</a>))</td></tr>
+<tr name="1077" id="1077">
+<td>1077</td><td>      <a id="1077c7" class="tk">value</a>[(<a id="1077c14" class="tk">*</a><a id="1077c15" class="tk">count</a>)<a id="1077c21" class="tk">++</a>] = <a id="1077c27" class="tk">NIRT_GetValueByDataType</a>(<a id="1077c51" class="tk">ptr</a>, <a id="1077c56" class="tk">subindex</a><a id="1077c64" class="tk">++</a>,</td></tr>
+<tr name="1078" id="1078">
+<td>1078</td><td>        <a id="1078c9" class="tk">NI_SigList</a>[<a id="1078c20" class="tk">idx</a>].<a id="1078c25" class="tk">datatype</a>, <a id="1078c35" class="tk">NI_SigList</a>[<a id="1078c46" class="tk">idx</a>].<a id="1078c51" class="tk">IsComplex</a>);</td></tr>
+<tr name="1079" id="1079">
+<td>1079</td><td>    <span class="kw">return</span> <a id="1079c12" class="tk">*</a><a id="1079c13" class="tk">count</a>;</td></tr>
+<tr name="1080" id="1080">
+<td>1080</td><td>  <span class="br">}</span></td></tr>
+<tr name="1081" id="1081">
+<td>1081</td><td><span class="br">}</span></td></tr>
+<tr name="1082" id="1082">
+<td>1082</td><td></td></tr>
+<tr name="1083" id="1083">
+<td>1083</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="1084" id="1084">
+<td>1084</td><td><span class="ct"> * Function: NIRT_ProbeSignals</span></td></tr>
+<tr name="1085" id="1085">
+<td>1085</td><td><span class="ct"> *</span></td></tr>
+<tr name="1086" id="1086">
+<td>1086</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="1087" id="1087">
+<td>1087</td><td><span class="ct"> *	returns the latest signal values.</span></td></tr>
+<tr name="1088" id="1088">
+<td>1088</td><td><span class="ct"> *</span></td></tr>
+<tr name="1089" id="1089">
+<td>1089</td><td><span class="ct"> * Input Parameters:</span></td></tr>
+<tr name="1090" id="1090">
+<td>1090</td><td><span class="ct"> *	sigindices	: list of signal indices to be probed.</span></td></tr>
+<tr name="1091" id="1091">
+<td>1091</td><td><span class="ct"> *	numsigs		: length of sigindices array.</span></td></tr>
+<tr name="1092" id="1092">
+<td>1092</td><td><span class="ct"> *</span></td></tr>
+<tr name="1093" id="1093">
+<td>1093</td><td><span class="ct"> *		NOTE: (Implementation detail) the sigindices array that is passed in is delimited by a value of -1.</span></td></tr>
+<tr name="1094" id="1094">
+<td>1094</td><td><span class="ct"> *		Thus the # of valid indices in the sigindices table is min(numsigs, index of value -1) - 1.</span></td></tr>
+<tr name="1095" id="1095">
+<td>1095</td><td><span class="ct"> *		Reason for subtracting 1, the first index in the array is used for bookkeeping and should be copied</span></td></tr>
+<tr name="1096" id="1096">
+<td>1096</td><td><span class="ct"> *		into the 0th index in the signal values buffer.</span></td></tr>
+<tr name="1097" id="1097">
+<td>1097</td><td><span class="ct"> *		Also, the 1st index in the signal values buffer should contain the current timestamp. Hence valid</span></td></tr>
+<tr name="1098" id="1098">
+<td>1098</td><td><span class="ct"> *		signal data should be filled in starting from index 2. Any non-scalar signals should be added to the</span></td></tr>
+<tr name="1099" id="1099">
+<td>1099</td><td><span class="ct"> *		buffer in row-order.</span></td></tr>
+<tr name="1100" id="1100">
+<td>1100</td><td><span class="ct"> *</span></td></tr>
+<tr name="1101" id="1101">
+<td>1101</td><td><span class="ct"> * Input/Output Parameters</span></td></tr>
+<tr name="1102" id="1102">
+<td>1102</td><td><span class="ct"> *	num			: (in) length of sigvalues buffer (out) number of values returned in the buffer</span></td></tr>
+<tr name="1103" id="1103">
+<td>1103</td><td><span class="ct"> *</span></td></tr>
+<tr name="1104" id="1104">
+<td>1104</td><td><span class="ct"> * Output Parameters:</span></td></tr>
+<tr name="1105" id="1105">
+<td>1105</td><td><span class="ct"> *	value		: array of signal values</span></td></tr>
+<tr name="1106" id="1106">
+<td>1106</td><td><span class="ct"> *</span></td></tr>
+<tr name="1107" id="1107">
+<td>1107</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="1108" id="1108">
+<td>1108</td><td><span class="ct"> *	NI_OK if no error</span></td></tr>
+<tr name="1109" id="1109">
+<td>1109</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="1110" id="1110">
+<td>1110</td><td><a id="1110c1" class="tk">DLL_EXPORT</a> <a id="1110c12" class="tk">int32_t</a> <a id="1110c20" class="tk">NIRT_ProbeSignals</a>(<a id="1110c38" class="tk">int32_t</a><a id="1110c45" class="tk">*</a> <a id="1110c47" class="tk">sigindices</a>, <a id="1110c59" class="tk">int32_t</a> <a id="1110c67" class="tk">numsigs</a>,</td></tr>
+<tr name="1111" id="1111">
+<td>1111</td><td>  <span class="kw">double</span><a id="1111c9" class="tk">*</a> <a id="1111c11" class="tk">value</a>, <a id="1111c18" class="tk">int32_t</a><a id="1111c25" class="tk">*</a> <a id="1111c27" class="tk">len</a>)</td></tr>
+<tr name="1112" id="1112">
+<td>1112</td><td><span class="br">{</span></td></tr>
+<tr name="1113" id="1113">
+<td>1113</td><td>  <a id="1113c3" class="tk">int32_t</a> <a id="1113c11" class="tk">i</a> = 0;</td></tr>
+<tr name="1114" id="1114">
+<td>1114</td><td>  <a id="1114c3" class="tk">int32_t</a> <a id="1114c11" class="tk">idx</a> = 0;</td></tr>
+<tr name="1115" id="1115">
+<td>1115</td><td>  <a id="1115c3" class="tk">int32_t</a> <a id="1115c11" class="tk">count</a> = 0;</td></tr>
+<tr name="1116" id="1116">
+<td>1116</td><td>  <span class="kw">if</span> (<a id="1116c7" class="tk">!</a><a id="1116c8" class="tk">SITexportglobals</a>.<a id="1116c25" class="tk">inCriticalSection</a>) <span class="br">{</span></td></tr>
+<tr name="1117" id="1117">
+<td>1117</td><td>    <a id="1117c5" class="tk">SetSITErrorMessage</a>("SignalProbe should only be called between ScheduleTasks and PostOutputs",</td></tr>
+<tr name="1118" id="1118">
+<td>1118</td><td>                       1);</td></tr>
+<tr name="1119" id="1119">
+<td>1119</td><td>  <span class="br">}</span></td></tr>
+<tr name="1120" id="1120">
+<td>1120</td><td></td></tr>
+<tr name="1121" id="1121">
+<td>1121</td><td>  <span class="ct">/* Get the index to the first signal */</span></td></tr>
+<tr name="1122" id="1122">
+<td>1122</td><td>  <span class="kw">if</span> ((<a id="1122c8" class="tk">*</a><a id="1122c9" class="tk">len</a> <a id="1122c13" class="tk">&gt;</a> 1) <a id="1122c18" class="tk">&amp;&amp;</a> (<a id="1122c22" class="tk">numsigs</a> <a id="1122c30" class="tk">&gt;</a> 0)) <span class="br">{</span></td></tr>
+<tr name="1123" id="1123">
+<td>1123</td><td>    <a id="1123c5" class="tk">value</a>[<a id="1123c11" class="tk">count</a><a id="1123c16" class="tk">++</a>] = <a id="1123c22" class="tk">sigindices</a>[0];</td></tr>
+<tr name="1124" id="1124">
+<td>1124</td><td>    <a id="1124c5" class="tk">value</a>[<a id="1124c11" class="tk">count</a><a id="1124c16" class="tk">++</a>] = 0;</td></tr>
+<tr name="1125" id="1125">
+<td>1125</td><td>  <span class="br">}</span></td></tr>
+<tr name="1126" id="1126">
+<td>1126</td><td></td></tr>
+<tr name="1127" id="1127">
+<td>1127</td><td>  <span class="ct">/* Get the second and other signals */</span></td></tr>
+<tr name="1128" id="1128">
+<td>1128</td><td>  <span class="kw">for</span> (<a id="1128c8" class="tk">i</a> = 1; (<a id="1128c16" class="tk">i</a> <a id="1128c18" class="tk">&lt;</a> <a id="1128c20" class="tk">numsigs</a>) <a id="1128c29" class="tk">&amp;&amp;</a> (<a id="1128c33" class="tk">count</a> <a id="1128c39" class="tk">&lt;</a> <a id="1128c41" class="tk">*</a><a id="1128c42" class="tk">len</a>); <a id="1128c48" class="tk">i</a><a id="1128c49" class="tk">++</a>) <span class="br">{</span></td></tr>
+<tr name="1129" id="1129">
+<td>1129</td><td>    <a id="1129c5" class="tk">idx</a> = <a id="1129c11" class="tk">sigindices</a>[<a id="1129c22" class="tk">i</a>];</td></tr>
+<tr name="1130" id="1130">
+<td>1130</td><td>    <span class="kw">if</span> (<a id="1130c9" class="tk">idx</a> <a id="1130c13" class="tk">&lt;</a> 0) <span class="br">{</span></td></tr>
+<tr name="1131" id="1131">
+<td>1131</td><td>      <span class="kw">break</span>;</td></tr>
+<tr name="1132" id="1132">
+<td>1132</td><td>    <span class="br">}</span></td></tr>
+<tr name="1133" id="1133">
+<td>1133</td><td></td></tr>
+<tr name="1134" id="1134">
+<td>1134</td><td>    <span class="kw">if</span> (<a id="1134c9" class="tk">idx</a> <a id="1134c13" class="tk">&lt;</a> <a id="1134c15" class="tk">NI_SigListSize</a>) <span class="br">{</span></td></tr>
+<tr name="1135" id="1135">
+<td>1135</td><td>      <span class="kw">if</span> (<a id="1135c11" class="tk">NI_SigList</a>[<a id="1135c22" class="tk">idx</a>].<a id="1135c27" class="tk">baseaddr</a> <a id="1135c36" class="tk">==</a> <a id="1135c39" class="tk">VIRTUAL_SIG</a>) <span class="br">{</span></td></tr>
+<tr name="1136" id="1136">
+<td>1136</td><td>        <a id="1136c9" class="tk">int32_t</a> <a id="1136c17" class="tk">vidx</a> = <a id="1136c24" class="tk">NI_VirtualBlockSources</a>[<a id="1136c47" class="tk">NI_SigList</a>[<a id="1136c58" class="tk">idx</a>].<a id="1136c63" class="tk">addr</a>];</td></tr>
+<tr name="1137" id="1137">
+<td>1137</td><td>        <a id="1137c9" class="tk">NI_ProbeOneSignal</a>(<a id="1137c27" class="tk">vidx</a>, <a id="1137c33" class="tk">value</a>, <a id="1137c40" class="tk">*</a><a id="1137c41" class="tk">len</a>, <a id="1137c46" class="tk">&amp;</a><a id="1137c47" class="tk">count</a>, 0, <a id="1137c57" class="tk">-</a>1);</td></tr>
+<tr name="1138" id="1138">
+<td>1138</td><td>      <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="1139" id="1139">
+<td>1139</td><td>        <a id="1139c9" class="tk">NI_ProbeOneSignal</a>(<a id="1139c27" class="tk">idx</a>, <a id="1139c32" class="tk">value</a>, <a id="1139c39" class="tk">*</a><a id="1139c40" class="tk">len</a>, <a id="1139c45" class="tk">&amp;</a><a id="1139c46" class="tk">count</a>, 0, <a id="1139c56" class="tk">-</a>1);</td></tr>
+<tr name="1140" id="1140">
+<td>1140</td><td>      <span class="br">}</span></td></tr>
+<tr name="1141" id="1141">
+<td>1141</td><td>    <span class="br">}</span></td></tr>
+<tr name="1142" id="1142">
+<td>1142</td><td>  <span class="br">}</span></td></tr>
+<tr name="1143" id="1143">
+<td>1143</td><td></td></tr>
+<tr name="1144" id="1144">
+<td>1144</td><td>  <a id="1144c3" class="tk">*</a><a id="1144c4" class="tk">len</a> = <a id="1144c10" class="tk">count</a>;</td></tr>
+<tr name="1145" id="1145">
+<td>1145</td><td>  <span class="kw">return</span> <a id="1145c10" class="tk">count</a>;</td></tr>
+<tr name="1146" id="1146">
+<td>1146</td><td><span class="br">}</span></td></tr>
+<tr name="1147" id="1147">
+<td>1147</td><td></td></tr>
+<tr name="1148" id="1148">
+<td>1148</td><td><a id="1148c1" class="tk">int32_t</a> <a id="1148c9" class="tk">NI_InitParamDoubleBuf</a>(<span class="kw">void</span>)</td></tr>
+<tr name="1149" id="1149">
+<td>1149</td><td><span class="br">{</span></td></tr>
+<tr name="1150" id="1150">
+<td>1150</td><td>  <span class="kw">return</span> <a id="1150c10" class="tk">NI_OK</a>;</td></tr>
+<tr name="1151" id="1151">
+<td>1151</td><td><span class="br">}</span></td></tr>
+<tr name="1152" id="1152">
+<td>1152</td><td></td></tr>
+<tr name="1153" id="1153">
+<td>1153</td><td><a id="1153c1" class="tk">int32_t</a> <a id="1153c9" class="tk">NI_InitializeParamStruct</a>(<span class="kw">void</span>)</td></tr>
+<tr name="1154" id="1154">
+<td>1154</td><td><span class="br">{</span></td></tr>
+<tr name="1155" id="1155">
+<td>1155</td><td>  <span class="kw">return</span> <a id="1155c10" class="tk">NI_OK</a>;</td></tr>
+<tr name="1156" id="1156">
+<td>1156</td><td><span class="br">}</span></td></tr>
+<tr name="1157" id="1157">
+<td>1157</td><td></td></tr>
+<tr name="1158" id="1158">
+<td>1158</td><td><a id="1158c1" class="tk">DLL_EXPORT</a> <a id="1158c12" class="tk">int32_t</a> <a id="1158c20" class="tk">NIRT_SetParameter</a>(<a id="1158c38" class="tk">int32_t</a> <a id="1158c46" class="tk">index</a>, <a id="1158c53" class="tk">int32_t</a> <a id="1158c61" class="tk">subindex</a>, <span class="kw">double</span></td></tr>
+<tr name="1159" id="1159">
+<td>1159</td><td>  <a id="1159c3" class="tk">value</a>)</td></tr>
+<tr name="1160" id="1160">
+<td>1160</td><td><span class="br">{</span></td></tr>
+<tr name="1161" id="1161">
+<td>1161</td><td>  <span class="kw">return</span> <a id="1161c10" class="tk">NI_ERROR</a>;</td></tr>
+<tr name="1162" id="1162">
+<td>1162</td><td><span class="br">}</span></td></tr>
+<tr name="1163" id="1163">
+<td>1163</td><td></td></tr>
+<tr name="1164" id="1164">
+<td>1164</td><td><a id="1164c1" class="tk">DLL_EXPORT</a> <a id="1164c12" class="tk">int32_t</a> <a id="1164c20" class="tk">NIRT_GetParameter</a>(<a id="1164c38" class="tk">int32_t</a> <a id="1164c46" class="tk">index</a>, <a id="1164c53" class="tk">int32_t</a> <a id="1164c61" class="tk">subindex</a>, <span class="kw">double</span></td></tr>
+<tr name="1165" id="1165">
+<td>1165</td><td>  <a id="1165c3" class="tk">*</a><a id="1165c4" class="tk">value</a>)</td></tr>
+<tr name="1166" id="1166">
+<td>1166</td><td><span class="br">{</span></td></tr>
+<tr name="1167" id="1167">
+<td>1167</td><td>  <span class="kw">return</span> <a id="1167c10" class="tk">NI_ERROR</a>;</td></tr>
+<tr name="1168" id="1168">
+<td>1168</td><td><span class="br">}</span></td></tr>
+<tr name="1169" id="1169">
+<td>1169</td><td></td></tr>
+<tr name="1170" id="1170">
+<td>1170</td><td><a id="1170c1" class="tk">DLL_EXPORT</a> <a id="1170c12" class="tk">int32_t</a> <a id="1170c20" class="tk">NIRT_GetVectorParameter</a>(<a id="1170c44" class="tk">uint32_t</a> <a id="1170c53" class="tk">index</a>, <span class="kw">double</span><a id="1170c66" class="tk">*</a> <a id="1170c68" class="tk">paramvalues</a>,</td></tr>
+<tr name="1171" id="1171">
+<td>1171</td><td>  <a id="1171c3" class="tk">uint32_t</a> <a id="1171c12" class="tk">paramlength</a>)</td></tr>
+<tr name="1172" id="1172">
+<td>1172</td><td><span class="br">{</span></td></tr>
+<tr name="1173" id="1173">
+<td>1173</td><td>  <span class="kw">return</span> <a id="1173c10" class="tk">NI_ERROR</a>;</td></tr>
+<tr name="1174" id="1174">
+<td>1174</td><td><span class="br">}</span></td></tr>
+<tr name="1175" id="1175">
+<td>1175</td><td></td></tr>
+<tr name="1176" id="1176">
+<td>1176</td><td><a id="1176c1" class="tk">DLL_EXPORT</a> <a id="1176c12" class="tk">int32_t</a> <a id="1176c20" class="tk">NIRT_SetVectorParameter</a>(<a id="1176c44" class="tk">uint32_t</a> <a id="1176c53" class="tk">index</a>, <span class="kw">const</span> <span class="kw">double</span></td></tr>
+<tr name="1177" id="1177">
+<td>1177</td><td>  <a id="1177c3" class="tk">*</a> <a id="1177c5" class="tk">paramvalues</a>, <a id="1177c18" class="tk">uint32_t</a> <a id="1177c27" class="tk">paramlength</a>)</td></tr>
+<tr name="1178" id="1178">
+<td>1178</td><td><span class="br">{</span></td></tr>
+<tr name="1179" id="1179">
+<td>1179</td><td>  <span class="kw">return</span> <a id="1179c10" class="tk">NI_ERROR</a>;</td></tr>
+<tr name="1180" id="1180">
+<td>1180</td><td><span class="br">}</span></td></tr>
+<tr name="1181" id="1181">
+<td>1181</td><td></td></tr>
+<tr name="1182" id="1182">
+<td>1182</td><td><a id="1182c1" class="tk">DLL_EXPORT</a> <a id="1182c12" class="tk">int32_t</a> <a id="1182c20" class="tk">NIRT_SetScalarParameterInline</a>(<a id="1182c50" class="tk">uint32_t</a> <a id="1182c59" class="tk">index</a>, <a id="1182c66" class="tk">uint32_t</a></td></tr>
+<tr name="1183" id="1183">
+<td>1183</td><td>  <a id="1183c3" class="tk">subindex</a>, <span class="kw">double</span> <a id="1183c20" class="tk">paramvalue</a>)</td></tr>
+<tr name="1184" id="1184">
+<td>1184</td><td><span class="br">{</span></td></tr>
+<tr name="1185" id="1185">
+<td>1185</td><td>  <span class="kw">return</span> <a id="1185c10" class="tk">NI_ERROR</a>;</td></tr>
+<tr name="1186" id="1186">
+<td>1186</td><td><span class="br">}</span></td></tr>
+<tr name="1187" id="1187">
+<td>1187</td><td></td></tr>
+<tr name="1188" id="1188">
+<td>1188</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="1189" id="1189">
+<td>1189</td><td><span class="ct"> * Function: NIRT_GetSimState</span></td></tr>
+<tr name="1190" id="1190">
+<td>1190</td><td><span class="ct"> *</span></td></tr>
+<tr name="1191" id="1191">
+<td>1191</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="1192" id="1192">
+<td>1192</td><td><span class="ct"> *</span></td></tr>
+<tr name="1193" id="1193">
+<td>1193</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="1194" id="1194">
+<td>1194</td><td><span class="ct"> *	NI_OK if no error</span></td></tr>
+<tr name="1195" id="1195">
+<td>1195</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="1196" id="1196">
+<td>1196</td><td><a id="1196c1" class="tk">DLL_EXPORT</a> <a id="1196c12" class="tk">int32_t</a> <a id="1196c20" class="tk">NIRT_GetSimState</a>(<a id="1196c37" class="tk">int32_t</a><a id="1196c44" class="tk">*</a> <a id="1196c46" class="tk">numContStates</a>, <span class="kw">char</span></td></tr>
+<tr name="1197" id="1197">
+<td>1197</td><td>  <a id="1197c3" class="tk">*</a> <a id="1197c5" class="tk">contStatesNames</a>, <span class="kw">double</span><a id="1197c28" class="tk">*</a> <a id="1197c30" class="tk">contStates</a>, <a id="1197c42" class="tk">int32_t</a><a id="1197c49" class="tk">*</a> <a id="1197c51" class="tk">numDiscStates</a>, <span class="kw">char</span></td></tr>
+<tr name="1198" id="1198">
+<td>1198</td><td>  <a id="1198c3" class="tk">*</a> <a id="1198c5" class="tk">discStatesNames</a>, <span class="kw">double</span><a id="1198c28" class="tk">*</a> <a id="1198c30" class="tk">discStates</a>, <a id="1198c42" class="tk">int32_t</a><a id="1198c49" class="tk">*</a> <a id="1198c51" class="tk">numClockTicks</a>, <span class="kw">char</span></td></tr>
+<tr name="1199" id="1199">
+<td>1199</td><td>  <a id="1199c3" class="tk">*</a> <a id="1199c5" class="tk">clockTicksNames</a>, <a id="1199c22" class="tk">int32_t</a><a id="1199c29" class="tk">*</a> <a id="1199c31" class="tk">clockTicks</a>)</td></tr>
+<tr name="1200" id="1200">
+<td>1200</td><td><span class="br">{</span></td></tr>
+<tr name="1201" id="1201">
+<td>1201</td><td>  <a id="1201c3" class="tk">int32_t</a> <a id="1201c11" class="tk">count</a> = 0;</td></tr>
+<tr name="1202" id="1202">
+<td>1202</td><td>  <a id="1202c3" class="tk">int32_t</a> <a id="1202c11" class="tk">idx</a> = 0;</td></tr>
+<tr name="1203" id="1203">
+<td>1203</td><td>  <span class="kw">if</span> ((<a id="1203c8" class="tk">numContStates</a> <a id="1203c22" class="tk">!=</a> <a id="1203c25" class="tk">NULL</a>) <a id="1203c31" class="tk">&amp;&amp;</a> (<a id="1203c35" class="tk">numDiscStates</a> <a id="1203c49" class="tk">!=</a> <a id="1203c52" class="tk">NULL</a>) <a id="1203c58" class="tk">&amp;&amp;</a> (<a id="1203c62" class="tk">numClockTicks</a> <a id="1203c76" class="tk">!=</a></td></tr>
+<tr name="1204" id="1204">
+<td>1204</td><td>       <a id="1204c8" class="tk">NULL</a>)) <span class="br">{</span></td></tr>
+<tr name="1205" id="1205">
+<td>1205</td><td>    <span class="kw">if</span> (<a id="1205c9" class="tk">*</a><a id="1205c10" class="tk">numContStates</a> <a id="1205c24" class="tk">&lt;</a> 0 <a id="1205c28" class="tk">||</a> <a id="1205c31" class="tk">*</a><a id="1205c32" class="tk">numDiscStates</a> <a id="1205c46" class="tk">&lt;</a> 0 <a id="1205c50" class="tk">||</a> <a id="1205c53" class="tk">*</a><a id="1205c54" class="tk">numClockTicks</a> <a id="1205c68" class="tk">&lt;</a> 0) <span class="br">{</span></td></tr>
+<tr name="1206" id="1206">
+<td>1206</td><td>      <a id="1206c7" class="tk">*</a><a id="1206c8" class="tk">numContStates</a> = 0;</td></tr>
+<tr name="1207" id="1207">
+<td>1207</td><td>      <a id="1207c7" class="tk">*</a><a id="1207c8" class="tk">numDiscStates</a> = 0;</td></tr>
+<tr name="1208" id="1208">
+<td>1208</td><td>      <a id="1208c7" class="tk">*</a><a id="1208c8" class="tk">numClockTicks</a> = <a id="1208c24" class="tk">NUMST</a> <a id="1208c30" class="tk">-</a> <a id="1208c32" class="tk">TID01EQ</a>;</td></tr>
+<tr name="1209" id="1209">
+<td>1209</td><td>      <span class="kw">return</span> <a id="1209c14" class="tk">NI_OK</a>;</td></tr>
+<tr name="1210" id="1210">
+<td>1210</td><td>    <span class="br">}</span></td></tr>
+<tr name="1211" id="1211">
+<td>1211</td><td>  <span class="br">}</span></td></tr>
+<tr name="1212" id="1212">
+<td>1212</td><td></td></tr>
+<tr name="1213" id="1213">
+<td>1213</td><td>  <span class="kw">if</span> ((<a id="1213c8" class="tk">clockTicks</a> <a id="1213c19" class="tk">!=</a> <a id="1213c22" class="tk">NULL</a>) <a id="1213c28" class="tk">&amp;&amp;</a> (<a id="1213c32" class="tk">clockTicksNames</a> <a id="1213c48" class="tk">!=</a> <a id="1213c51" class="tk">NULL</a>)) <span class="br">{</span></td></tr>
+<tr name="1214" id="1214">
+<td>1214</td><td>    <a id="1214c5" class="tk">clockTicks</a>[0] = <a id="1214c21" class="tk">S</a>-&gt;<a id="1214c24" class="tk">Timing</a>.<a id="1214c31" class="tk">clockTick0</a>;</td></tr>
+<tr name="1215" id="1215">
+<td>1215</td><td>    <a id="1215c5" class="tk">strcpy</a>(<a id="1215c12" class="tk">clockTicksNames</a>, "clockTick0");</td></tr>
+<tr name="1216" id="1216">
+<td>1216</td><td>  <span class="br">}</span></td></tr>
+<tr name="1217" id="1217">
+<td>1217</td><td></td></tr>
+<tr name="1218" id="1218">
+<td>1218</td><td>  <a id="1218c3" class="tk">UNUSED_PARAMETER</a>(<a id="1218c20" class="tk">count</a>);</td></tr>
+<tr name="1219" id="1219">
+<td>1219</td><td>  <a id="1219c3" class="tk">UNUSED_PARAMETER</a>(<a id="1219c20" class="tk">idx</a>);</td></tr>
+<tr name="1220" id="1220">
+<td>1220</td><td>  <span class="kw">return</span> <a id="1220c10" class="tk">NI_OK</a>;</td></tr>
+<tr name="1221" id="1221">
+<td>1221</td><td><span class="br">}</span></td></tr>
+<tr name="1222" id="1222">
+<td>1222</td><td></td></tr>
+<tr name="1223" id="1223">
+<td>1223</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="1224" id="1224">
+<td>1224</td><td><span class="ct"> * Function: NIRT_SetSimState</span></td></tr>
+<tr name="1225" id="1225">
+<td>1225</td><td><span class="ct"> *</span></td></tr>
+<tr name="1226" id="1226">
+<td>1226</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="1227" id="1227">
+<td>1227</td><td><span class="ct"> *</span></td></tr>
+<tr name="1228" id="1228">
+<td>1228</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="1229" id="1229">
+<td>1229</td><td><span class="ct"> *	NI_OK if no error</span></td></tr>
+<tr name="1230" id="1230">
+<td>1230</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="1231" id="1231">
+<td>1231</td><td><a id="1231c1" class="tk">DLL_EXPORT</a> <a id="1231c12" class="tk">int32_t</a> <a id="1231c20" class="tk">NIRT_SetSimState</a>(<span class="kw">double</span><a id="1231c43" class="tk">*</a> <a id="1231c45" class="tk">contStates</a>, <span class="kw">double</span><a id="1231c63" class="tk">*</a> <a id="1231c65" class="tk">discStates</a>,</td></tr>
+<tr name="1232" id="1232">
+<td>1232</td><td>  <a id="1232c3" class="tk">int32_t</a><a id="1232c10" class="tk">*</a> <a id="1232c12" class="tk">clockTicks</a>)</td></tr>
+<tr name="1233" id="1233">
+<td>1233</td><td><span class="br">{</span></td></tr>
+<tr name="1234" id="1234">
+<td>1234</td><td>  <a id="1234c3" class="tk">int32_t</a> <a id="1234c11" class="tk">count</a> = 0;</td></tr>
+<tr name="1235" id="1235">
+<td>1235</td><td>  <a id="1235c3" class="tk">int32_t</a> <a id="1235c11" class="tk">idx</a> = 0;</td></tr>
+<tr name="1236" id="1236">
+<td>1236</td><td>  <span class="kw">if</span> (<a id="1236c7" class="tk">clockTicks</a> <a id="1236c18" class="tk">!=</a> <a id="1236c21" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="1237" id="1237">
+<td>1237</td><td>    <a id="1237c5" class="tk">S</a>-&gt;<a id="1237c8" class="tk">Timing</a>.<a id="1237c15" class="tk">clockTick0</a> = <a id="1237c28" class="tk">clockTicks</a>[0];</td></tr>
+<tr name="1238" id="1238">
+<td>1238</td><td>  <span class="br">}</span></td></tr>
+<tr name="1239" id="1239">
+<td>1239</td><td></td></tr>
+<tr name="1240" id="1240">
+<td>1240</td><td>  <a id="1240c3" class="tk">UNUSED_PARAMETER</a>(<a id="1240c20" class="tk">count</a>);</td></tr>
+<tr name="1241" id="1241">
+<td>1241</td><td>  <a id="1241c3" class="tk">UNUSED_PARAMETER</a>(<a id="1241c20" class="tk">idx</a>);</td></tr>
+<tr name="1242" id="1242">
+<td>1242</td><td>  <span class="kw">return</span> <a id="1242c10" class="tk">NI_OK</a>;</td></tr>
+<tr name="1243" id="1243">
+<td>1243</td><td><span class="br">}</span></td></tr>
+<tr name="1244" id="1244">
+<td>1244</td><td></td></tr>
+<tr name="1245" id="1245">
+<td>1245</td><td><span class="pp">#endif</span>                                 <span class="ct">// of NI_ROOTMODEL_feedback_control</span></td></tr>
+<tr name="1246" id="1246">
+<td>1246</td><td></td></tr>
+</table>
+</pre>
+</body>
+</html>

@@ -1,0 +1,2366 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="./js/coder_app.js"></script>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="./rtwreport_utils.js"></script>
+<script type="text/javascript" src="./rtwannotate.js"></script>
+<link rel="stylesheet" type="text/css" href="./css/coder_app.css"/>
+</head>
+<body onload="srcFileOnload();">
+<pre id="code">
+<table class="code" id="codeTbl">
+<tr name="1" id="1">
+<td>1</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="2" id="2">
+<td>2</td><td><span class="ct"> * NI VeriStand Model Framework for MathWorks Simulink (R)</span></td></tr>
+<tr name="3" id="3">
+<td>3</td><td><span class="ct"> * Core interface</span></td></tr>
+<tr name="4" id="4">
+<td>4</td><td><span class="ct"> *</span></td></tr>
+<tr name="5" id="5">
+<td>5</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="6" id="6">
+<td>6</td><td><span class="ct"> * Core functions to the NI VeriStand Model Framework interface.</span></td></tr>
+<tr name="7" id="7">
+<td>7</td><td><span class="ct"> *</span></td></tr>
+<tr name="8" id="8">
+<td>8</td><td><span class="ct"> * Compiler specified defines:</span></td></tr>
+<tr name="9" id="9">
+<td>9</td><td><span class="ct"> * RT				- Required.</span></td></tr>
+<tr name="10" id="10">
+<td>10</td><td><span class="ct"> * MODEL= modelname	- Required.</span></td></tr>
+<tr name="11" id="11">
+<td>11</td><td><span class="ct"> * NUMST=#			- Required. Number of sample times.</span></td></tr>
+<tr name="12" id="12">
+<td>12</td><td><span class="ct"> * NCSTATES=#		- Required. Number of continuous states.</span></td></tr>
+<tr name="13" id="13">
+<td>13</td><td><span class="ct"> * TID01EQ=1 or 0	- Optional. Only define to 1 if sample time task id's 0 and 1 have equal rates.</span></td></tr>
+<tr name="14" id="14">
+<td>14</td><td><span class="ct"> * MULTITASKING		- Optional. (use MT for a synonym).</span></td></tr>
+<tr name="15" id="15">
+<td>15</td><td><span class="ct"> * SAVEFILE			- Optional (non-quoted) name of .mat file to create. Default is &lt;MODEL&gt;.mat</span></td></tr>
+<tr name="16" id="16">
+<td>16</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="17" id="17">
+<td>17</td><td></td></tr>
+<tr name="18" id="18">
+<td>18</td><td><span class="pp">#include "ni_modelframework.h"</span></td></tr>
+<tr name="19" id="19">
+<td>19</td><td><span class="pp">#include &lt;float.h&gt;</span></td></tr>
+<tr name="20" id="20">
+<td>20</td><td><span class="pp">#include "tmwtypes.h"</span></td></tr>
+<tr name="21" id="21">
+<td>21</td><td><span class="pp">#include "rtmodel.h"</span></td></tr>
+<tr name="22" id="22">
+<td>22</td><td><span class="pp">#include "rt_sim.h"</span></td></tr>
+<tr name="23" id="23">
+<td>23</td><td><span class="pp">#include "rt_logging.h"</span></td></tr>
+<tr name="24" id="24">
+<td>24</td><td><span class="pp">#ifdef</span> <a id="24c8" class="tk">UseMMIDataLogging</a></td></tr>
+<tr name="25" id="25">
+<td>25</td><td><span class="pp">#include "rt_logging_mmi.h"</span></td></tr>
+<tr name="26" id="26">
+<td>26</td><td><span class="pp">#endif</span></td></tr>
+<tr name="27" id="27">
+<td>27</td><td></td></tr>
+<tr name="28" id="28">
+<td>28</td><td><span class="pp">#include "rt_nonfinite.h"</span></td></tr>
+<tr name="29" id="29">
+<td>29</td><td><span class="pp">#include "ni_modelframework_ex.h"</span></td></tr>
+<tr name="30" id="30">
+<td>30</td><td></td></tr>
+<tr name="31" id="31">
+<td>31</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="32" id="32">
+<td>32</td><td><span class="ct"> * Verify existence of required MACROS</span></td></tr>
+<tr name="33" id="33">
+<td>33</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="34" id="34">
+<td>34</td><td><span class="pp">#ifndef</span> <a id="34c9" class="tk">RT</a></td></tr>
+<tr name="35" id="35">
+<td>35</td><td><span class="pp">#error</span> "must define RT"</td></tr>
+<tr name="36" id="36">
+<td>36</td><td><span class="pp">#endif</span></td></tr>
+<tr name="37" id="37">
+<td>37</td><td></td></tr>
+<tr name="38" id="38">
+<td>38</td><td><span class="pp">#ifndef</span> <a id="38c9" class="tk">MODEL</a></td></tr>
+<tr name="39" id="39">
+<td>39</td><td><span class="pp">#error</span> "must define MODEL"</td></tr>
+<tr name="40" id="40">
+<td>40</td><td><span class="pp">#endif</span></td></tr>
+<tr name="41" id="41">
+<td>41</td><td></td></tr>
+<tr name="42" id="42">
+<td>42</td><td><span class="pp">#ifndef</span> <a id="42c9" class="tk">NUMST</a></td></tr>
+<tr name="43" id="43">
+<td>43</td><td><span class="pp">#error</span> "must define number of sample times, NUMST"</td></tr>
+<tr name="44" id="44">
+<td>44</td><td><span class="pp">#endif</span></td></tr>
+<tr name="45" id="45">
+<td>45</td><td></td></tr>
+<tr name="46" id="46">
+<td>46</td><td><span class="pp">#ifndef</span> <a id="46c9" class="tk">NCSTATES</a></td></tr>
+<tr name="47" id="47">
+<td>47</td><td><span class="pp">#error</span> "must define NCSTATES"</td></tr>
+<tr name="48" id="48">
+<td>48</td><td><span class="pp">#endif</span></td></tr>
+<tr name="49" id="49">
+<td>49</td><td></td></tr>
+<tr name="50" id="50">
+<td>50</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="51" id="51">
+<td>51</td><td><span class="ct"> * MACRO Declarations</span></td></tr>
+<tr name="52" id="52">
+<td>52</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="53" id="53">
+<td>53</td><td><span class="pp">#ifndef</span> <a id="53c9" class="tk">TRUE</a></td></tr>
+<tr name="54" id="54">
+<td>54</td><td><span class="pp">#define</span> <a id="54c9" class="tk">FALSE</a>                          (0)</td></tr>
+<tr name="55" id="55">
+<td>55</td><td><span class="pp">#define</span> <a id="55c9" class="tk">TRUE</a>                           (1)</td></tr>
+<tr name="56" id="56">
+<td>56</td><td><span class="pp">#endif</span></td></tr>
+<tr name="57" id="57">
+<td>57</td><td></td></tr>
+<tr name="58" id="58">
+<td>58</td><td><span class="pp">#ifndef</span> <a id="58c9" class="tk">EXIT_FAILURE</a></td></tr>
+<tr name="59" id="59">
+<td>59</td><td><span class="pp">#define</span> <a id="59c9" class="tk">EXIT_FAILURE</a>                   1</td></tr>
+<tr name="60" id="60">
+<td>60</td><td><span class="pp">#endif</span></td></tr>
+<tr name="61" id="61">
+<td>61</td><td></td></tr>
+<tr name="62" id="62">
+<td>62</td><td><span class="pp">#ifndef</span> <a id="62c9" class="tk">EXIT_SUCCESS</a></td></tr>
+<tr name="63" id="63">
+<td>63</td><td><span class="pp">#define</span> <a id="63c9" class="tk">EXIT_SUCCESS</a>                   0</td></tr>
+<tr name="64" id="64">
+<td>64</td><td><span class="pp">#endif</span></td></tr>
+<tr name="65" id="65">
+<td>65</td><td></td></tr>
+<tr name="66" id="66">
+<td>66</td><td><span class="pp">#ifndef</span> <a id="66c9" class="tk">SAVEFILE</a></td></tr>
+<tr name="67" id="67">
+<td>67</td><td><span class="pp">#define</span> <a id="67c9" class="tk">MATFILE2</a>(<a id="67c18" class="tk">file</a>)                 #<a id="67c41" class="tk">file</a> ".mat"</td></tr>
+<tr name="68" id="68">
+<td>68</td><td><span class="pp">#define</span> <a id="68c9" class="tk">MATFILE1</a>(<a id="68c18" class="tk">file</a>)                 <a id="68c40" class="tk">MATFILE2</a>(<a id="68c49" class="tk">file</a>)</td></tr>
+<tr name="69" id="69">
+<td>69</td><td><span class="pp">#define</span> <a id="69c9" class="tk">MATFILE</a>                        <a id="69c40" class="tk">MATFILE1</a>(<a id="69c49" class="tk">MODEL</a>)</td></tr>
+<tr name="70" id="70">
+<td>70</td><td><span class="pp">#else</span></td></tr>
+<tr name="71" id="71">
+<td>71</td><td><span class="pp">#define</span> <a id="71c9" class="tk">MATFILE</a>                        <a id="71c40" class="tk">QUOTE</a>(<a id="71c46" class="tk">SAVEFILE</a>)</td></tr>
+<tr name="72" id="72">
+<td>72</td><td><span class="pp">#endif</span></td></tr>
+<tr name="73" id="73">
+<td>73</td><td></td></tr>
+<tr name="74" id="74">
+<td>74</td><td><span class="pp">#define</span> <a id="74c9" class="tk">RUN_FOREVER</a>                    <a id="74c40" class="tk">-</a>1.0</td></tr>
+<tr name="75" id="75">
+<td>75</td><td><span class="pp">#define</span> <a id="75c9" class="tk">EXPAND_CONCAT</a>(<a id="75c23" class="tk">name1</a>,<a id="75c29" class="tk">name2</a>)     <a id="75c40" class="tk">name1</a> ## <a id="75c49" class="tk">name2</a></td></tr>
+<tr name="76" id="76">
+<td>76</td><td><span class="pp">#define</span> <a id="76c9" class="tk">CONCAT</a>(<a id="76c16" class="tk">name1</a>,<a id="76c22" class="tk">name2</a>)            <a id="76c40" class="tk">EXPAND_CONCAT</a>(<a id="76c54" class="tk">name1</a>,<a id="76c60" class="tk">name2</a>)</td></tr>
+<tr name="77" id="77">
+<td>77</td><td><span class="pp">#define</span> <a id="77c9" class="tk">RT_MODEL</a>                       <a id="77c40" class="tk">CONCAT</a>(<a id="77c47" class="tk">MODEL</a>,<a id="77c53" class="tk">_rtModel</a>)</td></tr>
+<tr name="78" id="78">
+<td>78</td><td><span class="pp">#define</span> <a id="78c9" class="tk">QUOTE1</a>(<a id="78c16" class="tk">name</a>)                   #<a id="78c41" class="tk">name</a></td></tr>
+<tr name="79" id="79">
+<td>79</td><td><span class="pp">#define</span> <a id="79c9" class="tk">QUOTE</a>(<a id="79c15" class="tk">name</a>)                    <a id="79c40" class="tk">QUOTE1</a>(<a id="79c47" class="tk">name</a>)              <span class="ct">/* need to expand name    */</span></td></tr>
+<tr name="80" id="80">
+<td>80</td><td></td></tr>
+<tr name="81" id="81">
+<td>81</td><td><span class="ct">/*</span></td></tr>
+<tr name="82" id="82">
+<td>82</td><td><span class="ct"> * NI VeriStand Model Framework API version</span></td></tr>
+<tr name="83" id="83">
+<td>83</td><td><span class="ct"> * Use NIRT_GetModelFrameworkVersion() instead to retrieve</span></td></tr>
+<tr name="84" id="84">
+<td>84</td><td><span class="ct"> * version information.</span></td></tr>
+<tr name="85" id="85">
+<td>85</td><td><span class="ct"> */</span></td></tr>
+<tr name="86" id="86">
+<td>86</td><td><a id="86c1" class="tk">NI_Version</a> <a id="86c12" class="tk">NIVS_APIversion</a> <a id="86c28" class="tk">DataSection</a>(".NIVS.APIVersion") = <span class="br">{</span> <a id="86c64" class="tk">NIMF_VER_MAJOR</a>,</td></tr>
+<tr name="87" id="87">
+<td>87</td><td>  <a id="87c3" class="tk">NIMF_VER_MINOR</a>, <a id="87c19" class="tk">NIMF_VER_FIX</a>, <a id="87c33" class="tk">NIMF_VER_BUILD</a> <span class="br">}</span>;</td></tr>
+<tr name="88" id="88">
+<td>88</td><td></td></tr>
+<tr name="89" id="89">
+<td>89</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="90" id="90">
+<td>90</td><td><span class="ct"> * Utility Function Definitions</span></td></tr>
+<tr name="91" id="91">
+<td>91</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="92" id="92">
+<td>92</td><td><span class="pp">#ifdef</span> <a id="92c8" class="tk">VXWORKS</a></td></tr>
+<tr name="93" id="93">
+<td>93</td><td></td></tr>
+<tr name="94" id="94">
+<td>94</td><td><a id="94c1" class="tk">HANDLE</a> <a id="94c8" class="tk">CreateSemaphore</a>(<span class="kw">void</span><a id="94c28" class="tk">*</a> <a id="94c30" class="tk">lpSemaphoreAttributes</a>, <span class="kw">int</span> <a id="94c57" class="tk">lInitialCount</a>, <span class="kw">int</span></td></tr>
+<tr name="95" id="95">
+<td>95</td><td>  <a id="95c3" class="tk">lMaximumCount</a>, <span class="kw">char</span><a id="95c22" class="tk">*</a> <a id="95c24" class="tk">lpName</a>)</td></tr>
+<tr name="96" id="96">
+<td>96</td><td><span class="br">{</span></td></tr>
+<tr name="97" id="97">
+<td>97</td><td>  <a id="97c3" class="tk">UNUSED_PARAMETER</a>(<a id="97c20" class="tk">lpSemaphoreAttributes</a>);</td></tr>
+<tr name="98" id="98">
+<td>98</td><td>  <a id="98c3" class="tk">UNUSED_PARAMETER</a>(<a id="98c20" class="tk">lInitialCount</a>);</td></tr>
+<tr name="99" id="99">
+<td>99</td><td>  <a id="99c3" class="tk">UNUSED_PARAMETER</a>(<a id="99c20" class="tk">lMaximumCount</a>);</td></tr>
+<tr name="100" id="100">
+<td>100</td><td>  <a id="100c3" class="tk">UNUSED_PARAMETER</a>(<a id="100c20" class="tk">lpName</a>);</td></tr>
+<tr name="101" id="101">
+<td>101</td><td>  <span class="kw">return</span> <a id="101c10" class="tk">semBCreate</a>(<a id="101c21" class="tk">SEM_Q_PRIORITY</a>, <a id="101c37" class="tk">SEM_FULL</a>);</td></tr>
+<tr name="102" id="102">
+<td>102</td><td><span class="br">}</span></td></tr>
+<tr name="103" id="103">
+<td>103</td><td></td></tr>
+<tr name="104" id="104">
+<td>104</td><td><span class="kw">void</span> <a id="104c6" class="tk">WaitForSingleObject</a>(<a id="104c26" class="tk">HANDLE</a> <a id="104c33" class="tk">hHandle</a>, <span class="kw">int</span> <a id="104c46" class="tk">dwMilliseconds</a>)</td></tr>
+<tr name="105" id="105">
+<td>105</td><td><span class="br">{</span></td></tr>
+<tr name="106" id="106">
+<td>106</td><td>  <span class="kw">int</span> <a id="106c7" class="tk">ticks</a> = <a id="106c15" class="tk">INFINITE</a>;</td></tr>
+<tr name="107" id="107">
+<td>107</td><td>  <span class="kw">if</span> (<a id="107c7" class="tk">dwMilliseconds</a> <a id="107c22" class="tk">!=</a> <a id="107c25" class="tk">INFINITE</a>) <span class="br">{</span></td></tr>
+<tr name="108" id="108">
+<td>108</td><td>    <a id="108c5" class="tk">ticks</a> = (<a id="108c14" class="tk">CLOCKS_PER_SEC</a> <a id="108c29" class="tk">*</a> (<a id="108c32" class="tk">dwMilliseconds</a><a id="108c46" class="tk">/</a>1000)) <a id="108c54" class="tk">+</a> 1;</td></tr>
+<tr name="109" id="109">
+<td>109</td><td>  <span class="br">}</span></td></tr>
+<tr name="110" id="110">
+<td>110</td><td></td></tr>
+<tr name="111" id="111">
+<td>111</td><td>  <a id="111c3" class="tk">semTake</a>(<a id="111c11" class="tk">hHandle</a>, <a id="111c20" class="tk">ticks</a>);</td></tr>
+<tr name="112" id="112">
+<td>112</td><td><span class="br">}</span></td></tr>
+<tr name="113" id="113">
+<td>113</td><td></td></tr>
+<tr name="114" id="114">
+<td>114</td><td><span class="kw">void</span> <a id="114c6" class="tk">ReleaseSemaphore</a>(<a id="114c23" class="tk">HANDLE</a> <a id="114c30" class="tk">hSemaphore</a>, <span class="kw">int</span> <a id="114c46" class="tk">lReleaseCount</a>, <span class="kw">void</span></td></tr>
+<tr name="115" id="115">
+<td>115</td><td>                      <a id="115c23" class="tk">*</a> <a id="115c25" class="tk">lpPreviousCount</a>)</td></tr>
+<tr name="116" id="116">
+<td>116</td><td><span class="br">{</span></td></tr>
+<tr name="117" id="117">
+<td>117</td><td>  <a id="117c3" class="tk">UNUSED_PARAMETER</a>(<a id="117c20" class="tk">lReleaseCount</a>);</td></tr>
+<tr name="118" id="118">
+<td>118</td><td>  <a id="118c3" class="tk">UNUSED_PARAMETER</a>(<a id="118c20" class="tk">lpPreviousCount</a>);</td></tr>
+<tr name="119" id="119">
+<td>119</td><td>  <a id="119c3" class="tk">semGive</a>(<a id="119c11" class="tk">hSemaphore</a>);</td></tr>
+<tr name="120" id="120">
+<td>120</td><td><span class="br">}</span></td></tr>
+<tr name="121" id="121">
+<td>121</td><td></td></tr>
+<tr name="122" id="122">
+<td>122</td><td><span class="kw">void</span> <a id="122c6" class="tk">CloseHandle</a>(<a id="122c18" class="tk">HANDLE</a> <a id="122c25" class="tk">hObject</a>)</td></tr>
+<tr name="123" id="123">
+<td>123</td><td><span class="br">{</span></td></tr>
+<tr name="124" id="124">
+<td>124</td><td>  <a id="124c3" class="tk">semFlush</a>(<a id="124c12" class="tk">hObject</a>);</td></tr>
+<tr name="125" id="125">
+<td>125</td><td>  <a id="125c3" class="tk">semDelete</a>(<a id="125c13" class="tk">hObject</a>);</td></tr>
+<tr name="126" id="126">
+<td>126</td><td><span class="br">}</span></td></tr>
+<tr name="127" id="127">
+<td>127</td><td></td></tr>
+<tr name="128" id="128">
+<td>128</td><td><span class="kw">void</span> <a id="128c6" class="tk">InitializeCriticalSection</a>(<a id="128c32" class="tk">CRITICAL_SECTION</a> <a id="128c49" class="tk">*</a><a id="128c50" class="tk">CriticalSection</a>)</td></tr>
+<tr name="129" id="129">
+<td>129</td><td><span class="br">{</span></td></tr>
+<tr name="130" id="130">
+<td>130</td><td>  <a id="130c3" class="tk">*</a><a id="130c4" class="tk">CriticalSection</a> = <a id="130c22" class="tk">CreateSemaphore</a>(<a id="130c38" class="tk">NULL</a>, 1, 1, <a id="130c50" class="tk">NULL</a>);</td></tr>
+<tr name="131" id="131">
+<td>131</td><td><span class="br">}</span></td></tr>
+<tr name="132" id="132">
+<td>132</td><td></td></tr>
+<tr name="133" id="133">
+<td>133</td><td><span class="kw">void</span> <a id="133c6" class="tk">EnterCriticalSection</a>(<a id="133c27" class="tk">CRITICAL_SECTION</a> <a id="133c44" class="tk">*</a><a id="133c45" class="tk">CriticalSection</a>)</td></tr>
+<tr name="134" id="134">
+<td>134</td><td><span class="br">{</span></td></tr>
+<tr name="135" id="135">
+<td>135</td><td>  <a id="135c3" class="tk">semTake</a>(<a id="135c11" class="tk">*</a><a id="135c12" class="tk">CriticalSection</a>, <a id="135c29" class="tk">WAIT_FOREVER</a>);</td></tr>
+<tr name="136" id="136">
+<td>136</td><td><span class="br">}</span></td></tr>
+<tr name="137" id="137">
+<td>137</td><td></td></tr>
+<tr name="138" id="138">
+<td>138</td><td><span class="kw">void</span> <a id="138c6" class="tk">LeaveCriticalSection</a>(<a id="138c27" class="tk">CRITICAL_SECTION</a> <a id="138c44" class="tk">*</a><a id="138c45" class="tk">CriticalSection</a>)</td></tr>
+<tr name="139" id="139">
+<td>139</td><td><span class="br">{</span></td></tr>
+<tr name="140" id="140">
+<td>140</td><td>  <a id="140c3" class="tk">semGive</a>(<a id="140c11" class="tk">*</a><a id="140c12" class="tk">CriticalSection</a>);</td></tr>
+<tr name="141" id="141">
+<td>141</td><td><span class="br">}</span></td></tr>
+<tr name="142" id="142">
+<td>142</td><td></td></tr>
+<tr name="143" id="143">
+<td>143</td><td><span class="kw">void</span> <a id="143c6" class="tk">DeleteCriticalSection</a>(<a id="143c28" class="tk">CRITICAL_SECTION</a> <a id="143c45" class="tk">*</a><a id="143c46" class="tk">CriticalSection</a>)</td></tr>
+<tr name="144" id="144">
+<td>144</td><td><span class="br">{</span></td></tr>
+<tr name="145" id="145">
+<td>145</td><td>  <a id="145c3" class="tk">semFlush</a>(<a id="145c12" class="tk">*</a><a id="145c13" class="tk">CriticalSection</a>);</td></tr>
+<tr name="146" id="146">
+<td>146</td><td>  <a id="146c3" class="tk">semDelete</a>(<a id="146c13" class="tk">*</a><a id="146c14" class="tk">CriticalSection</a>);</td></tr>
+<tr name="147" id="147">
+<td>147</td><td><span class="br">}</span></td></tr>
+<tr name="148" id="148">
+<td>148</td><td></td></tr>
+<tr name="149" id="149">
+<td>149</td><td><a id="149c1" class="tk">boolean_T</a> <a id="149c11" class="tk">_isnan</a>(<a id="149c18" class="tk">real_T</a> <a id="149c25" class="tk">value</a>)</td></tr>
+<tr name="150" id="150">
+<td>150</td><td><span class="br">{</span></td></tr>
+<tr name="151" id="151">
+<td>151</td><td>  <span class="kw">return</span> <a id="151c10" class="tk">isNan</a>(<a id="151c16" class="tk">value</a>);</td></tr>
+<tr name="152" id="152">
+<td>152</td><td><span class="br">}</span></td></tr>
+<tr name="153" id="153">
+<td>153</td><td></td></tr>
+<tr name="154" id="154">
+<td>154</td><td><span class="pp">#elif</span> <a id="154c7" class="tk">kNIOSLinux</a></td></tr>
+<tr name="155" id="155">
+<td>155</td><td></td></tr>
+<tr name="156" id="156">
+<td>156</td><td><a id="156c1" class="tk">HANDLE</a> <a id="156c8" class="tk">CreateSemaphore</a>(<span class="kw">void</span><a id="156c28" class="tk">*</a> <a id="156c30" class="tk">lpSemaphoreAttributes</a>, <span class="kw">int</span> <a id="156c57" class="tk">lInitialCount</a>, <span class="kw">int</span></td></tr>
+<tr name="157" id="157">
+<td>157</td><td>  <a id="157c3" class="tk">lMaximumCount</a>, <span class="kw">char</span><a id="157c22" class="tk">*</a> <a id="157c24" class="tk">lpName</a>)</td></tr>
+<tr name="158" id="158">
+<td>158</td><td><span class="br">{</span></td></tr>
+<tr name="159" id="159">
+<td>159</td><td>  <a id="159c3" class="tk">UNUSED_PARAMETER</a>(<a id="159c20" class="tk">lpSemaphoreAttributes</a>);</td></tr>
+<tr name="160" id="160">
+<td>160</td><td>  <a id="160c3" class="tk">UNUSED_PARAMETER</a>(<a id="160c20" class="tk">lpName</a>);</td></tr>
+<tr name="161" id="161">
+<td>161</td><td>  <a id="161c3" class="tk">UNUSED_PARAMETER</a>(<a id="161c20" class="tk">lMaximumCount</a>);</td></tr>
+<tr name="162" id="162">
+<td>162</td><td>  <a id="162c3" class="tk">HANDLE</a> <a id="162c10" class="tk">sem</a> = (<a id="162c17" class="tk">HANDLE</a>) <a id="162c25" class="tk">malloc</a>(<span class="kw">sizeof</span>(<a id="162c39" class="tk">sem_t</a>));</td></tr>
+<tr name="163" id="163">
+<td>163</td><td>  <span class="kw">int</span> <a id="163c7" class="tk">err</a> = <a id="163c13" class="tk">sem_init</a>(<a id="163c22" class="tk">sem</a>, 0, <a id="163c30" class="tk">lInitialCount</a>);</td></tr>
+<tr name="164" id="164">
+<td>164</td><td>  <span class="kw">if</span> (<a id="164c7" class="tk">err</a> <a id="164c11" class="tk">==</a> 0) <span class="br">{</span></td></tr>
+<tr name="165" id="165">
+<td>165</td><td>    <span class="kw">return</span> <a id="165c12" class="tk">sem</a>;</td></tr>
+<tr name="166" id="166">
+<td>166</td><td>  <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="167" id="167">
+<td>167</td><td>    <a id="167c5" class="tk">free</a>(<a id="167c10" class="tk">sem</a>);</td></tr>
+<tr name="168" id="168">
+<td>168</td><td>    <span class="kw">return</span> <a id="168c12" class="tk">NULL</a>;</td></tr>
+<tr name="169" id="169">
+<td>169</td><td>  <span class="br">}</span></td></tr>
+<tr name="170" id="170">
+<td>170</td><td><span class="br">}</span></td></tr>
+<tr name="171" id="171">
+<td>171</td><td></td></tr>
+<tr name="172" id="172">
+<td>172</td><td><span class="kw">void</span> <a id="172c6" class="tk">WaitForSingleObject</a>(<a id="172c26" class="tk">HANDLE</a> <a id="172c33" class="tk">hHandle</a>, <span class="kw">int</span> <a id="172c46" class="tk">dwMilliseconds</a>)</td></tr>
+<tr name="173" id="173">
+<td>173</td><td><span class="br">{</span></td></tr>
+<tr name="174" id="174">
+<td>174</td><td>  <span class="kw">if</span> (<a id="174c7" class="tk">dwMilliseconds</a> <a id="174c22" class="tk">==</a> <a id="174c25" class="tk">INFINITE</a>) <span class="br">{</span></td></tr>
+<tr name="175" id="175">
+<td>175</td><td>    <a id="175c5" class="tk">sem_wait</a>(<a id="175c14" class="tk">hHandle</a>);</td></tr>
+<tr name="176" id="176">
+<td>176</td><td>  <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="177" id="177">
+<td>177</td><td>    <span class="kw">struct</span> <a id="177c12" class="tk">timespec</a> <a id="177c21" class="tk">ts</a>;</td></tr>
+<tr name="178" id="178">
+<td>178</td><td>    <a id="178c5" class="tk">ts</a>.<a id="178c8" class="tk">tv_nsec</a> = <a id="178c18" class="tk">dwMilliseconds</a> <a id="178c33" class="tk">*</a> 10<a id="178c37" class="tk">^</a>6;</td></tr>
+<tr name="179" id="179">
+<td>179</td><td>    <a id="179c5" class="tk">sem_timedwait</a>(<a id="179c19" class="tk">hHandle</a>, <a id="179c28" class="tk">&amp;</a><a id="179c29" class="tk">ts</a>);</td></tr>
+<tr name="180" id="180">
+<td>180</td><td>  <span class="br">}</span></td></tr>
+<tr name="181" id="181">
+<td>181</td><td><span class="br">}</span></td></tr>
+<tr name="182" id="182">
+<td>182</td><td></td></tr>
+<tr name="183" id="183">
+<td>183</td><td><span class="kw">void</span> <a id="183c6" class="tk">ReleaseSemaphore</a>(<a id="183c23" class="tk">HANDLE</a> <a id="183c30" class="tk">hSemaphore</a>, <span class="kw">int</span> <a id="183c46" class="tk">lReleaseCount</a>, <span class="kw">void</span></td></tr>
+<tr name="184" id="184">
+<td>184</td><td>                      <a id="184c23" class="tk">*</a> <a id="184c25" class="tk">lpPreviousCount</a>)</td></tr>
+<tr name="185" id="185">
+<td>185</td><td><span class="br">{</span></td></tr>
+<tr name="186" id="186">
+<td>186</td><td>  <a id="186c3" class="tk">UNUSED_PARAMETER</a>(<a id="186c20" class="tk">lReleaseCount</a>);</td></tr>
+<tr name="187" id="187">
+<td>187</td><td>  <a id="187c3" class="tk">UNUSED_PARAMETER</a>(<a id="187c20" class="tk">lpPreviousCount</a>);</td></tr>
+<tr name="188" id="188">
+<td>188</td><td>  <a id="188c3" class="tk">sem_post</a>(<a id="188c12" class="tk">hSemaphore</a>);</td></tr>
+<tr name="189" id="189">
+<td>189</td><td><span class="br">}</span></td></tr>
+<tr name="190" id="190">
+<td>190</td><td></td></tr>
+<tr name="191" id="191">
+<td>191</td><td><span class="kw">void</span> <a id="191c6" class="tk">CloseHandle</a>(<a id="191c18" class="tk">HANDLE</a> <a id="191c25" class="tk">hObject</a>)</td></tr>
+<tr name="192" id="192">
+<td>192</td><td><span class="br">{</span></td></tr>
+<tr name="193" id="193">
+<td>193</td><td>  <a id="193c3" class="tk">sem_destroy</a>(<a id="193c15" class="tk">hObject</a>);</td></tr>
+<tr name="194" id="194">
+<td>194</td><td>  <a id="194c3" class="tk">free</a>(<a id="194c8" class="tk">hObject</a>);</td></tr>
+<tr name="195" id="195">
+<td>195</td><td><span class="br">}</span></td></tr>
+<tr name="196" id="196">
+<td>196</td><td></td></tr>
+<tr name="197" id="197">
+<td>197</td><td><span class="kw">void</span> <a id="197c6" class="tk">InitializeCriticalSection</a>(<a id="197c32" class="tk">CRITICAL_SECTION</a> <a id="197c49" class="tk">*</a><a id="197c50" class="tk">CriticalSection</a>)</td></tr>
+<tr name="198" id="198">
+<td>198</td><td><span class="br">{</span></td></tr>
+<tr name="199" id="199">
+<td>199</td><td>  <a id="199c3" class="tk">*</a><a id="199c4" class="tk">CriticalSection</a> = <a id="199c22" class="tk">CreateSemaphore</a>(<a id="199c38" class="tk">NULL</a>, 1, 1, <a id="199c50" class="tk">NULL</a>);</td></tr>
+<tr name="200" id="200">
+<td>200</td><td><span class="br">}</span></td></tr>
+<tr name="201" id="201">
+<td>201</td><td></td></tr>
+<tr name="202" id="202">
+<td>202</td><td><span class="kw">void</span> <a id="202c6" class="tk">EnterCriticalSection</a>(<a id="202c27" class="tk">CRITICAL_SECTION</a> <a id="202c44" class="tk">*</a><a id="202c45" class="tk">CriticalSection</a>)</td></tr>
+<tr name="203" id="203">
+<td>203</td><td><span class="br">{</span></td></tr>
+<tr name="204" id="204">
+<td>204</td><td>  <a id="204c3" class="tk">sem_wait</a>(<a id="204c12" class="tk">*</a><a id="204c13" class="tk">CriticalSection</a>);</td></tr>
+<tr name="205" id="205">
+<td>205</td><td><span class="br">}</span></td></tr>
+<tr name="206" id="206">
+<td>206</td><td></td></tr>
+<tr name="207" id="207">
+<td>207</td><td><span class="kw">void</span> <a id="207c6" class="tk">LeaveCriticalSection</a>(<a id="207c27" class="tk">CRITICAL_SECTION</a> <a id="207c44" class="tk">*</a><a id="207c45" class="tk">CriticalSection</a>)</td></tr>
+<tr name="208" id="208">
+<td>208</td><td><span class="br">{</span></td></tr>
+<tr name="209" id="209">
+<td>209</td><td>  <a id="209c3" class="tk">sem_post</a>(<a id="209c12" class="tk">*</a><a id="209c13" class="tk">CriticalSection</a>);</td></tr>
+<tr name="210" id="210">
+<td>210</td><td><span class="br">}</span></td></tr>
+<tr name="211" id="211">
+<td>211</td><td></td></tr>
+<tr name="212" id="212">
+<td>212</td><td><span class="kw">void</span> <a id="212c6" class="tk">DeleteCriticalSection</a>(<a id="212c28" class="tk">CRITICAL_SECTION</a> <a id="212c45" class="tk">*</a><a id="212c46" class="tk">CriticalSection</a>)</td></tr>
+<tr name="213" id="213">
+<td>213</td><td><span class="br">{</span></td></tr>
+<tr name="214" id="214">
+<td>214</td><td>  <a id="214c3" class="tk">CloseHandle</a>(<a id="214c15" class="tk">*</a><a id="214c16" class="tk">CriticalSection</a>);</td></tr>
+<tr name="215" id="215">
+<td>215</td><td><span class="br">}</span></td></tr>
+<tr name="216" id="216">
+<td>216</td><td></td></tr>
+<tr name="217" id="217">
+<td>217</td><td><a id="217c1" class="tk">boolean_T</a> <a id="217c11" class="tk">_isnan</a>(<a id="217c18" class="tk">real_T</a> <a id="217c25" class="tk">value</a>)</td></tr>
+<tr name="218" id="218">
+<td>218</td><td><span class="br">{</span></td></tr>
+<tr name="219" id="219">
+<td>219</td><td>  <span class="kw">return</span> <a id="219c10" class="tk">isnan</a>(<a id="219c16" class="tk">value</a>);</td></tr>
+<tr name="220" id="220">
+<td>220</td><td><span class="br">}</span></td></tr>
+<tr name="221" id="221">
+<td>221</td><td></td></tr>
+<tr name="222" id="222">
+<td>222</td><td><span class="pp">#endif</span></td></tr>
+<tr name="223" id="223">
+<td>223</td><td></td></tr>
+<tr name="224" id="224">
+<td>224</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="225" id="225">
+<td>225</td><td><span class="ct"> * External Functions</span></td></tr>
+<tr name="226" id="226">
+<td>226</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="227" id="227">
+<td>227</td><td><span class="kw">extern</span> <a id="227c8" class="tk">RT_MODEL</a> <a id="227c17" class="tk">*</a><a id="227c18" class="tk">MODEL</a>(<span class="kw">void</span>);</td></tr>
+<tr name="228" id="228">
+<td>228</td><td><span class="kw">extern</span> <span class="kw">void</span> <a id="228c13" class="tk">MdlInitializeSizes</a>(<span class="kw">void</span>);</td></tr>
+<tr name="229" id="229">
+<td>229</td><td><span class="kw">extern</span> <span class="kw">void</span> <a id="229c13" class="tk">MdlInitializeSampleTimes</a>(<span class="kw">void</span>);</td></tr>
+<tr name="230" id="230">
+<td>230</td><td><span class="kw">extern</span> <span class="kw">void</span> <a id="230c13" class="tk">MdlStart</a>(<span class="kw">void</span>);</td></tr>
+<tr name="231" id="231">
+<td>231</td><td><span class="kw">extern</span> <span class="kw">void</span> <a id="231c13" class="tk">MdlOutputs</a>(<a id="231c24" class="tk">int_T</a> <a id="231c30" class="tk">tid</a>);</td></tr>
+<tr name="232" id="232">
+<td>232</td><td><span class="kw">extern</span> <span class="kw">void</span> <a id="232c13" class="tk">MdlUpdate</a>(<a id="232c23" class="tk">int_T</a> <a id="232c29" class="tk">tid</a>);</td></tr>
+<tr name="233" id="233">
+<td>233</td><td><span class="kw">extern</span> <span class="kw">void</span> <a id="233c13" class="tk">MdlTerminate</a>(<span class="kw">void</span>);</td></tr>
+<tr name="234" id="234">
+<td>234</td><td></td></tr>
+<tr name="235" id="235">
+<td>235</td><td><span class="pp">#if</span> <a id="235c5" class="tk">NCSTATES</a> <a id="235c14" class="tk">&gt;</a> 0</td></tr>
+<tr name="236" id="236">
+<td>236</td><td></td></tr>
+<tr name="237" id="237">
+<td>237</td><td><span class="kw">extern</span> <span class="kw">void</span> <a id="237c13" class="tk">rt_ODECreateIntegrationData</a>(<a id="237c41" class="tk">RTWSolverInfo</a> <a id="237c55" class="tk">*</a><a id="237c56" class="tk">si</a>);</td></tr>
+<tr name="238" id="238">
+<td>238</td><td><span class="kw">extern</span> <span class="kw">void</span> <a id="238c13" class="tk">rt_ODEUpdateContinuousStates</a>(<a id="238c42" class="tk">RTWSolverInfo</a> <a id="238c56" class="tk">*</a><a id="238c57" class="tk">si</a>);</td></tr>
+<tr name="239" id="239">
+<td>239</td><td></td></tr>
+<tr name="240" id="240">
+<td>240</td><td><span class="pp">#define</span> <a id="240c9" class="tk">rt_CreateIntegrationData</a>(<a id="240c34" class="tk">S</a>)    <a id="240c40" class="tk">rt_ODECreateIntegrationData</a>(<a id="240c68" class="tk">rtmGetRTWSolverInfo</a>(<a id="240c88" class="tk">S</a>));</td></tr>
+<tr name="241" id="241">
+<td>241</td><td><span class="pp">#define</span> <a id="241c9" class="tk">rt_UpdateContinuousStates</a>(<a id="241c35" class="tk">S</a>)   <a id="241c40" class="tk">rt_ODEUpdateContinuousStates</a>(<a id="241c69" class="tk">rtmGetRTWSolverInfo</a>(<a id="241c89" class="tk">S</a>));</td></tr>
+<tr name="242" id="242">
+<td>242</td><td><span class="pp">#else</span></td></tr>
+<tr name="243" id="243">
+<td>243</td><td><span class="pp">#define</span> <a id="243c9" class="tk">rt_CreateIntegrationData</a>(<a id="243c34" class="tk">S</a>)    <a id="243c40" class="tk">rtsiSetSolverName</a>(<a id="243c58" class="tk">rtmGetRTWSolverInfo</a>(<a id="243c78" class="tk">S</a>),"FixedStepDiscrete");</td></tr>
+<tr name="244" id="244">
+<td>244</td><td><span class="pp">#define</span> <a id="244c9" class="tk">rt_UpdateContinuousStates</a>(<a id="244c35" class="tk">S</a>)   <a id="244c40" class="tk">rtmSetT</a>(<a id="244c48" class="tk">S</a>, <a id="244c51" class="tk">rtsiGetSolverStopTime</a>(<a id="244c73" class="tk">rtmGetRTWSolverInfo</a>(<a id="244c93" class="tk">S</a>)));</td></tr>
+<tr name="245" id="245">
+<td>245</td><td><span class="pp">#endif</span></td></tr>
+<tr name="246" id="246">
+<td>246</td><td></td></tr>
+<tr name="247" id="247">
+<td>247</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="248" id="248">
+<td>248</td><td><span class="ct"> * Global data local to this module</span></td></tr>
+<tr name="249" id="249">
+<td>249</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="250" id="250">
+<td>250</td><td><span class="kw">static</span> <span class="kw">struct</span> <span class="br">{</span></td></tr>
+<tr name="251" id="251">
+<td>251</td><td>  <a id="251c3" class="tk">int_T</a> <a id="251c9" class="tk">stopExecutionFlag</a>;</td></tr>
+<tr name="252" id="252">
+<td>252</td><td>  <a id="252c3" class="tk">int_T</a> <a id="252c9" class="tk">isrOverrun</a>;</td></tr>
+<tr name="253" id="253">
+<td>253</td><td>  <a id="253c3" class="tk">int_T</a> <a id="253c9" class="tk">overrunFlags</a>[<a id="253c22" class="tk">NUMST</a>];</td></tr>
+<tr name="254" id="254">
+<td>254</td><td>  <a id="254c3" class="tk">int_T</a> <a id="254c9" class="tk">overrunCount</a>[<a id="254c22" class="tk">NUMST</a>];</td></tr>
+<tr name="255" id="255">
+<td>255</td><td>  <a id="255c3" class="tk">int_T</a> <a id="255c9" class="tk">haltonOverrun</a>;</td></tr>
+<tr name="256" id="256">
+<td>256</td><td>  <a id="256c3" class="tk">CRITICAL_SECTION</a> <a id="256c20" class="tk">taskCriticalSection</a>;</td></tr>
+<tr name="257" id="257">
+<td>257</td><td>  <span class="kw">const</span> <a id="257c9" class="tk">char_T</a> <a id="257c16" class="tk">*</a><a id="257c17" class="tk">errmsg</a>;</td></tr>
+<tr name="258" id="258">
+<td>258</td><td>  <a id="258c3" class="tk">boolean_T</a> <a id="258c13" class="tk">isFirstTimeStep</a>;</td></tr>
+<tr name="259" id="259">
+<td>259</td><td>  <a id="259c3" class="tk">boolean_T</a> <a id="259c13" class="tk">isModelStarted</a>;</td></tr>
+<tr name="260" id="260">
+<td>260</td><td><span class="br">}</span> <a id="260c3" class="tk">SITglobals</a>;</td></tr>
+<tr name="261" id="261">
+<td>261</td><td></td></tr>
+<tr name="262" id="262">
+<td>262</td><td><a id="262c1" class="tk">_SITexportglobals</a> <a id="262c19" class="tk">SITexportglobals</a>;</td></tr>
+<tr name="263" id="263">
+<td>263</td><td><a id="263c1" class="tk">RT_MODEL</a> <a id="263c10" class="tk">*</a><a id="263c11" class="tk">S</a> = <a id="263c15" class="tk">NULL</a>;</td></tr>
+<tr name="264" id="264">
+<td>264</td><td></td></tr>
+<tr name="265" id="265">
+<td>265</td><td><span class="ct">/* Following functions are defined in &lt;model name&gt;.c */</span></td></tr>
+<tr name="266" id="266">
+<td>266</td><td><span class="kw">void</span> <a id="266c6" class="tk">SetExternalInputs</a>(<span class="kw">double</span> <a id="266c31" class="tk">*</a><a id="266c32" class="tk">data</a>, <a id="266c38" class="tk">int_T</a><a id="266c43" class="tk">*</a> <a id="266c45" class="tk">sampleHit</a>);</td></tr>
+<tr name="267" id="267">
+<td>267</td><td><span class="kw">void</span> <a id="267c6" class="tk">SetExternalOutputs</a>(<span class="kw">double</span> <a id="267c32" class="tk">*</a><a id="267c33" class="tk">data</a>, <a id="267c39" class="tk">int_T</a><a id="267c44" class="tk">*</a> <a id="267c46" class="tk">sampleHit</a>);</td></tr>
+<tr name="268" id="268">
+<td>268</td><td><a id="268c1" class="tk">int32_t</a> <a id="268c9" class="tk">NumInputPorts</a>(<span class="kw">void</span>);</td></tr>
+<tr name="269" id="269">
+<td>269</td><td><a id="269c1" class="tk">int32_t</a> <a id="269c9" class="tk">NumOutputPorts</a>(<span class="kw">void</span>);</td></tr>
+<tr name="270" id="270">
+<td>270</td><td><a id="270c1" class="tk">int32_t</a> <a id="270c9" class="tk">NI_InitParamDoubleBuf</a>(<span class="kw">void</span>);</td></tr>
+<tr name="271" id="271">
+<td>271</td><td><a id="271c1" class="tk">int32_t</a> <a id="271c9" class="tk">NI_InitializeParamStruct</a>(<span class="kw">void</span>);</td></tr>
+<tr name="272" id="272">
+<td>272</td><td><a id="272c1" class="tk">int32_t</a> <a id="272c9" class="tk">NI_InitExternalOutputs</a>(<span class="kw">void</span>);</td></tr>
+<tr name="273" id="273">
+<td>273</td><td></td></tr>
+<tr name="274" id="274">
+<td>274</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="275" id="275">
+<td>275</td><td><span class="ct"> * Function: SetSITErrorMessage</span></td></tr>
+<tr name="276" id="276">
+<td>276</td><td><span class="ct"> *</span></td></tr>
+<tr name="277" id="277">
+<td>277</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="278" id="278">
+<td>278</td><td><span class="ct"> *	Sets and prints the system's error or warning message to stderr. To clear the last message, you must first set ErrMsg to NULL.</span></td></tr>
+<tr name="279" id="279">
+<td>279</td><td><span class="ct"> *</span></td></tr>
+<tr name="280" id="280">
+<td>280</td><td><span class="ct"> * Parameters:</span></td></tr>
+<tr name="281" id="281">
+<td>281</td><td><span class="ct"> *	ErrMsg : error or warning string. First set to NULL to clear the last error message</span></td></tr>
+<tr name="282" id="282">
+<td>282</td><td><span class="ct"> *	isError : if true, the SITglobals.stopExecutionFlag is enabled and the message is reported as a Fatal Error.</span></td></tr>
+<tr name="283" id="283">
+<td>283</td><td><span class="ct"> *</span></td></tr>
+<tr name="284" id="284">
+<td>284</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="285" id="285">
+<td>285</td><td><span class="kw">void</span> <a id="285c6" class="tk">SetSITErrorMessage</a>(<span class="kw">const</span> <span class="kw">char</span> <a id="285c36" class="tk">*</a><a id="285c37" class="tk">ErrMsg</a>, <a id="285c45" class="tk">int32_t</a> <a id="285c53" class="tk">isError</a>)</td></tr>
+<tr name="286" id="286">
+<td>286</td><td><span class="br">{</span></td></tr>
+<tr name="287" id="287">
+<td>287</td><td>  <span class="ct">/* If a fatal error and one hasn't yet occurred */</span></td></tr>
+<tr name="288" id="288">
+<td>288</td><td>  <span class="kw">if</span> (<a id="288c7" class="tk">isError</a> <a id="288c15" class="tk">&amp;&amp;</a> (<a id="288c19" class="tk">SITglobals</a>.<a id="288c30" class="tk">stopExecutionFlag</a> <a id="288c48" class="tk">==</a> 0)) <span class="br">{</span></td></tr>
+<tr name="289" id="289">
+<td>289</td><td>    <span class="ct">/* Set the stop flag and forcefully set the error message by setting internal variable to NULL.*/</span></td></tr>
+<tr name="290" id="290">
+<td>290</td><td>    <a id="290c5" class="tk">SITglobals</a>.<a id="290c16" class="tk">stopExecutionFlag</a> = 1;</td></tr>
+<tr name="291" id="291">
+<td>291</td><td>    <a id="291c5" class="tk">SITglobals</a>.<a id="291c16" class="tk">errmsg</a> = <a id="291c25" class="tk">NULL</a>;</td></tr>
+<tr name="292" id="292">
+<td>292</td><td>  <span class="br">}</span></td></tr>
+<tr name="293" id="293">
+<td>293</td><td></td></tr>
+<tr name="294" id="294">
+<td>294</td><td>  <span class="ct">/* Only set the error message if it hasn't been set before. */</span></td></tr>
+<tr name="295" id="295">
+<td>295</td><td>  <span class="kw">if</span> (<a id="295c7" class="tk">SITglobals</a>.<a id="295c18" class="tk">errmsg</a> <a id="295c25" class="tk">==</a> <a id="295c28" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="296" id="296">
+<td>296</td><td>    <a id="296c5" class="tk">SITglobals</a>.<a id="296c16" class="tk">errmsg</a> = <a id="296c25" class="tk">ErrMsg</a>;</td></tr>
+<tr name="297" id="297">
+<td>297</td><td>  <span class="br">}</span></td></tr>
+<tr name="298" id="298">
+<td>298</td><td></td></tr>
+<tr name="299" id="299">
+<td>299</td><td>  <span class="ct">/* Print the error\warning message */</span></td></tr>
+<tr name="300" id="300">
+<td>300</td><td>  <span class="kw">if</span> (<a id="300c7" class="tk">SITglobals</a>.<a id="300c18" class="tk">errmsg</a> <a id="300c25" class="tk">!=</a> <a id="300c28" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="301" id="301">
+<td>301</td><td>    <span class="kw">if</span> (<a id="301c9" class="tk">isError</a>) <span class="br">{</span></td></tr>
+<tr name="302" id="302">
+<td>302</td><td>      (<span class="kw">void</span>)<a id="302c13" class="tk">fprintf</a>(<a id="302c21" class="tk">stderr</a>,"VeriStand Error: %s\n", <a id="302c53" class="tk">SITglobals</a>.<a id="302c64" class="tk">errmsg</a>);</td></tr>
+<tr name="303" id="303">
+<td>303</td><td>    <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="304" id="304">
+<td>304</td><td>      (<span class="kw">void</span>)<a id="304c13" class="tk">fprintf</a>(<a id="304c21" class="tk">stderr</a>,"VeriStand Warning: %s\n", <a id="304c55" class="tk">SITglobals</a>.<a id="304c66" class="tk">errmsg</a>);</td></tr>
+<tr name="305" id="305">
+<td>305</td><td>    <span class="br">}</span></td></tr>
+<tr name="306" id="306">
+<td>306</td><td>  <span class="br">}</span></td></tr>
+<tr name="307" id="307">
+<td>307</td><td><span class="br">}</span></td></tr>
+<tr name="308" id="308">
+<td>308</td><td></td></tr>
+<tr name="309" id="309">
+<td>309</td><td><span class="pp">#ifndef</span> <a id="309c9" class="tk">MULTITASKING</a>                   <span class="ct">/* SINGLETASKING */</span></td></tr>
+<tr name="310" id="310">
+<td>310</td><td><span class="pp">#define</span> <a id="310c9" class="tk">FIRST_TID</a>                      0</td></tr>
+<tr name="311" id="311">
+<td>311</td><td></td></tr>
+<tr name="312" id="312">
+<td>312</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="313" id="313">
+<td>313</td><td><span class="ct"> * Function: rtOneStep</span></td></tr>
+<tr name="314" id="314">
+<td>314</td><td><span class="ct"> *</span></td></tr>
+<tr name="315" id="315">
+<td>315</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="316" id="316">
+<td>316</td><td><span class="ct"> *	Perform one step of the model. This function is modeled such that</span></td></tr>
+<tr name="317" id="317">
+<td>317</td><td><span class="ct"> *	it could be called from an interrupt service routine (ISR) with minor</span></td></tr>
+<tr name="318" id="318">
+<td>318</td><td><span class="ct"> *	modifications.</span></td></tr>
+<tr name="319" id="319">
+<td>319</td><td><span class="ct"> *</span></td></tr>
+<tr name="320" id="320">
+<td>320</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="321" id="321">
+<td>321</td><td><span class="ct"> *     NI_OK if no error.</span></td></tr>
+<tr name="322" id="322">
+<td>322</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="323" id="323">
+<td>323</td><td><span class="kw">static</span> <a id="323c8" class="tk">int32_t</a> <a id="323c16" class="tk">rt_OneStep</a>(<a id="323c27" class="tk">RT_MODEL</a> <a id="323c36" class="tk">*</a><a id="323c37" class="tk">S</a>, <span class="kw">double</span> <a id="323c47" class="tk">*</a><a id="323c48" class="tk">inData</a>)</td></tr>
+<tr name="324" id="324">
+<td>324</td><td><span class="br">{</span></td></tr>
+<tr name="325" id="325">
+<td>325</td><td>  <a id="325c3" class="tk">real_T</a> <a id="325c10" class="tk">tnext</a> = 0;</td></tr>
+<tr name="326" id="326">
+<td>326</td><td>  <a id="326c3" class="tk">int_T</a> <a id="326c9" class="tk">*</a><a id="326c10" class="tk">sampleHit</a> = <a id="326c22" class="tk">rtmGetSampleHitPtr</a>(<a id="326c41" class="tk">S</a>);</td></tr>
+<tr name="327" id="327">
+<td>327</td><td></td></tr>
+<tr name="328" id="328">
+<td>328</td><td>  <span class="ct">/***********************************************</span></td></tr>
+<tr name="329" id="329">
+<td>329</td><td><span class="ct">   * Check and see if base step time is too fast *</span></td></tr>
+<tr name="330" id="330">
+<td>330</td><td><span class="ct">   ***********************************************/</span></td></tr>
+<tr name="331" id="331">
+<td>331</td><td>  <span class="kw">if</span> (<a id="331c7" class="tk">SITglobals</a>.<a id="331c18" class="tk">isrOverrun</a><a id="331c28" class="tk">++</a>) <span class="br">{</span></td></tr>
+<tr name="332" id="332">
+<td>332</td><td>    <a id="332c5" class="tk">SITglobals</a>.<a id="332c16" class="tk">stopExecutionFlag</a> = 1;</td></tr>
+<tr name="333" id="333">
+<td>333</td><td>    <span class="kw">return</span> <a id="333c12" class="tk">-</a>1;</td></tr>
+<tr name="334" id="334">
+<td>334</td><td>  <span class="br">}</span></td></tr>
+<tr name="335" id="335">
+<td>335</td><td></td></tr>
+<tr name="336" id="336">
+<td>336</td><td>  <span class="ct">/***********************************************</span></td></tr>
+<tr name="337" id="337">
+<td>337</td><td><span class="ct">   * Check and see if error status has been set  *</span></td></tr>
+<tr name="338" id="338">
+<td>338</td><td><span class="ct">   ***********************************************/</span></td></tr>
+<tr name="339" id="339">
+<td>339</td><td>  <span class="kw">if</span> (<a id="339c7" class="tk">rtmGetErrorStatus</a>(<a id="339c25" class="tk">S</a>) <a id="339c28" class="tk">!=</a> <a id="339c31" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="340" id="340">
+<td>340</td><td>    <a id="340c5" class="tk">SITglobals</a>.<a id="340c16" class="tk">stopExecutionFlag</a> = 1;</td></tr>
+<tr name="341" id="341">
+<td>341</td><td>    <span class="kw">return</span> <a id="341c12" class="tk">-</a>1;</td></tr>
+<tr name="342" id="342">
+<td>342</td><td>  <span class="br">}</span></td></tr>
+<tr name="343" id="343">
+<td>343</td><td></td></tr>
+<tr name="344" id="344">
+<td>344</td><td>  <span class="ct">/* enable interrupts here */</span></td></tr>
+<tr name="345" id="345">
+<td>345</td><td>  <a id="345c3" class="tk">SetExternalInputs</a>(<a id="345c21" class="tk">inData</a>, <a id="345c29" class="tk">sampleHit</a>);</td></tr>
+<tr name="346" id="346">
+<td>346</td><td>  <a id="346c3" class="tk">tnext</a> = <a id="346c11" class="tk">rt_SimGetNextSampleHit</a>();</td></tr>
+<tr name="347" id="347">
+<td>347</td><td>  <a id="347c3" class="tk">rtsiSetSolverStopTime</a>(<a id="347c25" class="tk">rtmGetRTWSolverInfo</a>(<a id="347c45" class="tk">S</a>),<a id="347c48" class="tk">tnext</a>);</td></tr>
+<tr name="348" id="348">
+<td>348</td><td>  <a id="348c3" class="tk">MdlOutputs</a>(0);</td></tr>
+<tr name="349" id="349">
+<td>349</td><td>  <a id="349c3" class="tk">SITglobals</a>.<a id="349c14" class="tk">isrOverrun</a><a id="349c24" class="tk">--</a>;</td></tr>
+<tr name="350" id="350">
+<td>350</td><td>  <span class="kw">return</span> <a id="350c10" class="tk">NI_OK</a>;</td></tr>
+<tr name="351" id="351">
+<td>351</td><td><span class="br">}</span>                                      <span class="ct">/* end rtOneStep */</span></td></tr>
+<tr name="352" id="352">
+<td>352</td><td></td></tr>
+<tr name="353" id="353">
+<td>353</td><td><span class="pp">#else</span>                                  <span class="ct">/* MULTITASKING */</span></td></tr>
+<tr name="354" id="354">
+<td>354</td><td><span class="pp">#if</span> <a id="354c5" class="tk">TID01EQ</a> <a id="354c13" class="tk">==</a> 1</td></tr>
+<tr name="355" id="355">
+<td>355</td><td><span class="pp">#define</span> <a id="355c9" class="tk">FIRST_TID</a>                      1</td></tr>
+<tr name="356" id="356">
+<td>356</td><td><span class="pp">#else</span></td></tr>
+<tr name="357" id="357">
+<td>357</td><td><span class="pp">#define</span> <a id="357c9" class="tk">FIRST_TID</a>                      0</td></tr>
+<tr name="358" id="358">
+<td>358</td><td><span class="pp">#endif</span></td></tr>
+<tr name="359" id="359">
+<td>359</td><td></td></tr>
+<tr name="360" id="360">
+<td>360</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="361" id="361">
+<td>361</td><td><span class="ct"> * Function: SCHEDULER</span></td></tr>
+<tr name="362" id="362">
+<td>362</td><td><span class="ct"> *</span></td></tr>
+<tr name="363" id="363">
+<td>363</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="364" id="364">
+<td>364</td><td><span class="ct"> *	Computes SampleHits for tasks in the model.</span></td></tr>
+<tr name="365" id="365">
+<td>365</td><td><span class="ct"> *</span></td></tr>
+<tr name="366" id="366">
+<td>366</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="367" id="367">
+<td>367</td><td><span class="ct"> *	NI_OK if no error.</span></td></tr>
+<tr name="368" id="368">
+<td>368</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="369" id="369">
+<td>369</td><td><span class="kw">static</span> <a id="369c8" class="tk">int32_t</a> <a id="369c16" class="tk">SCHEDULER</a>(<a id="369c26" class="tk">RT_MODEL</a> <a id="369c35" class="tk">*</a><a id="369c36" class="tk">S</a>)</td></tr>
+<tr name="370" id="370">
+<td>370</td><td><span class="br">{</span></td></tr>
+<tr name="371" id="371">
+<td>371</td><td>  <a id="371c3" class="tk">int_T</a> <a id="371c9" class="tk">i</a> = 0;</td></tr>
+<tr name="372" id="372">
+<td>372</td><td>  <a id="372c3" class="tk">real_T</a> <a id="372c10" class="tk">tnext</a> = 0;</td></tr>
+<tr name="373" id="373">
+<td>373</td><td>  <a id="373c3" class="tk">int_T</a> <a id="373c9" class="tk">*</a><a id="373c10" class="tk">sampleHit</a> = <a id="373c22" class="tk">rtmGetSampleHitPtr</a>(<a id="373c41" class="tk">S</a>);</td></tr>
+<tr name="374" id="374">
+<td>374</td><td></td></tr>
+<tr name="375" id="375">
+<td>375</td><td>  <span class="ct">/***********************************************</span></td></tr>
+<tr name="376" id="376">
+<td>376</td><td><span class="ct">   * Check and see if base step time is too fast *</span></td></tr>
+<tr name="377" id="377">
+<td>377</td><td><span class="ct">   ***********************************************/</span></td></tr>
+<tr name="378" id="378">
+<td>378</td><td>  <span class="kw">if</span> (<a id="378c7" class="tk">SITglobals</a>.<a id="378c18" class="tk">isrOverrun</a><a id="378c28" class="tk">++</a>) <span class="br">{</span></td></tr>
+<tr name="379" id="379">
+<td>379</td><td>    <a id="379c5" class="tk">SITglobals</a>.<a id="379c16" class="tk">stopExecutionFlag</a> = 1;</td></tr>
+<tr name="380" id="380">
+<td>380</td><td>    <span class="kw">return</span> <a id="380c12" class="tk">-</a>1;</td></tr>
+<tr name="381" id="381">
+<td>381</td><td>  <span class="br">}</span></td></tr>
+<tr name="382" id="382">
+<td>382</td><td></td></tr>
+<tr name="383" id="383">
+<td>383</td><td>  <span class="ct">/***********************************************</span></td></tr>
+<tr name="384" id="384">
+<td>384</td><td><span class="ct">   * Check and see if error status has been set  *</span></td></tr>
+<tr name="385" id="385">
+<td>385</td><td><span class="ct">   ***********************************************/</span></td></tr>
+<tr name="386" id="386">
+<td>386</td><td>  <span class="kw">if</span> (<a id="386c7" class="tk">rtmGetErrorStatus</a>(<a id="386c25" class="tk">S</a>) <a id="386c28" class="tk">!=</a> <a id="386c31" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="387" id="387">
+<td>387</td><td>    <a id="387c5" class="tk">SITglobals</a>.<a id="387c16" class="tk">stopExecutionFlag</a> = 1;</td></tr>
+<tr name="388" id="388">
+<td>388</td><td>    <span class="kw">return</span> <a id="388c12" class="tk">-</a>1;</td></tr>
+<tr name="389" id="389">
+<td>389</td><td>  <span class="br">}</span></td></tr>
+<tr name="390" id="390">
+<td>390</td><td></td></tr>
+<tr name="391" id="391">
+<td>391</td><td>  <span class="ct">/* compute next cycle hits */</span></td></tr>
+<tr name="392" id="392">
+<td>392</td><td>  <a id="392c3" class="tk">tnext</a> = <a id="392c11" class="tk">rt_SimUpdateDiscreteEvents</a>(<a id="392c38" class="tk">rtmGetNumSampleTimes</a>(<a id="392c59" class="tk">S</a>),</td></tr>
+<tr name="393" id="393">
+<td>393</td><td>    <a id="393c5" class="tk">rtmGetTimingData</a>(<a id="393c22" class="tk">S</a>),</td></tr>
+<tr name="394" id="394">
+<td>394</td><td>    <a id="394c5" class="tk">rtmGetSampleHitPtr</a>(<a id="394c24" class="tk">S</a>),</td></tr>
+<tr name="395" id="395">
+<td>395</td><td>    <a id="395c5" class="tk">rtmGetPerTaskSampleHitsPtr</a>(<a id="395c32" class="tk">S</a>));</td></tr>
+<tr name="396" id="396">
+<td>396</td><td>  <a id="396c3" class="tk">rtsiSetSolverStopTime</a>(<a id="396c25" class="tk">rtmGetRTWSolverInfo</a>(<a id="396c45" class="tk">S</a>),<a id="396c48" class="tk">tnext</a>);</td></tr>
+<tr name="397" id="397">
+<td>397</td><td></td></tr>
+<tr name="398" id="398">
+<td>398</td><td>  <span class="ct">/*********************************************</span></td></tr>
+<tr name="399" id="399">
+<td>399</td><td><span class="ct">   * Step the model for any other sample times *</span></td></tr>
+<tr name="400" id="400">
+<td>400</td><td><span class="ct">   *********************************************/</span></td></tr>
+<tr name="401" id="401">
+<td>401</td><td>  <span class="kw">for</span> (<a id="401c8" class="tk">i</a>=1<a id="401c11" class="tk">+</a><a id="401c12" class="tk">FIRST_TID</a>; <a id="401c23" class="tk">i</a><a id="401c24" class="tk">&lt;</a><a id="401c25" class="tk">NUMST</a>; <a id="401c32" class="tk">i</a><a id="401c33" class="tk">++</a>) <span class="br">{</span></td></tr>
+<tr name="402" id="402">
+<td>402</td><td>    <span class="kw">if</span> (<a id="402c9" class="tk">sampleHit</a>[<a id="402c19" class="tk">i</a>]) <span class="br">{</span></td></tr>
+<tr name="403" id="403">
+<td>403</td><td>      <span class="ct">/*	if sampleHit, mark the overrunFlag : if the flag is already marked,</span></td></tr>
+<tr name="404" id="404">
+<td>404</td><td><span class="ct">         the task has not finished its run from last sampleHit.</span></td></tr>
+<tr name="405" id="405">
+<td>405</td><td><span class="ct">         Marking the flag in scheduler instead of in the task:</span></td></tr>
+<tr name="406" id="406">
+<td>406</td><td><span class="ct">         To detect the case of overrun when the task cannot even start</span></td></tr>
+<tr name="407" id="407">
+<td>407</td><td><span class="ct">         execution even though it is scheduled</span></td></tr>
+<tr name="408" id="408">
+<td>408</td><td><span class="ct">       */</span></td></tr>
+<tr name="409" id="409">
+<td>409</td><td>      <span class="kw">if</span> (<a id="409c11" class="tk">SITglobals</a>.<a id="409c22" class="tk">overrunFlags</a>[<a id="409c35" class="tk">i</a>] <a id="409c38" class="tk">&gt;</a> 0) <span class="br">{</span></td></tr>
+<tr name="410" id="410">
+<td>410</td><td>        <span class="ct">// check for overrun</span></td></tr>
+<tr name="411" id="411">
+<td>411</td><td>        <a id="411c9" class="tk">printf</a>("overrun in task %d: %d\n", <a id="411c44" class="tk">i</a>, <a id="411c47" class="tk">SITglobals</a>.<a id="411c58" class="tk">overrunFlags</a>[<a id="411c71" class="tk">i</a>]);</td></tr>
+<tr name="412" id="412">
+<td>412</td><td>        <a id="412c9" class="tk">SITglobals</a>.<a id="412c20" class="tk">overrunCount</a>[<a id="412c33" class="tk">i</a>]<a id="412c35" class="tk">++</a>;  <span class="ct">// update counter</span></td></tr>
+<tr name="413" id="413">
+<td>413</td><td>        <span class="kw">if</span> (<a id="413c13" class="tk">SITglobals</a>.<a id="413c24" class="tk">haltonOverrun</a>) <span class="br">{</span></td></tr>
+<tr name="414" id="414">
+<td>414</td><td>          <a id="414c11" class="tk">SetSITErrorMessage</a>("Task Overran", 1);</td></tr>
+<tr name="415" id="415">
+<td>415</td><td>        <span class="br">}</span></td></tr>
+<tr name="416" id="416">
+<td>416</td><td>      <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="417" id="417">
+<td>417</td><td>        <a id="417c9" class="tk">SITglobals</a>.<a id="417c20" class="tk">overrunFlags</a>[<a id="417c33" class="tk">i</a>] = 1;</td></tr>
+<tr name="418" id="418">
+<td>418</td><td>      <span class="br">}</span></td></tr>
+<tr name="419" id="419">
+<td>419</td><td>    <span class="br">}</span></td></tr>
+<tr name="420" id="420">
+<td>420</td><td>  <span class="br">}</span></td></tr>
+<tr name="421" id="421">
+<td>421</td><td></td></tr>
+<tr name="422" id="422">
+<td>422</td><td>  <a id="422c3" class="tk">SITglobals</a>.<a id="422c14" class="tk">isrOverrun</a><a id="422c24" class="tk">--</a>;</td></tr>
+<tr name="423" id="423">
+<td>423</td><td>  <span class="kw">return</span> <a id="423c10" class="tk">NI_OK</a>;</td></tr>
+<tr name="424" id="424">
+<td>424</td><td><span class="br">}</span>                                      <span class="ct">/* end SCHEDULER */</span></td></tr>
+<tr name="425" id="425">
+<td>425</td><td></td></tr>
+<tr name="426" id="426">
+<td>426</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="427" id="427">
+<td>427</td><td><span class="ct"> * Function: NIRT_ScheduleTasks2</span></td></tr>
+<tr name="428" id="428">
+<td>428</td><td><span class="ct"> *</span></td></tr>
+<tr name="429" id="429">
+<td>429</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="430" id="430">
+<td>430</td><td><span class="ct"> *	Determines the sub tasks to execute next. We do not run the other tasks here, they are</span></td></tr>
+<tr name="431" id="431">
+<td>431</td><td><span class="ct"> *	executed separately through NIRT_TaskTakeOneStep)</span></td></tr>
+<tr name="432" id="432">
+<td>432</td><td><span class="ct"> *</span></td></tr>
+<tr name="433" id="433">
+<td>433</td><td><span class="ct"> * Output Parameters:</span></td></tr>
+<tr name="434" id="434">
+<td>434</td><td><span class="ct"> *	dispatchtasks	: Array size of NUMST.  This defines the next task to execute. dispatchtasks[0] is the base task.</span></td></tr>
+<tr name="435" id="435">
+<td>435</td><td><span class="ct"> *	isFirstSchedule	: true if executing the first time step</span></td></tr>
+<tr name="436" id="436">
+<td>436</td><td><span class="ct"> *</span></td></tr>
+<tr name="437" id="437">
+<td>437</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="438" id="438">
+<td>438</td><td><span class="ct"> *	NI_OK if no error.</span></td></tr>
+<tr name="439" id="439">
+<td>439</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="440" id="440">
+<td>440</td><td><a id="440c1" class="tk">DLL_EXPORT</a> <a id="440c12" class="tk">int32_t</a> <a id="440c20" class="tk">NIRT_ScheduleTasks2</a>(<a id="440c40" class="tk">int32_t</a> <a id="440c48" class="tk">*</a><a id="440c49" class="tk">dispatchtasks</a>, <span class="kw">char</span></td></tr>
+<tr name="441" id="441">
+<td>441</td><td>  <a id="441c3" class="tk">*</a><a id="441c4" class="tk">isFirstSchedule</a>)</td></tr>
+<tr name="442" id="442">
+<td>442</td><td><span class="br">{</span></td></tr>
+<tr name="443" id="443">
+<td>443</td><td></td></tr>
+<tr name="444" id="444">
+<td>444</td><td><span class="pp">#ifndef</span> <a id="444c9" class="tk">MULTITASKING</a></td></tr>
+<tr name="445" id="445">
+<td>445</td><td></td></tr>
+<tr name="446" id="446">
+<td>446</td><td>  <a id="446c3" class="tk">SetSITErrorMessage</a>("Called ScheduleTasks2() for a single-rate model.  Use Schedule() instead.",</td></tr>
+<tr name="447" id="447">
+<td>447</td><td>                     1);</td></tr>
+<tr name="448" id="448">
+<td>448</td><td>  <span class="kw">return</span> <a id="448c10" class="tk">NI_ERROR</a>;</td></tr>
+<tr name="449" id="449">
+<td>449</td><td></td></tr>
+<tr name="450" id="450">
+<td>450</td><td><span class="pp">#else</span></td></tr>
+<tr name="451" id="451">
+<td>451</td><td></td></tr>
+<tr name="452" id="452">
+<td>452</td><td>  <a id="452c3" class="tk">int32_t</a> <a id="452c11" class="tk">tid</a> = 0;</td></tr>
+<tr name="453" id="453">
+<td>453</td><td>  <a id="453c3" class="tk">int32_t</a> <a id="453c11" class="tk">retVal</a> = 0;</td></tr>
+<tr name="454" id="454">
+<td>454</td><td>  <a id="454c3" class="tk">int_T</a> <a id="454c9" class="tk">*</a><a id="454c10" class="tk">sampleHits</a> = <a id="454c23" class="tk">rtmGetSampleHitPtr</a>(<a id="454c42" class="tk">S</a>);</td></tr>
+<tr name="455" id="455">
+<td>455</td><td>  <a id="455c3" class="tk">retVal</a> = <a id="455c12" class="tk">SCHEDULER</a>(<a id="455c22" class="tk">S</a>);</td></tr>
+<tr name="456" id="456">
+<td>456</td><td>  <span class="kw">if</span> (<a id="456c7" class="tk">retVal</a> <a id="456c14" class="tk">==</a> 0) <span class="br">{</span></td></tr>
+<tr name="457" id="457">
+<td>457</td><td>    <span class="ct">/* Update with list of scheduled tasks.*/</span></td></tr>
+<tr name="458" id="458">
+<td>458</td><td>    <span class="kw">for</span> (<a id="458c10" class="tk">tid</a>=0; <a id="458c17" class="tk">tid</a><a id="458c20" class="tk">&lt;</a><a id="458c21" class="tk">NUMST</a>; <a id="458c28" class="tk">tid</a><a id="458c31" class="tk">++</a>) <span class="br">{</span></td></tr>
+<tr name="459" id="459">
+<td>459</td><td>      <a id="459c7" class="tk">dispatchtasks</a>[<a id="459c21" class="tk">tid</a>] = <a id="459c28" class="tk">sampleHits</a>[<a id="459c39" class="tk">tid</a> <a id="459c43" class="tk">+</a> <a id="459c45" class="tk">TID01EQ</a>];</td></tr>
+<tr name="460" id="460">
+<td>460</td><td>    <span class="br">}</span></td></tr>
+<tr name="461" id="461">
+<td>461</td><td>  <span class="br">}</span></td></tr>
+<tr name="462" id="462">
+<td>462</td><td></td></tr>
+<tr name="463" id="463">
+<td>463</td><td>  <a id="463c3" class="tk">*</a><a id="463c4" class="tk">isFirstSchedule</a> = <a id="463c22" class="tk">SITglobals</a>.<a id="463c33" class="tk">isFirstTimeStep</a>;</td></tr>
+<tr name="464" id="464">
+<td>464</td><td>  <span class="kw">return</span> <a id="464c10" class="tk">retVal</a>;</td></tr>
+<tr name="465" id="465">
+<td>465</td><td></td></tr>
+<tr name="466" id="466">
+<td>466</td><td><span class="pp">#endif</span></td></tr>
+<tr name="467" id="467">
+<td>467</td><td></td></tr>
+<tr name="468" id="468">
+<td>468</td><td><span class="br">}</span></td></tr>
+<tr name="469" id="469">
+<td>469</td><td></td></tr>
+<tr name="470" id="470">
+<td>470</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="471" id="471">
+<td>471</td><td><span class="ct"> * Function: rt_OneStepTask</span></td></tr>
+<tr name="472" id="472">
+<td>472</td><td><span class="ct"> *</span></td></tr>
+<tr name="473" id="473">
+<td>473</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="474" id="474">
+<td>474</td><td><span class="ct"> *	Takes one step for the task specified by tid</span></td></tr>
+<tr name="475" id="475">
+<td>475</td><td><span class="ct"> *</span></td></tr>
+<tr name="476" id="476">
+<td>476</td><td><span class="ct"> * Input Parameters:</span></td></tr>
+<tr name="477" id="477">
+<td>477</td><td><span class="ct"> *	S		: Pointer to model information</span></td></tr>
+<tr name="478" id="478">
+<td>478</td><td><span class="ct"> *	tid		: Task ID to step</span></td></tr>
+<tr name="479" id="479">
+<td>479</td><td><span class="ct"> *	inData	: Pointer to inport data. Ignored unless it is the FIRST_TID (aka base rate).</span></td></tr>
+<tr name="480" id="480">
+<td>480</td><td><span class="ct"> *</span></td></tr>
+<tr name="481" id="481">
+<td>481</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="482" id="482">
+<td>482</td><td><span class="ct"> *	1 if this is the last task to execute for a time step</span></td></tr>
+<tr name="483" id="483">
+<td>483</td><td><span class="ct"> *	0 if other tasks still need to execute</span></td></tr>
+<tr name="484" id="484">
+<td>484</td><td><span class="ct"> *	-1 if an error occurred</span></td></tr>
+<tr name="485" id="485">
+<td>485</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="486" id="486">
+<td>486</td><td><span class="kw">static</span> <a id="486c8" class="tk">int32_t</a> <a id="486c16" class="tk">rt_OneStepTask</a>(<a id="486c31" class="tk">RT_MODEL</a> <a id="486c40" class="tk">*</a><a id="486c41" class="tk">S</a>, <a id="486c44" class="tk">int32_t</a> <a id="486c52" class="tk">tid</a>, <span class="kw">double</span> <a id="486c64" class="tk">*</a><a id="486c65" class="tk">inData</a>)</td></tr>
+<tr name="487" id="487">
+<td>487</td><td><span class="br">{</span></td></tr>
+<tr name="488" id="488">
+<td>488</td><td>  <span class="kw">if</span> (<a id="488c7" class="tk">tid</a> <a id="488c11" class="tk">==</a> <a id="488c14" class="tk">FIRST_TID</a>) <span class="br">{</span></td></tr>
+<tr name="489" id="489">
+<td>489</td><td>    <span class="ct">/* Return if there has been a previous error */</span></td></tr>
+<tr name="490" id="490">
+<td>490</td><td>    <span class="kw">if</span> (<a id="490c9" class="tk">SITglobals</a>.<a id="490c20" class="tk">stopExecutionFlag</a>) <span class="br">{</span></td></tr>
+<tr name="491" id="491">
+<td>491</td><td>      <span class="kw">return</span> <a id="491c14" class="tk">-</a>1;</td></tr>
+<tr name="492" id="492">
+<td>492</td><td>    <span class="br">}</span></td></tr>
+<tr name="493" id="493">
+<td>493</td><td></td></tr>
+<tr name="494" id="494">
+<td>494</td><td>    <span class="ct">/*******************************************</span></td></tr>
+<tr name="495" id="495">
+<td>495</td><td><span class="ct">     * Step the model for the base sample time *</span></td></tr>
+<tr name="496" id="496">
+<td>496</td><td><span class="ct">     *******************************************/</span></td></tr>
+<tr name="497" id="497">
+<td>497</td><td>    <span class="kw">if</span> ((<a id="497c10" class="tk">inData</a> <a id="497c17" class="tk">==</a> <a id="497c20" class="tk">NULL</a>) <a id="497c26" class="tk">&amp;&amp;</a> (<a id="497c30" class="tk">NumInputPorts</a>() <a id="497c46" class="tk">&gt;</a> 0)) <span class="br">{</span></td></tr>
+<tr name="498" id="498">
+<td>498</td><td>      <span class="ct">/* For baserate (FIRST_TID) we need inData, but only set error message if it hasn't been set yet */</span></td></tr>
+<tr name="499" id="499">
+<td>499</td><td>      <a id="499c7" class="tk">SetSITErrorMessage</a>("External Input data array is NULL for base rate task",</td></tr>
+<tr name="500" id="500">
+<td>500</td><td>                         1);</td></tr>
+<tr name="501" id="501">
+<td>501</td><td>      <span class="kw">return</span> <a id="501c14" class="tk">-</a>1;</td></tr>
+<tr name="502" id="502">
+<td>502</td><td>    <span class="br">}</span></td></tr>
+<tr name="503" id="503">
+<td>503</td><td></td></tr>
+<tr name="504" id="504">
+<td>504</td><td>    <span class="ct">/* MdlUpdate is not executed on the first iteration. */</span></td></tr>
+<tr name="505" id="505">
+<td>505</td><td></td></tr>
+<tr name="506" id="506">
+<td>506</td><td>    <span class="ct">/* pull inport data in from caller */</span></td></tr>
+<tr name="507" id="507">
+<td>507</td><td>    <a id="507c5" class="tk">SetExternalInputs</a>(<a id="507c23" class="tk">inData</a>, <a id="507c31" class="tk">rtmGetSampleHitPtr</a>(<a id="507c50" class="tk">S</a>));</td></tr>
+<tr name="508" id="508">
+<td>508</td><td>    <a id="508c5" class="tk">MdlOutputs</a>(<a id="508c16" class="tk">FIRST_TID</a>);</td></tr>
+<tr name="509" id="509">
+<td>509</td><td>  <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="510" id="510">
+<td>510</td><td>    <span class="ct">/*********************************************</span></td></tr>
+<tr name="511" id="511">
+<td>511</td><td><span class="ct">     * Step the model for any other sample times *</span></td></tr>
+<tr name="512" id="512">
+<td>512</td><td><span class="ct">     *********************************************/</span></td></tr>
+<tr name="513" id="513">
+<td>513</td><td>    <span class="kw">if</span> ((<a id="513c10" class="tk">tid</a> <a id="513c14" class="tk">&lt;</a> (<a id="513c17" class="tk">FIRST_TID</a><a id="513c26" class="tk">+</a>1)) <a id="513c31" class="tk">||</a> (<a id="513c35" class="tk">tid</a> <a id="513c39" class="tk">&gt;=</a> <a id="513c42" class="tk">NUMST</a>) ) <span class="br">{</span></td></tr>
+<tr name="514" id="514">
+<td>514</td><td>      <span class="kw">return</span> <a id="514c14" class="tk">-</a>1;</td></tr>
+<tr name="515" id="515">
+<td>515</td><td>    <span class="br">}</span></td></tr>
+<tr name="516" id="516">
+<td>516</td><td></td></tr>
+<tr name="517" id="517">
+<td>517</td><td>    <a id="517c5" class="tk">MdlOutputs</a>(<a id="517c16" class="tk">tid</a>);</td></tr>
+<tr name="518" id="518">
+<td>518</td><td>    <a id="518c5" class="tk">MdlUpdate</a>(<a id="518c15" class="tk">tid</a>);</td></tr>
+<tr name="519" id="519">
+<td>519</td><td>    <a id="519c5" class="tk">rt_SimUpdateDiscreteTaskTime</a>(<a id="519c34" class="tk">rtmGetTPtr</a>(<a id="519c45" class="tk">S</a>), <a id="519c49" class="tk">rtmGetTimingData</a>(<a id="519c66" class="tk">S</a>),<a id="519c69" class="tk">tid</a>);</td></tr>
+<tr name="520" id="520">
+<td>520</td><td></td></tr>
+<tr name="521" id="521">
+<td>521</td><td>    <span class="ct">/* Indicate task complete */</span></td></tr>
+<tr name="522" id="522">
+<td>522</td><td>    <a id="522c5" class="tk">SITglobals</a>.<a id="522c16" class="tk">overrunFlags</a>[<a id="522c29" class="tk">tid</a>]<a id="522c33" class="tk">--</a>;</td></tr>
+<tr name="523" id="523">
+<td>523</td><td>  <span class="br">}</span>                                    <span class="ct">// of tid==FIRST_TID</span></td></tr>
+<tr name="524" id="524">
+<td>524</td><td></td></tr>
+<tr name="525" id="525">
+<td>525</td><td>  <span class="kw">return</span> <a id="525c10" class="tk">NI_OK</a>;</td></tr>
+<tr name="526" id="526">
+<td>526</td><td><span class="br">}</span>                                      <span class="ct">/* end rtOneStep */</span></td></tr>
+<tr name="527" id="527">
+<td>527</td><td></td></tr>
+<tr name="528" id="528">
+<td>528</td><td><span class="pp">#endif</span>                                 <span class="ct">/* MULTITASKING */</span></td></tr>
+<tr name="529" id="529">
+<td>529</td><td></td></tr>
+<tr name="530" id="530">
+<td>530</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="531" id="531">
+<td>531</td><td><span class="ct"> * Function: NIRT_GetModelFrameworkVersion</span></td></tr>
+<tr name="532" id="532">
+<td>532</td><td><span class="ct"> *</span></td></tr>
+<tr name="533" id="533">
+<td>533</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="534" id="534">
+<td>534</td><td><span class="ct"> *	Returns the version of the NI VeriStand Model Framework</span></td></tr>
+<tr name="535" id="535">
+<td>535</td><td><span class="ct"> *</span></td></tr>
+<tr name="536" id="536">
+<td>536</td><td><span class="ct"> * Output Parameters</span></td></tr>
+<tr name="537" id="537">
+<td>537</td><td><span class="ct"> *	major : major version number</span></td></tr>
+<tr name="538" id="538">
+<td>538</td><td><span class="ct"> *	minor : minor version number</span></td></tr>
+<tr name="539" id="539">
+<td>539</td><td><span class="ct"> *	fix   : fix version number</span></td></tr>
+<tr name="540" id="540">
+<td>540</td><td><span class="ct"> *	build : build version number</span></td></tr>
+<tr name="541" id="541">
+<td>541</td><td><span class="ct"> *</span></td></tr>
+<tr name="542" id="542">
+<td>542</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="543" id="543">
+<td>543</td><td><span class="ct"> *	NI_OK if no error</span></td></tr>
+<tr name="544" id="544">
+<td>544</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="545" id="545">
+<td>545</td><td><a id="545c1" class="tk">DLL_EXPORT</a> <a id="545c12" class="tk">int32_t</a> <a id="545c20" class="tk">NIRT_GetModelFrameworkVersion</a>(<a id="545c50" class="tk">uint32_t</a><a id="545c58" class="tk">*</a> <a id="545c60" class="tk">major</a>, <a id="545c67" class="tk">uint32_t</a><a id="545c75" class="tk">*</a></td></tr>
+<tr name="546" id="546">
+<td>546</td><td>  <a id="546c3" class="tk">minor</a>, <a id="546c10" class="tk">uint32_t</a><a id="546c18" class="tk">*</a> <a id="546c20" class="tk">fix</a>, <a id="546c25" class="tk">uint32_t</a><a id="546c33" class="tk">*</a> <a id="546c35" class="tk">build</a>)</td></tr>
+<tr name="547" id="547">
+<td>547</td><td><span class="br">{</span></td></tr>
+<tr name="548" id="548">
+<td>548</td><td>  <a id="548c3" class="tk">*</a><a id="548c4" class="tk">major</a> = <a id="548c12" class="tk">NIVS_APIversion</a>.<a id="548c28" class="tk">major</a>;</td></tr>
+<tr name="549" id="549">
+<td>549</td><td>  <a id="549c3" class="tk">*</a><a id="549c4" class="tk">minor</a> = <a id="549c12" class="tk">NIVS_APIversion</a>.<a id="549c28" class="tk">minor</a>;</td></tr>
+<tr name="550" id="550">
+<td>550</td><td>  <a id="550c3" class="tk">*</a><a id="550c4" class="tk">fix</a> = <a id="550c10" class="tk">NIVS_APIversion</a>.<a id="550c26" class="tk">fix</a>;</td></tr>
+<tr name="551" id="551">
+<td>551</td><td>  <a id="551c3" class="tk">*</a><a id="551c4" class="tk">build</a> = <a id="551c12" class="tk">NIVS_APIversion</a>.<a id="551c28" class="tk">build</a>;</td></tr>
+<tr name="552" id="552">
+<td>552</td><td>  <span class="kw">return</span> <a id="552c10" class="tk">NI_OK</a>;</td></tr>
+<tr name="553" id="553">
+<td>553</td><td><span class="br">}</span></td></tr>
+<tr name="554" id="554">
+<td>554</td><td></td></tr>
+<tr name="555" id="555">
+<td>555</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="556" id="556">
+<td>556</td><td><span class="ct"> * Function: NIRT_InitializeModel</span></td></tr>
+<tr name="557" id="557">
+<td>557</td><td><span class="ct"> *</span></td></tr>
+<tr name="558" id="558">
+<td>558</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="559" id="559">
+<td>559</td><td><span class="ct"> *	Initializes internal structures and prepares model for execution.</span></td></tr>
+<tr name="560" id="560">
+<td>560</td><td><span class="ct"> *</span></td></tr>
+<tr name="561" id="561">
+<td>561</td><td><span class="ct"> * Input Parameters:</span></td></tr>
+<tr name="562" id="562">
+<td>562</td><td><span class="ct"> *	finaltime	: the final time until which the model should run.</span></td></tr>
+<tr name="563" id="563">
+<td>563</td><td><span class="ct"> *</span></td></tr>
+<tr name="564" id="564">
+<td>564</td><td><span class="ct"> * Output Parameters:</span></td></tr>
+<tr name="565" id="565">
+<td>565</td><td><span class="ct"> *	outTimeStep	: the base time step of the model scheduler.</span></td></tr>
+<tr name="566" id="566">
+<td>566</td><td><span class="ct"> *	num_in		: number of external inputs</span></td></tr>
+<tr name="567" id="567">
+<td>567</td><td><span class="ct"> *	num_out		: number of external outputs</span></td></tr>
+<tr name="568" id="568">
+<td>568</td><td><span class="ct"> *	num_tasks	: number of Tasks (for multirate models only).</span></td></tr>
+<tr name="569" id="569">
+<td>569</td><td><span class="ct"> *</span></td></tr>
+<tr name="570" id="570">
+<td>570</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="571" id="571">
+<td>571</td><td><span class="ct"> *	NI_OK if no error</span></td></tr>
+<tr name="572" id="572">
+<td>572</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="573" id="573">
+<td>573</td><td><a id="573c1" class="tk">DLL_EXPORT</a> <a id="573c12" class="tk">int32_t</a> <a id="573c20" class="tk">NIRT_InitializeModel</a> (<span class="kw">double</span> <a id="573c49" class="tk">finaltime</a>, <span class="kw">double</span> <a id="573c67" class="tk">*</a><a id="573c68" class="tk">outTimeStep</a>,</td></tr>
+<tr name="574" id="574">
+<td>574</td><td>  <a id="574c3" class="tk">int32_t</a> <a id="574c11" class="tk">*</a><a id="574c12" class="tk">outNumInports</a>, <a id="574c27" class="tk">int32_t</a> <a id="574c35" class="tk">*</a><a id="574c36" class="tk">outNumOutports</a>, <a id="574c52" class="tk">int32_t</a> <a id="574c60" class="tk">*</a><a id="574c61" class="tk">numTasks</a>)</td></tr>
+<tr name="575" id="575">
+<td>575</td><td><span class="br">{</span></td></tr>
+<tr name="576" id="576">
+<td>576</td><td>  <span class="kw">const</span> <span class="kw">char</span> <a id="576c14" class="tk">*</a><a id="576c15" class="tk">status</a> = <a id="576c24" class="tk">NULL</a>;</td></tr>
+<tr name="577" id="577">
+<td>577</td><td></td></tr>
+<tr name="578" id="578">
+<td>578</td><td>  <span class="ct">//Make sure SITglobals is reinitialized even if DLL is not reloaded</span></td></tr>
+<tr name="579" id="579">
+<td>579</td><td>  (<span class="kw">void</span>)<a id="579c9" class="tk">memset</a>(<a id="579c16" class="tk">&amp;</a><a id="579c17" class="tk">SITglobals</a>, 0, <span class="kw">sizeof</span>(<a id="579c39" class="tk">SITglobals</a>));</td></tr>
+<tr name="580" id="580">
+<td>580</td><td>  (<span class="kw">void</span>)<a id="580c9" class="tk">memset</a>(<a id="580c16" class="tk">&amp;</a><a id="580c17" class="tk">SITexportglobals</a>, 0, <span class="kw">sizeof</span>(<a id="580c45" class="tk">SITexportglobals</a>));</td></tr>
+<tr name="581" id="581">
+<td>581</td><td>  <a id="581c3" class="tk">rt_InitInfAndNaN</a>(<span class="kw">sizeof</span>(<a id="581c27" class="tk">real_T</a>));</td></tr>
+<tr name="582" id="582">
+<td>582</td><td>  <a id="582c3" class="tk">NI_InitializeParamStruct</a>();</td></tr>
+<tr name="583" id="583">
+<td>583</td><td>  <a id="583c3" class="tk">S</a> = <a id="583c7" class="tk">MODEL</a>();</td></tr>
+<tr name="584" id="584">
+<td>584</td><td>  <span class="kw">if</span> (<a id="584c7" class="tk">rtmGetErrorStatus</a>(<a id="584c25" class="tk">S</a>) <a id="584c28" class="tk">!=</a> <a id="584c31" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="585" id="585">
+<td>585</td><td>    (<span class="kw">void</span>)<a id="585c11" class="tk">fprintf</a>(<a id="585c19" class="tk">stderr</a>,"Error during model registration: %s\n",</td></tr>
+<tr name="586" id="586">
+<td>586</td><td>                  <a id="586c19" class="tk">rtmGetErrorStatus</a>(<a id="586c37" class="tk">S</a>));</td></tr>
+<tr name="587" id="587">
+<td>587</td><td>    <span class="kw">return</span> 5;</td></tr>
+<tr name="588" id="588">
+<td>588</td><td>  <span class="br">}</span></td></tr>
+<tr name="589" id="589">
+<td>589</td><td></td></tr>
+<tr name="590" id="590">
+<td>590</td><td>  <span class="kw">if</span> ((<a id="590c8" class="tk">finaltime</a> <a id="590c18" class="tk">&gt;=</a> 0.0) <a id="590c26" class="tk">||</a> (<a id="590c30" class="tk">finaltime</a> <a id="590c40" class="tk">==</a> <a id="590c43" class="tk">RUN_FOREVER</a>)) <span class="br">{</span></td></tr>
+<tr name="591" id="591">
+<td>591</td><td>    <a id="591c5" class="tk">rtmSetTFinal</a>(<a id="591c18" class="tk">S</a>,<a id="591c20" class="tk">finaltime</a>);</td></tr>
+<tr name="592" id="592">
+<td>592</td><td>  <span class="br">}</span></td></tr>
+<tr name="593" id="593">
+<td>593</td><td></td></tr>
+<tr name="594" id="594">
+<td>594</td><td>  <a id="594c3" class="tk">MdlInitializeSizes</a>();</td></tr>
+<tr name="595" id="595">
+<td>595</td><td>  <a id="595c3" class="tk">MdlInitializeSampleTimes</a>();</td></tr>
+<tr name="596" id="596">
+<td>596</td><td>  <a id="596c3" class="tk">status</a> = <a id="596c12" class="tk">rt_SimInitTimingEngine</a>(<a id="596c35" class="tk">rtmGetNumSampleTimes</a>(<a id="596c56" class="tk">S</a>),</td></tr>
+<tr name="597" id="597">
+<td>597</td><td>    <a id="597c5" class="tk">rtmGetStepSize</a>(<a id="597c20" class="tk">S</a>),</td></tr>
+<tr name="598" id="598">
+<td>598</td><td>    <a id="598c5" class="tk">rtmGetSampleTimePtr</a>(<a id="598c25" class="tk">S</a>),</td></tr>
+<tr name="599" id="599">
+<td>599</td><td>    <a id="599c5" class="tk">rtmGetOffsetTimePtr</a>(<a id="599c25" class="tk">S</a>),</td></tr>
+<tr name="600" id="600">
+<td>600</td><td>    <a id="600c5" class="tk">rtmGetSampleHitPtr</a>(<a id="600c24" class="tk">S</a>),</td></tr>
+<tr name="601" id="601">
+<td>601</td><td>    <a id="601c5" class="tk">rtmGetSampleTimeTaskIDPtr</a>(<a id="601c31" class="tk">S</a>),</td></tr>
+<tr name="602" id="602">
+<td>602</td><td>    <a id="602c5" class="tk">rtmGetTStart</a>(<a id="602c18" class="tk">S</a>),</td></tr>
+<tr name="603" id="603">
+<td>603</td><td>    <a id="603c5" class="tk">&amp;</a><a id="603c6" class="tk">rtmGetSimTimeStep</a>(<a id="603c24" class="tk">S</a>),</td></tr>
+<tr name="604" id="604">
+<td>604</td><td>    <a id="604c5" class="tk">&amp;</a><a id="604c6" class="tk">rtmGetTimingData</a>(<a id="604c23" class="tk">S</a>));</td></tr>
+<tr name="605" id="605">
+<td>605</td><td>  <span class="kw">if</span> (<a id="605c7" class="tk">status</a> <a id="605c14" class="tk">!=</a> <a id="605c17" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="606" id="606">
+<td>606</td><td>    (<span class="kw">void</span>)<a id="606c11" class="tk">fprintf</a>(<a id="606c19" class="tk">stderr</a>, "Failed to initialize sample time engine: %s\n",</td></tr>
+<tr name="607" id="607">
+<td>607</td><td>                  <a id="607c19" class="tk">status</a>);</td></tr>
+<tr name="608" id="608">
+<td>608</td><td>    <a id="608c5" class="tk">exit</a>(<a id="608c10" class="tk">EXIT_FAILURE</a>);</td></tr>
+<tr name="609" id="609">
+<td>609</td><td>  <span class="br">}</span></td></tr>
+<tr name="610" id="610">
+<td>610</td><td></td></tr>
+<tr name="611" id="611">
+<td>611</td><td>  <a id="611c3" class="tk">rt_CreateIntegrationData</a>(<a id="611c28" class="tk">S</a>);</td></tr>
+<tr name="612" id="612">
+<td>612</td><td>  <a id="612c3" class="tk">SITglobals</a>.<a id="612c14" class="tk">errmsg</a> = <a id="612c23" class="tk">rt_StartDataLogging</a>(<a id="612c43" class="tk">rtmGetRTWLogInfo</a>(<a id="612c60" class="tk">S</a>),</td></tr>
+<tr name="613" id="613">
+<td>613</td><td>    <a id="613c5" class="tk">rtmGetTFinal</a>(<a id="613c18" class="tk">S</a>),</td></tr>
+<tr name="614" id="614">
+<td>614</td><td>    <a id="614c5" class="tk">rtmGetStepSize</a>(<a id="614c20" class="tk">S</a>),</td></tr>
+<tr name="615" id="615">
+<td>615</td><td>    <a id="615c5" class="tk">&amp;</a><a id="615c6" class="tk">rtmGetErrorStatus</a>(<a id="615c24" class="tk">S</a>));</td></tr>
+<tr name="616" id="616">
+<td>616</td><td>  <span class="kw">if</span> (<a id="616c7" class="tk">SITglobals</a>.<a id="616c18" class="tk">errmsg</a> <a id="616c25" class="tk">!=</a> <a id="616c28" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="617" id="617">
+<td>617</td><td>    (<span class="kw">void</span>)<a id="617c11" class="tk">fprintf</a>(<a id="617c19" class="tk">stderr</a>,"Error starting data logging: %s\n",<a id="617c62" class="tk">SITglobals</a>.<a id="617c73" class="tk">errmsg</a>);</td></tr>
+<tr name="618" id="618">
+<td>618</td><td>    <span class="kw">return</span>(3);</td></tr>
+<tr name="619" id="619">
+<td>619</td><td>  <span class="br">}</span></td></tr>
+<tr name="620" id="620">
+<td>620</td><td></td></tr>
+<tr name="621" id="621">
+<td>621</td><td>  <a id="621c3" class="tk">NI_InitParamDoubleBuf</a>();</td></tr>
+<tr name="622" id="622">
+<td>622</td><td>  <span class="kw">if</span> (<a id="622c7" class="tk">rtmGetErrorStatus</a>(<a id="622c25" class="tk">S</a>) <a id="622c28" class="tk">!=</a> <a id="622c31" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="623" id="623">
+<td>623</td><td>    <a id="623c5" class="tk">SITglobals</a>.<a id="623c16" class="tk">stopExecutionFlag</a> = 1;</td></tr>
+<tr name="624" id="624">
+<td>624</td><td>  <span class="br">}</span></td></tr>
+<tr name="625" id="625">
+<td>625</td><td></td></tr>
+<tr name="626" id="626">
+<td>626</td><td>  <a id="626c3" class="tk">NIRT_GetModelSpec</a>(<a id="626c21" class="tk">NULL</a>, 0, <a id="626c30" class="tk">outTimeStep</a>, <a id="626c43" class="tk">outNumInports</a>, <a id="626c58" class="tk">outNumOutports</a>,</td></tr>
+<tr name="627" id="627">
+<td>627</td><td>                    <a id="627c21" class="tk">numTasks</a>);</td></tr>
+<tr name="628" id="628">
+<td>628</td><td>  <a id="628c3" class="tk">InitializeCriticalSection</a>(<a id="628c29" class="tk">&amp;</a><a id="628c30" class="tk">SITglobals</a>.<a id="628c41" class="tk">taskCriticalSection</a>);</td></tr>
+<tr name="629" id="629">
+<td>629</td><td>  <a id="629c3" class="tk">SITexportglobals</a>.<a id="629c20" class="tk">flipCriticalSection</a> = <a id="629c42" class="tk">CreateSemaphore</a>(<a id="629c58" class="tk">NULL</a>, 1, 1, <a id="629c70" class="tk">NULL</a>);</td></tr>
+<tr name="630" id="630">
+<td>630</td><td>  <span class="kw">if</span> (<a id="630c7" class="tk">SITexportglobals</a>.<a id="630c24" class="tk">flipCriticalSection</a> <a id="630c44" class="tk">==</a> <a id="630c47" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="631" id="631">
+<td>631</td><td>    <a id="631c5" class="tk">SetSITErrorMessage</a>("Failed to create semaphore.", 1);</td></tr>
+<tr name="632" id="632">
+<td>632</td><td>  <span class="br">}</span></td></tr>
+<tr name="633" id="633">
+<td>633</td><td></td></tr>
+<tr name="634" id="634">
+<td>634</td><td>  <span class="kw">return</span> <a id="634c10" class="tk">NI_OK</a>;</td></tr>
+<tr name="635" id="635">
+<td>635</td><td><span class="br">}</span>                                      <span class="ct">// end of InitializeModel()</span></td></tr>
+<tr name="636" id="636">
+<td>636</td><td></td></tr>
+<tr name="637" id="637">
+<td>637</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="638" id="638">
+<td>638</td><td><span class="ct"> * Function: NIRT_ModelStart</span></td></tr>
+<tr name="639" id="639">
+<td>639</td><td><span class="ct"> *</span></td></tr>
+<tr name="640" id="640">
+<td>640</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="641" id="641">
+<td>641</td><td><span class="ct"> *	Executes before the first time step and only once within a model's execution.</span></td></tr>
+<tr name="642" id="642">
+<td>642</td><td><span class="ct"> *</span></td></tr>
+<tr name="643" id="643">
+<td>643</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="644" id="644">
+<td>644</td><td><span class="ct"> *	NI_OK if no error</span></td></tr>
+<tr name="645" id="645">
+<td>645</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="646" id="646">
+<td>646</td><td><a id="646c1" class="tk">DLL_EXPORT</a> <a id="646c12" class="tk">int32_t</a> <a id="646c20" class="tk">NIRT_ModelStart</a>(<span class="kw">void</span>)</td></tr>
+<tr name="647" id="647">
+<td>647</td><td><span class="br">{</span></td></tr>
+<tr name="648" id="648">
+<td>648</td><td>  <a id="648c3" class="tk">MdlStart</a>();</td></tr>
+<tr name="649" id="649">
+<td>649</td><td>  <a id="649c3" class="tk">NI_InitExternalOutputs</a>();</td></tr>
+<tr name="650" id="650">
+<td>650</td><td></td></tr>
+<tr name="651" id="651">
+<td>651</td><td><span class="pp">#if</span> <a id="651c5" class="tk">defined</a>(<a id="651c13" class="tk">MULTITASKING</a>)              <span class="ct">/* MULTITASKING */</span></td></tr>
+<tr name="652" id="652">
+<td>652</td><td></td></tr>
+<tr name="653" id="653">
+<td>653</td><td>  <span class="br">{</span></td></tr>
+<tr name="654" id="654">
+<td>654</td><td>    <a id="654c5" class="tk">SITglobals</a>.<a id="654c16" class="tk">isFirstTimeStep</a> = <a id="654c34" class="tk">TRUE</a>;</td></tr>
+<tr name="655" id="655">
+<td>655</td><td></td></tr>
+<tr name="656" id="656">
+<td>656</td><td>    <span class="ct">// Make sure SampleHits is uptodate</span></td></tr>
+<tr name="657" id="657">
+<td>657</td><td>    <a id="657c5" class="tk">rt_SimUpdateDiscreteEvents</a>(<a id="657c32" class="tk">rtmGetNumSampleTimes</a>(<a id="657c53" class="tk">S</a>),</td></tr>
+<tr name="658" id="658">
+<td>658</td><td>      <a id="658c7" class="tk">rtmGetTimingData</a>(<a id="658c24" class="tk">S</a>),</td></tr>
+<tr name="659" id="659">
+<td>659</td><td>      <a id="659c7" class="tk">rtmGetSampleHitPtr</a>(<a id="659c26" class="tk">S</a>),</td></tr>
+<tr name="660" id="660">
+<td>660</td><td>      <a id="660c7" class="tk">rtmGetPerTaskSampleHitsPtr</a>(<a id="660c34" class="tk">S</a>));</td></tr>
+<tr name="661" id="661">
+<td>661</td><td>  <span class="br">}</span></td></tr>
+<tr name="662" id="662">
+<td>662</td><td></td></tr>
+<tr name="663" id="663">
+<td>663</td><td><span class="pp">#endif</span>                                 <span class="ct">// defined(MULTITASKING)</span></td></tr>
+<tr name="664" id="664">
+<td>664</td><td></td></tr>
+<tr name="665" id="665">
+<td>665</td><td>  <a id="665c3" class="tk">SITglobals</a>.<a id="665c14" class="tk">isModelStarted</a> = true;</td></tr>
+<tr name="666" id="666">
+<td>666</td><td>  <span class="kw">return</span> <a id="666c10" class="tk">NI_OK</a>;</td></tr>
+<tr name="667" id="667">
+<td>667</td><td><span class="br">}</span></td></tr>
+<tr name="668" id="668">
+<td>668</td><td></td></tr>
+<tr name="669" id="669">
+<td>669</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="670" id="670">
+<td>670</td><td><span class="ct"> * Function: NIRT_ModelUpdate</span></td></tr>
+<tr name="671" id="671">
+<td>671</td><td><span class="ct"> *</span></td></tr>
+<tr name="672" id="672">
+<td>672</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="673" id="673">
+<td>673</td><td><span class="ct"> *	Updates the internal state of the model.</span></td></tr>
+<tr name="674" id="674">
+<td>674</td><td><span class="ct"> *</span></td></tr>
+<tr name="675" id="675">
+<td>675</td><td><span class="ct"> *	Each call to Schedule() or ScheduleTasks() must be followed by a call to NIRT_ModelUpdate before</span></td></tr>
+<tr name="676" id="676">
+<td>676</td><td><span class="ct"> *	the scheduling call can be made again. Decrement our count for entries into the critical section,</span></td></tr>
+<tr name="677" id="677">
+<td>677</td><td><span class="ct"> *	signalling the it is no longer safe to probeUpdate states. Leave critical section.</span></td></tr>
+<tr name="678" id="678">
+<td>678</td><td><span class="ct"> *</span></td></tr>
+<tr name="679" id="679">
+<td>679</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="680" id="680">
+<td>680</td><td><span class="ct"> *	NI_OK if no error</span></td></tr>
+<tr name="681" id="681">
+<td>681</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="682" id="682">
+<td>682</td><td><a id="682c1" class="tk">DLL_EXPORT</a> <a id="682c12" class="tk">int32_t</a> <a id="682c20" class="tk">NIRT_ModelUpdate</a>(<span class="kw">void</span>)</td></tr>
+<tr name="683" id="683">
+<td>683</td><td><span class="br">{</span></td></tr>
+<tr name="684" id="684">
+<td>684</td><td>  <span class="kw">if</span> (<a id="684c7" class="tk">SITexportglobals</a>.<a id="684c24" class="tk">inCriticalSection</a>) <span class="br">{</span></td></tr>
+<tr name="685" id="685">
+<td>685</td><td>    <a id="685c5" class="tk">SITexportglobals</a>.<a id="685c22" class="tk">inCriticalSection</a><a id="685c39" class="tk">--</a>;</td></tr>
+<tr name="686" id="686">
+<td>686</td><td>    <a id="686c5" class="tk">MdlUpdate</a>(<a id="686c15" class="tk">FIRST_TID</a>);</td></tr>
+<tr name="687" id="687">
+<td>687</td><td></td></tr>
+<tr name="688" id="688">
+<td>688</td><td><span class="pp">#if</span> <a id="688c5" class="tk">defined</a>(<a id="688c13" class="tk">MULTITASKING</a>)</td></tr>
+<tr name="689" id="689">
+<td>689</td><td></td></tr>
+<tr name="690" id="690">
+<td>690</td><td>    <span class="kw">if</span> (<a id="690c9" class="tk">rtmGetSampleTime</a>(<a id="690c26" class="tk">S</a>,0) <a id="690c31" class="tk">==</a> <a id="690c34" class="tk">CONTINUOUS_SAMPLE_TIME</a>) <span class="br">{</span></td></tr>
+<tr name="691" id="691">
+<td>691</td><td>      <a id="691c7" class="tk">rt_UpdateContinuousStates</a>(<a id="691c33" class="tk">S</a>);</td></tr>
+<tr name="692" id="692">
+<td>692</td><td>    <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="693" id="693">
+<td>693</td><td>      <a id="693c7" class="tk">rt_SimUpdateDiscreteTaskTime</a>(<a id="693c36" class="tk">rtmGetTPtr</a>(<a id="693c47" class="tk">S</a>), <a id="693c51" class="tk">rtmGetTimingData</a>(<a id="693c68" class="tk">S</a>), 0);</td></tr>
+<tr name="694" id="694">
+<td>694</td><td>    <span class="br">}</span></td></tr>
+<tr name="695" id="695">
+<td>695</td><td></td></tr>
+<tr name="696" id="696">
+<td>696</td><td><span class="pp">#if</span> <a id="696c5" class="tk">FIRST_TID</a> <a id="696c15" class="tk">==</a> 1</td></tr>
+<tr name="697" id="697">
+<td>697</td><td></td></tr>
+<tr name="698" id="698">
+<td>698</td><td>    <a id="698c5" class="tk">rt_SimUpdateDiscreteTaskTime</a>(<a id="698c34" class="tk">rtmGetTPtr</a>(<a id="698c45" class="tk">S</a>), <a id="698c49" class="tk">rtmGetTimingData</a>(<a id="698c66" class="tk">S</a>),1);</td></tr>
+<tr name="699" id="699">
+<td>699</td><td></td></tr>
+<tr name="700" id="700">
+<td>700</td><td><span class="pp">#endif</span></td></tr>
+<tr name="701" id="701">
+<td>701</td><td></td></tr>
+<tr name="702" id="702">
+<td>702</td><td><span class="pp">#else</span></td></tr>
+<tr name="703" id="703">
+<td>703</td><td></td></tr>
+<tr name="704" id="704">
+<td>704</td><td>    <a id="704c5" class="tk">rt_SimUpdateDiscreteTaskSampleHits</a>(<a id="704c40" class="tk">rtmGetNumSampleTimes</a>(<a id="704c61" class="tk">S</a>), <a id="704c65" class="tk">rtmGetTimingData</a></td></tr>
+<tr name="705" id="705">
+<td>705</td><td>      (<a id="705c8" class="tk">S</a>), <a id="705c12" class="tk">rtmGetSampleHitPtr</a>(<a id="705c31" class="tk">S</a>), <a id="705c35" class="tk">rtmGetTPtr</a>(<a id="705c46" class="tk">S</a>));</td></tr>
+<tr name="706" id="706">
+<td>706</td><td>    <span class="kw">if</span> (<a id="706c9" class="tk">rtmGetSampleTime</a>(<a id="706c26" class="tk">S</a>,0) <a id="706c31" class="tk">==</a> <a id="706c34" class="tk">CONTINUOUS_SAMPLE_TIME</a>) <span class="br">{</span></td></tr>
+<tr name="707" id="707">
+<td>707</td><td>      <a id="707c7" class="tk">rt_UpdateContinuousStates</a>(<a id="707c33" class="tk">S</a>);</td></tr>
+<tr name="708" id="708">
+<td>708</td><td>    <span class="br">}</span></td></tr>
+<tr name="709" id="709">
+<td>709</td><td></td></tr>
+<tr name="710" id="710">
+<td>710</td><td><span class="pp">#endif</span></td></tr>
+<tr name="711" id="711">
+<td>711</td><td></td></tr>
+<tr name="712" id="712">
+<td>712</td><td>    <a id="712c5" class="tk">ReleaseSemaphore</a>(<a id="712c22" class="tk">SITexportglobals</a>.<a id="712c39" class="tk">flipCriticalSection</a>,1,<a id="712c61" class="tk">NULL</a>);</td></tr>
+<tr name="713" id="713">
+<td>713</td><td>  <span class="br">}</span></td></tr>
+<tr name="714" id="714">
+<td>714</td><td></td></tr>
+<tr name="715" id="715">
+<td>715</td><td>  <span class="kw">return</span> <a id="715c10" class="tk">SITexportglobals</a>.<a id="715c27" class="tk">inCriticalSection</a>;</td></tr>
+<tr name="716" id="716">
+<td>716</td><td><span class="br">}</span></td></tr>
+<tr name="717" id="717">
+<td>717</td><td></td></tr>
+<tr name="718" id="718">
+<td>718</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="719" id="719">
+<td>719</td><td><span class="ct"> * Function: NIRT_StepBaseTask</span></td></tr>
+<tr name="720" id="720">
+<td>720</td><td><span class="ct"> *</span></td></tr>
+<tr name="721" id="721">
+<td>721</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="722" id="722">
+<td>722</td><td><span class="ct"> *	Takes a time step on the base task of a multi-rate model.</span></td></tr>
+<tr name="723" id="723">
+<td>723</td><td><span class="ct"> *</span></td></tr>
+<tr name="724" id="724">
+<td>724</td><td><span class="ct"> * Input Parameters:</span></td></tr>
+<tr name="725" id="725">
+<td>725</td><td><span class="ct"> *	inData	: Points to an array of elements sent to the model inports</span></td></tr>
+<tr name="726" id="726">
+<td>726</td><td><span class="ct"> *</span></td></tr>
+<tr name="727" id="727">
+<td>727</td><td><span class="ct"> * Output Parameters:</span></td></tr>
+<tr name="728" id="728">
+<td>728</td><td><span class="ct"> *	outData	: Points to an array of elements sent to the model outports</span></td></tr>
+<tr name="729" id="729">
+<td>729</td><td><span class="ct"> *	outTime	: Used to return the current model time.  Ignored if it is NULL</span></td></tr>
+<tr name="730" id="730">
+<td>730</td><td><span class="ct"> *</span></td></tr>
+<tr name="731" id="731">
+<td>731</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="732" id="732">
+<td>732</td><td><span class="ct"> *	NI_OK if no error</span></td></tr>
+<tr name="733" id="733">
+<td>733</td><td><span class="ct">   ========================================================================*/</span></td></tr>
+<tr name="734" id="734">
+<td>734</td><td><a id="734c1" class="tk">DLL_EXPORT</a> <a id="734c12" class="tk">int32_t</a> <a id="734c20" class="tk">NIRT_StepBaseTask</a>(<span class="kw">double</span> <a id="734c45" class="tk">*</a><a id="734c46" class="tk">inData</a>, <span class="kw">double</span> <a id="734c61" class="tk">*</a><a id="734c62" class="tk">outTime</a>, <span class="kw">double</span></td></tr>
+<tr name="735" id="735">
+<td>735</td><td>  <a id="735c3" class="tk">*</a><a id="735c4" class="tk">outData</a>)</td></tr>
+<tr name="736" id="736">
+<td>736</td><td><span class="br">{</span></td></tr>
+<tr name="737" id="737">
+<td>737</td><td></td></tr>
+<tr name="738" id="738">
+<td>738</td><td><span class="pp">#ifndef</span> <a id="738c9" class="tk">MULTITASKING</a></td></tr>
+<tr name="739" id="739">
+<td>739</td><td></td></tr>
+<tr name="740" id="740">
+<td>740</td><td>  <a id="740c3" class="tk">SetSITErrorMessage</a>("Called StepBaseTask() for a single-rate model.  Use Schedule() instead.",</td></tr>
+<tr name="741" id="741">
+<td>741</td><td>                     1);</td></tr>
+<tr name="742" id="742">
+<td>742</td><td>  <span class="kw">return</span> <a id="742c10" class="tk">NI_ERROR</a>;</td></tr>
+<tr name="743" id="743">
+<td>743</td><td></td></tr>
+<tr name="744" id="744">
+<td>744</td><td><span class="pp">#else</span></td></tr>
+<tr name="745" id="745">
+<td>745</td><td></td></tr>
+<tr name="746" id="746">
+<td>746</td><td>  <a id="746c3" class="tk">int32_t</a> <a id="746c11" class="tk">i</a> = 0;</td></tr>
+<tr name="747" id="747">
+<td>747</td><td>  <a id="747c3" class="tk">int32_t</a> <a id="747c11" class="tk">lastStep</a> = 1;</td></tr>
+<tr name="748" id="748">
+<td>748</td><td>  <a id="748c3" class="tk">int_T</a> <a id="748c9" class="tk">*</a><a id="748c10" class="tk">sampleHits</a> = <a id="748c23" class="tk">rtmGetSampleHitPtr</a>(<a id="748c42" class="tk">S</a>);</td></tr>
+<tr name="749" id="749">
+<td>749</td><td></td></tr>
+<tr name="750" id="750">
+<td>750</td><td>  <span class="ct">// donot increment the time..</span></td></tr>
+<tr name="751" id="751">
+<td>751</td><td>  <span class="kw">if</span> (<a id="751c7" class="tk">outTime</a> <a id="751c15" class="tk">!=</a> <a id="751c18" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="752" id="752">
+<td>752</td><td>    <a id="752c5" class="tk">*</a><a id="752c6" class="tk">outTime</a> = <a id="752c16" class="tk">rtmGetT</a>(<a id="752c24" class="tk">S</a>);</td></tr>
+<tr name="753" id="753">
+<td>753</td><td>  <span class="br">}</span></td></tr>
+<tr name="754" id="754">
+<td>754</td><td></td></tr>
+<tr name="755" id="755">
+<td>755</td><td>  <span class="ct">/* Critical section is used to prevent the background loop from switching parameters</span></td></tr>
+<tr name="756" id="756">
+<td>756</td><td><span class="ct">     sets while the baserate is running.  On a single core system this can not happen, but</span></td></tr>
+<tr name="757" id="757">
+<td>757</td><td><span class="ct">     on a multi-core system the baserate and background can be executing at the same time. */</span></td></tr>
+<tr name="758" id="758">
+<td>758</td><td>  <a id="758c3" class="tk">WaitForSingleObject</a>(<a id="758c23" class="tk">SITexportglobals</a>.<a id="758c40" class="tk">flipCriticalSection</a>, <a id="758c61" class="tk">INFINITE</a>);</td></tr>
+<tr name="759" id="759">
+<td>759</td><td>  <span class="kw">if</span> (<a id="759c7" class="tk">SITexportglobals</a>.<a id="759c24" class="tk">inCriticalSection</a> <a id="759c42" class="tk">&gt;</a> 0) <span class="br">{</span></td></tr>
+<tr name="760" id="760">
+<td>760</td><td>    <a id="760c5" class="tk">SetSITErrorMessage</a>("Each call to StepBaseTask() MUST be followed by a call to ModelUpdate() before StepBaseTask() is called again.",</td></tr>
+<tr name="761" id="761">
+<td>761</td><td>                       1);</td></tr>
+<tr name="762" id="762">
+<td>762</td><td>    <a id="762c5" class="tk">ReleaseSemaphore</a>(<a id="762c22" class="tk">SITexportglobals</a>.<a id="762c39" class="tk">flipCriticalSection</a>, 1, <a id="762c63" class="tk">NULL</a>);</td></tr>
+<tr name="763" id="763">
+<td>763</td><td>    <span class="kw">return</span> 1;</td></tr>
+<tr name="764" id="764">
+<td>764</td><td>  <span class="br">}</span></td></tr>
+<tr name="765" id="765">
+<td>765</td><td></td></tr>
+<tr name="766" id="766">
+<td>766</td><td>  <span class="ct">/* For each task other than the base rate copy parameters if there are new ones.</span></td></tr>
+<tr name="767" id="767">
+<td>767</td><td><span class="ct">     Since the task is about the be scheduled it should not be executing at the moment</span></td></tr>
+<tr name="768" id="768">
+<td>768</td><td><span class="ct">     so copying the parameters will be safe.</span></td></tr>
+<tr name="769" id="769">
+<td>769</td><td><span class="ct">   */</span></td></tr>
+<tr name="770" id="770">
+<td>770</td><td><span class="pp"># ifdef</span> <a id="770c9" class="tk">NI_SIT_PARAMS</a></td></tr>
+<tr name="771" id="771">
+<td>771</td><td></td></tr>
+<tr name="772" id="772">
+<td>772</td><td>  <span class="kw">for</span> (<a id="772c8" class="tk">i</a> = 1; <a id="772c15" class="tk">i</a> <a id="772c17" class="tk">&lt;</a> <a id="772c19" class="tk">NUMST</a> <a id="772c25" class="tk">-</a> <a id="772c27" class="tk">TID01EQ</a>; <a id="772c36" class="tk">i</a><a id="772c37" class="tk">++</a>) <span class="br">{</span></td></tr>
+<tr name="773" id="773">
+<td>773</td><td>    <span class="kw">if</span> (<a id="773c9" class="tk">sampleHits</a>[<a id="773c20" class="tk">i</a> <a id="773c22" class="tk">+</a> <a id="773c24" class="tk">TID01EQ</a>] <a id="773c33" class="tk">&amp;&amp;</a> (<a id="773c37" class="tk">SITexportglobals</a>.<a id="773c54" class="tk">copyTaskBitfield</a> <a id="773c71" class="tk">&amp;</a> (1 <a id="773c76" class="tk">&lt;&lt;</a> <a id="773c79" class="tk">i</a>)))</td></tr>
+<tr name="774" id="774">
+<td>774</td><td>    <span class="br">{</span></td></tr>
+<tr name="775" id="775">
+<td>775</td><td>      <a id="775c7" class="tk">memcpy</a>(<a id="775c14" class="tk">param_lookup</a>[<a id="775c27" class="tk">i</a><a id="775c28" class="tk">+</a><a id="775c29" class="tk">TID01EQ</a>][1<a id="775c39" class="tk">-</a><a id="775c40" class="tk">READSIDE</a>], <a id="775c51" class="tk">param_lookup</a>[0][<a id="775c67" class="tk">READSIDE</a>],</td></tr>
+<tr name="776" id="776">
+<td>776</td><td>             <span class="kw">sizeof</span>(<a id="776c21" class="tk">NI_PARAM_TYPEDEF</a>));</td></tr>
+<tr name="777" id="777">
+<td>777</td><td>      <a id="777c7" class="tk">SITexportglobals</a>.<a id="777c24" class="tk">copyTaskBitfield</a> <a id="777c41" class="tk">&amp;=</a> <a id="777c44" class="tk">~</a>(1 <a id="777c48" class="tk">&lt;&lt;</a> <a id="777c51" class="tk">i</a>);</td></tr>
+<tr name="778" id="778">
+<td>778</td><td>    <span class="br">}</span></td></tr>
+<tr name="779" id="779">
+<td>779</td><td>  <span class="br">}</span></td></tr>
+<tr name="780" id="780">
+<td>780</td><td></td></tr>
+<tr name="781" id="781">
+<td>781</td><td><span class="pp"># endif</span></td></tr>
+<tr name="782" id="782">
+<td>782</td><td></td></tr>
+<tr name="783" id="783">
+<td>783</td><td>  <span class="ct">//If stopExecutionFlag is true we have had an error</span></td></tr>
+<tr name="784" id="784">
+<td>784</td><td>  <span class="kw">if</span> (<a id="784c7" class="tk">!</a><a id="784c8" class="tk">SITglobals</a>.<a id="784c19" class="tk">stopExecutionFlag</a>) <span class="br">{</span></td></tr>
+<tr name="785" id="785">
+<td>785</td><td>    <span class="kw">if</span> ((<a id="785c10" class="tk">rtmGetTFinal</a>(<a id="785c23" class="tk">S</a>) <a id="785c26" class="tk">==</a> <a id="785c29" class="tk">RUN_FOREVER</a>) <a id="785c42" class="tk">||</a> ((<a id="785c47" class="tk">rtmGetTFinal</a>(<a id="785c60" class="tk">S</a>) <a id="785c63" class="tk">-</a> <a id="785c65" class="tk">rtmGetT</a>(<a id="785c73" class="tk">S</a>)) <a id="785c77" class="tk">&gt;</a></td></tr>
+<tr name="786" id="786">
+<td>786</td><td>         (<a id="786c11" class="tk">rtmGetT</a>(<a id="786c19" class="tk">S</a>) <a id="786c22" class="tk">*</a><a id="786c23" class="tk">DBL_EPSILON</a>))) <span class="br">{</span></td></tr>
+<tr name="787" id="787">
+<td>787</td><td>      <a id="787c7" class="tk">rt_OneStepTask</a>(<a id="787c22" class="tk">S</a>,<a id="787c24" class="tk">FIRST_TID</a>, <a id="787c35" class="tk">inData</a>);</td></tr>
+<tr name="788" id="788">
+<td>788</td><td>      <a id="788c7" class="tk">lastStep</a> = <a id="788c18" class="tk">rtmGetStopRequested</a>(<a id="788c38" class="tk">S</a>);</td></tr>
+<tr name="789" id="789">
+<td>789</td><td>    <span class="br">}</span> <span class="kw">else</span> <span class="kw">if</span> (<a id="789c16" class="tk">!</a><a id="789c17" class="tk">rtmGetStopRequested</a>(<a id="789c37" class="tk">S</a>)) <span class="br">{</span><span class="ct">// take last step</span></td></tr>
+<tr name="790" id="790">
+<td>790</td><td>      <a id="790c7" class="tk">rt_OneStepTask</a>(<a id="790c22" class="tk">S</a>,<a id="790c24" class="tk">FIRST_TID</a>, <a id="790c35" class="tk">inData</a>);</td></tr>
+<tr name="791" id="791">
+<td>791</td><td>    <span class="br">}</span></td></tr>
+<tr name="792" id="792">
+<td>792</td><td></td></tr>
+<tr name="793" id="793">
+<td>793</td><td>    <span class="ct">/* Update outports */</span></td></tr>
+<tr name="794" id="794">
+<td>794</td><td>    <a id="794c5" class="tk">SetExternalOutputs</a>(<a id="794c24" class="tk">outData</a>, <a id="794c33" class="tk">sampleHits</a>);</td></tr>
+<tr name="795" id="795">
+<td>795</td><td>  <span class="br">}</span></td></tr>
+<tr name="796" id="796">
+<td>796</td><td></td></tr>
+<tr name="797" id="797">
+<td>797</td><td>  <a id="797c3" class="tk">SITexportglobals</a>.<a id="797c20" class="tk">inCriticalSection</a><a id="797c37" class="tk">++</a>;</td></tr>
+<tr name="798" id="798">
+<td>798</td><td></td></tr>
+<tr name="799" id="799">
+<td>799</td><td>  <span class="ct">/* Reset first run flag */</span></td></tr>
+<tr name="800" id="800">
+<td>800</td><td>  <a id="800c3" class="tk">SITglobals</a>.<a id="800c14" class="tk">isFirstTimeStep</a> = <a id="800c32" class="tk">FALSE</a>;</td></tr>
+<tr name="801" id="801">
+<td>801</td><td>  <span class="kw">return</span> <a id="801c10" class="tk">SITglobals</a>.<a id="801c21" class="tk">stopExecutionFlag</a> <a id="801c39" class="tk">|</a> <a id="801c41" class="tk">lastStep</a>;</td></tr>
+<tr name="802" id="802">
+<td>802</td><td></td></tr>
+<tr name="803" id="803">
+<td>803</td><td><span class="pp">#endif</span></td></tr>
+<tr name="804" id="804">
+<td>804</td><td></td></tr>
+<tr name="805" id="805">
+<td>805</td><td><span class="br">}</span></td></tr>
+<tr name="806" id="806">
+<td>806</td><td></td></tr>
+<tr name="807" id="807">
+<td>807</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="808" id="808">
+<td>808</td><td><span class="ct"> * Function: NIRT_Schedule</span></td></tr>
+<tr name="809" id="809">
+<td>809</td><td><span class="ct"> *</span></td></tr>
+<tr name="810" id="810">
+<td>810</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="811" id="811">
+<td>811</td><td><span class="ct"> *	Scheduler behaves traditionally for singletasking (Get Inputs, Take Step, Post Outputs).</span></td></tr>
+<tr name="812" id="812">
+<td>812</td><td><span class="ct"> *	For multitasking, the outputs are delayed by one time step.</span></td></tr>
+<tr name="813" id="813">
+<td>813</td><td><span class="ct"> *</span></td></tr>
+<tr name="814" id="814">
+<td>814</td><td><span class="ct"> *	This scheduler ignores dispatchtasks input as all tasks are dispatched based on their sample</span></td></tr>
+<tr name="815" id="815">
+<td>815</td><td><span class="ct"> *	rate information alone. This is done externally by timed loops.</span></td></tr>
+<tr name="816" id="816">
+<td>816</td><td><span class="ct"> *</span></td></tr>
+<tr name="817" id="817">
+<td>817</td><td><span class="ct"> * Input Parameters:</span></td></tr>
+<tr name="818" id="818">
+<td>818</td><td><span class="ct"> *	inData	: Points to an array of elements sent to the model inports</span></td></tr>
+<tr name="819" id="819">
+<td>819</td><td><span class="ct"> *</span></td></tr>
+<tr name="820" id="820">
+<td>820</td><td><span class="ct"> * Output Parameters:</span></td></tr>
+<tr name="821" id="821">
+<td>821</td><td><span class="ct"> *	outData	: Points to an array of elements sent to the model outports</span></td></tr>
+<tr name="822" id="822">
+<td>822</td><td><span class="ct"> *	outTime	: Used to return the current model time.  Ignored if it is NULL</span></td></tr>
+<tr name="823" id="823">
+<td>823</td><td><span class="ct"> *</span></td></tr>
+<tr name="824" id="824">
+<td>824</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="825" id="825">
+<td>825</td><td><span class="ct"> *	NI_OK if no error</span></td></tr>
+<tr name="826" id="826">
+<td>826</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="827" id="827">
+<td>827</td><td><a id="827c1" class="tk">DLL_EXPORT</a> <a id="827c12" class="tk">int32_t</a> <a id="827c20" class="tk">NIRT_Schedule</a>(<span class="kw">double</span> <a id="827c41" class="tk">*</a><a id="827c42" class="tk">inData</a>, <span class="kw">double</span> <a id="827c57" class="tk">*</a><a id="827c58" class="tk">outData</a>, <span class="kw">double</span></td></tr>
+<tr name="828" id="828">
+<td>828</td><td>  <a id="828c3" class="tk">*</a><a id="828c4" class="tk">outTime</a>, <a id="828c13" class="tk">int32_t</a> <a id="828c21" class="tk">*</a><a id="828c22" class="tk">dispatchtasks</a>)</td></tr>
+<tr name="829" id="829">
+<td>829</td><td><span class="br">{</span></td></tr>
+<tr name="830" id="830">
+<td>830</td><td></td></tr>
+<tr name="831" id="831">
+<td>831</td><td><span class="pp">#ifdef</span> <a id="831c8" class="tk">MULTITASKING</a></td></tr>
+<tr name="832" id="832">
+<td>832</td><td></td></tr>
+<tr name="833" id="833">
+<td>833</td><td>  <a id="833c3" class="tk">SetSITErrorMessage</a>("Called Schedule() for a multi-rate model.  Use ScheduleTasks2() instead.",</td></tr>
+<tr name="834" id="834">
+<td>834</td><td>                     1);</td></tr>
+<tr name="835" id="835">
+<td>835</td><td>  <span class="kw">return</span> <a id="835c10" class="tk">NI_ERROR</a>;</td></tr>
+<tr name="836" id="836">
+<td>836</td><td></td></tr>
+<tr name="837" id="837">
+<td>837</td><td><span class="pp">#else</span></td></tr>
+<tr name="838" id="838">
+<td>838</td><td></td></tr>
+<tr name="839" id="839">
+<td>839</td><td>  <a id="839c3" class="tk">int32_t</a> <a id="839c11" class="tk">lastStep</a> = 1;</td></tr>
+<tr name="840" id="840">
+<td>840</td><td>  <span class="kw">if</span> (<a id="840c7" class="tk">outTime</a> <a id="840c15" class="tk">!=</a> <a id="840c18" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="841" id="841">
+<td>841</td><td>    <a id="841c5" class="tk">*</a><a id="841c6" class="tk">outTime</a> = <a id="841c16" class="tk">rtmGetT</a>(<a id="841c24" class="tk">S</a>);</td></tr>
+<tr name="842" id="842">
+<td>842</td><td>  <span class="br">}</span></td></tr>
+<tr name="843" id="843">
+<td>843</td><td></td></tr>
+<tr name="844" id="844">
+<td>844</td><td>  <a id="844c3" class="tk">WaitForSingleObject</a>(<a id="844c23" class="tk">SITexportglobals</a>.<a id="844c40" class="tk">flipCriticalSection</a>, <a id="844c61" class="tk">INFINITE</a>);</td></tr>
+<tr name="845" id="845">
+<td>845</td><td>  <span class="kw">if</span> (<a id="845c7" class="tk">SITexportglobals</a>.<a id="845c24" class="tk">inCriticalSection</a> <a id="845c42" class="tk">&gt;</a> 0) <span class="br">{</span></td></tr>
+<tr name="846" id="846">
+<td>846</td><td>    <a id="846c5" class="tk">SetSITErrorMessage</a>("Each call to Schedule() MUST be followed by a call to ModelUpdate() before Schedule() is called again.",</td></tr>
+<tr name="847" id="847">
+<td>847</td><td>                       1);</td></tr>
+<tr name="848" id="848">
+<td>848</td><td>    <a id="848c5" class="tk">ReleaseSemaphore</a>(<a id="848c22" class="tk">SITexportglobals</a>.<a id="848c39" class="tk">flipCriticalSection</a>, 1, <a id="848c63" class="tk">NULL</a>);</td></tr>
+<tr name="849" id="849">
+<td>849</td><td>    <span class="kw">return</span> 1;</td></tr>
+<tr name="850" id="850">
+<td>850</td><td>  <span class="br">}</span></td></tr>
+<tr name="851" id="851">
+<td>851</td><td></td></tr>
+<tr name="852" id="852">
+<td>852</td><td>  <span class="kw">if</span> (<a id="852c7" class="tk">!</a><a id="852c8" class="tk">SITglobals</a>.<a id="852c19" class="tk">stopExecutionFlag</a> <a id="852c37" class="tk">&amp;&amp;</a> ((<a id="852c42" class="tk">rtmGetTFinal</a>(<a id="852c55" class="tk">S</a>) <a id="852c58" class="tk">==</a> <a id="852c61" class="tk">RUN_FOREVER</a>) <a id="852c74" class="tk">||</a></td></tr>
+<tr name="853" id="853">
+<td>853</td><td>       ((<a id="853c10" class="tk">rtmGetTFinal</a>(<a id="853c23" class="tk">S</a>) <a id="853c26" class="tk">-</a> <a id="853c28" class="tk">rtmGetT</a>(<a id="853c36" class="tk">S</a>)) <a id="853c40" class="tk">&gt;</a> (<a id="853c43" class="tk">rtmGetT</a>(<a id="853c51" class="tk">S</a>) <a id="853c54" class="tk">*</a> <a id="853c56" class="tk">DBL_EPSILON</a>)))) <span class="br">{</span></td></tr>
+<tr name="854" id="854">
+<td>854</td><td>    <a id="854c5" class="tk">rt_OneStep</a>(<a id="854c16" class="tk">S</a>, <a id="854c19" class="tk">inData</a>);</td></tr>
+<tr name="855" id="855">
+<td>855</td><td>    <a id="855c5" class="tk">lastStep</a> = <a id="855c16" class="tk">rtmGetStopRequested</a>(<a id="855c36" class="tk">S</a>);</td></tr>
+<tr name="856" id="856">
+<td>856</td><td>  <span class="br">}</span> <span class="kw">else</span> <span class="kw">if</span> (<a id="856c14" class="tk">!</a><a id="856c15" class="tk">SITglobals</a>.<a id="856c26" class="tk">stopExecutionFlag</a> <a id="856c44" class="tk">&amp;&amp;</a> <a id="856c47" class="tk">!</a><a id="856c48" class="tk">rtmGetStopRequested</a>(<a id="856c68" class="tk">S</a>)) <span class="br">{</span></td></tr>
+<tr name="857" id="857">
+<td>857</td><td>    <span class="ct">// take last step</span></td></tr>
+<tr name="858" id="858">
+<td>858</td><td>    <a id="858c5" class="tk">rt_OneStep</a>(<a id="858c16" class="tk">S</a>, <a id="858c19" class="tk">inData</a>);</td></tr>
+<tr name="859" id="859">
+<td>859</td><td>  <span class="br">}</span></td></tr>
+<tr name="860" id="860">
+<td>860</td><td></td></tr>
+<tr name="861" id="861">
+<td>861</td><td>  <a id="861c3" class="tk">SetExternalOutputs</a>(<a id="861c22" class="tk">outData</a>, <a id="861c31" class="tk">rtmGetSampleHitPtr</a>(<a id="861c50" class="tk">S</a>));<span class="ct">// push outport data out to LabVIEW</span></td></tr>
+<tr name="862" id="862">
+<td>862</td><td>  <a id="862c3" class="tk">SITexportglobals</a>.<a id="862c20" class="tk">inCriticalSection</a><a id="862c37" class="tk">++</a>;</td></tr>
+<tr name="863" id="863">
+<td>863</td><td>  <span class="kw">return</span> <a id="863c10" class="tk">lastStep</a>;</td></tr>
+<tr name="864" id="864">
+<td>864</td><td></td></tr>
+<tr name="865" id="865">
+<td>865</td><td><span class="pp">#endif</span></td></tr>
+<tr name="866" id="866">
+<td>866</td><td></td></tr>
+<tr name="867" id="867">
+<td>867</td><td><span class="br">}</span></td></tr>
+<tr name="868" id="868">
+<td>868</td><td></td></tr>
+<tr name="869" id="869">
+<td>869</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="870" id="870">
+<td>870</td><td><span class="ct"> * Function: NIRT_TakeOneStep</span></td></tr>
+<tr name="871" id="871">
+<td>871</td><td><span class="ct"> *</span></td></tr>
+<tr name="872" id="872">
+<td>872</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="873" id="873">
+<td>873</td><td><span class="ct"> *	Takes one time step for a single-rate model.</span></td></tr>
+<tr name="874" id="874">
+<td>874</td><td><span class="ct"> *</span></td></tr>
+<tr name="875" id="875">
+<td>875</td><td><span class="ct"> * Input Parameters:</span></td></tr>
+<tr name="876" id="876">
+<td>876</td><td><span class="ct"> *	inData	: Points to an array of elements sent to the model inports</span></td></tr>
+<tr name="877" id="877">
+<td>877</td><td><span class="ct"> *</span></td></tr>
+<tr name="878" id="878">
+<td>878</td><td><span class="ct"> * Output Parameters:</span></td></tr>
+<tr name="879" id="879">
+<td>879</td><td><span class="ct"> *	outData	: Points to an array of elements sent to the model outports</span></td></tr>
+<tr name="880" id="880">
+<td>880</td><td><span class="ct"> *	outTime	: Used to return the current model time.  Ignored if it is NULL</span></td></tr>
+<tr name="881" id="881">
+<td>881</td><td><span class="ct"> *</span></td></tr>
+<tr name="882" id="882">
+<td>882</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="883" id="883">
+<td>883</td><td><span class="ct"> *	NI_OK if no error</span></td></tr>
+<tr name="884" id="884">
+<td>884</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="885" id="885">
+<td>885</td><td><a id="885c1" class="tk">DLL_EXPORT</a> <a id="885c12" class="tk">int32_t</a> <a id="885c20" class="tk">NIRT_TakeOneStep</a>(<span class="kw">double</span> <a id="885c44" class="tk">*</a><a id="885c45" class="tk">inData</a>, <span class="kw">double</span> <a id="885c60" class="tk">*</a><a id="885c61" class="tk">outData</a>, <span class="kw">double</span></td></tr>
+<tr name="886" id="886">
+<td>886</td><td>  <a id="886c3" class="tk">*</a><a id="886c4" class="tk">outTime</a>)</td></tr>
+<tr name="887" id="887">
+<td>887</td><td><span class="br">{</span></td></tr>
+<tr name="888" id="888">
+<td>888</td><td>  <span class="kw">return</span> <a id="888c10" class="tk">NIRT_Schedule</a>(<a id="888c24" class="tk">inData</a>, <a id="888c32" class="tk">outData</a>, <a id="888c41" class="tk">outTime</a>, <a id="888c50" class="tk">NULL</a>);</td></tr>
+<tr name="889" id="889">
+<td>889</td><td><span class="br">}</span></td></tr>
+<tr name="890" id="890">
+<td>890</td><td></td></tr>
+<tr name="891" id="891">
+<td>891</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="892" id="892">
+<td>892</td><td><span class="ct"> * Function: NIRT_TaskTakeOneStep</span></td></tr>
+<tr name="893" id="893">
+<td>893</td><td><span class="ct"> *</span></td></tr>
+<tr name="894" id="894">
+<td>894</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="895" id="895">
+<td>895</td><td><span class="ct"> *	Steps the specified task one time step.</span></td></tr>
+<tr name="896" id="896">
+<td>896</td><td><span class="ct"> *</span></td></tr>
+<tr name="897" id="897">
+<td>897</td><td><span class="ct"> * Input Parameters:</span></td></tr>
+<tr name="898" id="898">
+<td>898</td><td><span class="ct"> *	tid	: the task ID</span></td></tr>
+<tr name="899" id="899">
+<td>899</td><td><span class="ct"> *</span></td></tr>
+<tr name="900" id="900">
+<td>900</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="901" id="901">
+<td>901</td><td><span class="ct"> *	NI_OK if no error</span></td></tr>
+<tr name="902" id="902">
+<td>902</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="903" id="903">
+<td>903</td><td><a id="903c1" class="tk">DLL_EXPORT</a> <a id="903c12" class="tk">int32_t</a> <a id="903c20" class="tk">NIRT_TaskTakeOneStep</a>(<a id="903c41" class="tk">int32_t</a> <a id="903c49" class="tk">tid</a>)</td></tr>
+<tr name="904" id="904">
+<td>904</td><td><span class="br">{</span></td></tr>
+<tr name="905" id="905">
+<td>905</td><td></td></tr>
+<tr name="906" id="906">
+<td>906</td><td><span class="pp">#if</span> <a id="906c5" class="tk">defined</a>(<a id="906c13" class="tk">MULTITASKING</a>)</td></tr>
+<tr name="907" id="907">
+<td>907</td><td></td></tr>
+<tr name="908" id="908">
+<td>908</td><td>  <span class="kw">return</span> <a id="908c10" class="tk">rt_OneStepTask</a>(<a id="908c25" class="tk">S</a>,<a id="908c27" class="tk">tid</a>, <a id="908c32" class="tk">NULL</a>);</td></tr>
+<tr name="909" id="909">
+<td>909</td><td></td></tr>
+<tr name="910" id="910">
+<td>910</td><td><span class="pp">#else</span></td></tr>
+<tr name="911" id="911">
+<td>911</td><td></td></tr>
+<tr name="912" id="912">
+<td>912</td><td>  <span class="kw">return</span> <a id="912c10" class="tk">NI_OK</a>;</td></tr>
+<tr name="913" id="913">
+<td>913</td><td></td></tr>
+<tr name="914" id="914">
+<td>914</td><td><span class="pp">#endif</span></td></tr>
+<tr name="915" id="915">
+<td>915</td><td></td></tr>
+<tr name="916" id="916">
+<td>916</td><td><span class="br">}</span></td></tr>
+<tr name="917" id="917">
+<td>917</td><td></td></tr>
+<tr name="918" id="918">
+<td>918</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="919" id="919">
+<td>919</td><td><span class="ct"> * Function: NIRT_FinalizeModel</span></td></tr>
+<tr name="920" id="920">
+<td>920</td><td><span class="ct"> *</span></td></tr>
+<tr name="921" id="921">
+<td>921</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="922" id="922">
+<td>922</td><td><span class="ct"> *	Releases resources. Called after simulation stops.</span></td></tr>
+<tr name="923" id="923">
+<td>923</td><td><span class="ct"> *</span></td></tr>
+<tr name="924" id="924">
+<td>924</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="925" id="925">
+<td>925</td><td><span class="ct"> *	NI_OK if no error</span></td></tr>
+<tr name="926" id="926">
+<td>926</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="927" id="927">
+<td>927</td><td><a id="927c1" class="tk">DLL_EXPORT</a> <a id="927c12" class="tk">int32_t</a> <a id="927c20" class="tk">NIRT_FinalizeModel</a>(<span class="kw">void</span>)</td></tr>
+<tr name="928" id="928">
+<td>928</td><td><span class="br">{</span></td></tr>
+<tr name="929" id="929">
+<td>929</td><td>  <a id="929c3" class="tk">rt_StopDataLogging</a>(<a id="929c22" class="tk">MATFILE</a>,<a id="929c30" class="tk">rtmGetRTWLogInfo</a>(<a id="929c47" class="tk">S</a>));</td></tr>
+<tr name="930" id="930">
+<td>930</td><td>  <span class="kw">if</span> (<a id="930c7" class="tk">SITglobals</a>.<a id="930c18" class="tk">errmsg</a> <a id="930c25" class="tk">!=</a> <a id="930c28" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="931" id="931">
+<td>931</td><td>    (<span class="kw">void</span>)<a id="931c11" class="tk">fprintf</a>(<a id="931c19" class="tk">stderr</a>,"%s\n",<a id="931c33" class="tk">SITglobals</a>.<a id="931c44" class="tk">errmsg</a>);</td></tr>
+<tr name="932" id="932">
+<td>932</td><td>    <span class="kw">return</span> <a id="932c12" class="tk">NI_ERROR</a>;</td></tr>
+<tr name="933" id="933">
+<td>933</td><td>  <span class="br">}</span></td></tr>
+<tr name="934" id="934">
+<td>934</td><td></td></tr>
+<tr name="935" id="935">
+<td>935</td><td>  <span class="kw">if</span> (<a id="935c7" class="tk">rtmGetErrorStatus</a>(<a id="935c25" class="tk">S</a>) <a id="935c28" class="tk">!=</a> <a id="935c31" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="936" id="936">
+<td>936</td><td>    (<span class="kw">void</span>)<a id="936c11" class="tk">fprintf</a>(<a id="936c19" class="tk">stderr</a>,"%s\n", <a id="936c34" class="tk">rtmGetErrorStatus</a>(<a id="936c52" class="tk">S</a>));</td></tr>
+<tr name="937" id="937">
+<td>937</td><td>    <span class="kw">return</span> <a id="937c12" class="tk">NI_ERROR</a>;</td></tr>
+<tr name="938" id="938">
+<td>938</td><td>  <span class="br">}</span></td></tr>
+<tr name="939" id="939">
+<td>939</td><td></td></tr>
+<tr name="940" id="940">
+<td>940</td><td>  <span class="ct">/* Clean up model resources that were set up during Model Start */</span></td></tr>
+<tr name="941" id="941">
+<td>941</td><td>  <span class="kw">if</span> (<a id="941c7" class="tk">SITglobals</a>.<a id="941c18" class="tk">isModelStarted</a>) <span class="br">{</span></td></tr>
+<tr name="942" id="942">
+<td>942</td><td>    <a id="942c5" class="tk">MdlTerminate</a>();</td></tr>
+<tr name="943" id="943">
+<td>943</td><td>  <span class="br">}</span></td></tr>
+<tr name="944" id="944">
+<td>944</td><td></td></tr>
+<tr name="945" id="945">
+<td>945</td><td>  <a id="945c3" class="tk">DeleteCriticalSection</a>(<a id="945c25" class="tk">&amp;</a><a id="945c26" class="tk">SITglobals</a>.<a id="945c37" class="tk">taskCriticalSection</a>);</td></tr>
+<tr name="946" id="946">
+<td>946</td><td>  <a id="946c3" class="tk">CloseHandle</a>(<a id="946c15" class="tk">SITexportglobals</a>.<a id="946c32" class="tk">flipCriticalSection</a>);</td></tr>
+<tr name="947" id="947">
+<td>947</td><td>  <span class="kw">return</span> <a id="947c10" class="tk">NI_OK</a>;</td></tr>
+<tr name="948" id="948">
+<td>948</td><td><span class="br">}</span>                                      <span class="ct">/* end FinalizeModel */</span></td></tr>
+<tr name="949" id="949">
+<td>949</td><td></td></tr>
+<tr name="950" id="950">
+<td>950</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="951" id="951">
+<td>951</td><td><span class="ct"> * Function: NIRT_GetErrorMessageLength</span></td></tr>
+<tr name="952" id="952">
+<td>952</td><td><span class="ct"> *</span></td></tr>
+<tr name="953" id="953">
+<td>953</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="954" id="954">
+<td>954</td><td><span class="ct"> *	Gets the length of the error message.</span></td></tr>
+<tr name="955" id="955">
+<td>955</td><td><span class="ct"> *</span></td></tr>
+<tr name="956" id="956">
+<td>956</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="957" id="957">
+<td>957</td><td><span class="ct"> *	Length of the error message.</span></td></tr>
+<tr name="958" id="958">
+<td>958</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="959" id="959">
+<td>959</td><td><a id="959c1" class="tk">DLL_EXPORT</a> <a id="959c12" class="tk">int32_t</a> <a id="959c20" class="tk">NIRT_GetErrorMessageLength</a>(<span class="kw">void</span>)</td></tr>
+<tr name="960" id="960">
+<td>960</td><td><span class="br">{</span></td></tr>
+<tr name="961" id="961">
+<td>961</td><td>  <a id="961c3" class="tk">int32_t</a> <a id="961c11" class="tk">retval</a> = 0;</td></tr>
+<tr name="962" id="962">
+<td>962</td><td>  <span class="kw">if</span> (<a id="962c7" class="tk">SITglobals</a>.<a id="962c18" class="tk">errmsg</a> <a id="962c25" class="tk">!=</a> <a id="962c28" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="963" id="963">
+<td>963</td><td>    <a id="963c5" class="tk">retval</a> = <a id="963c14" class="tk">strlen</a>(<a id="963c21" class="tk">SITglobals</a>.<a id="963c32" class="tk">errmsg</a>);</td></tr>
+<tr name="964" id="964">
+<td>964</td><td>  <span class="br">}</span> <span class="kw">else</span> <span class="kw">if</span> (<a id="964c14" class="tk">rtmGetErrorStatus</a>(<a id="964c32" class="tk">S</a>) <a id="964c35" class="tk">!=</a> <a id="964c38" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="965" id="965">
+<td>965</td><td>    <a id="965c5" class="tk">retval</a> = <a id="965c14" class="tk">strlen</a>(<a id="965c21" class="tk">rtmGetErrorStatus</a>(<a id="965c39" class="tk">S</a>));</td></tr>
+<tr name="966" id="966">
+<td>966</td><td>  <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="967" id="967">
+<td>967</td><td>    <span class="ct">/* No error message length */</span></td></tr>
+<tr name="968" id="968">
+<td>968</td><td>    <a id="968c5" class="tk">retval</a> = 0;</td></tr>
+<tr name="969" id="969">
+<td>969</td><td>  <span class="br">}</span></td></tr>
+<tr name="970" id="970">
+<td>970</td><td></td></tr>
+<tr name="971" id="971">
+<td>971</td><td>  <span class="kw">return</span> <a id="971c10" class="tk">retval</a>;</td></tr>
+<tr name="972" id="972">
+<td>972</td><td><span class="br">}</span></td></tr>
+<tr name="973" id="973">
+<td>973</td><td></td></tr>
+<tr name="974" id="974">
+<td>974</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="975" id="975">
+<td>975</td><td><span class="ct"> * Function: NIRT_ModelError</span></td></tr>
+<tr name="976" id="976">
+<td>976</td><td><span class="ct"> *</span></td></tr>
+<tr name="977" id="977">
+<td>977</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="978" id="978">
+<td>978</td><td><span class="ct"> *	Check for any simulation errors.</span></td></tr>
+<tr name="979" id="979">
+<td>979</td><td><span class="ct"> *</span></td></tr>
+<tr name="980" id="980">
+<td>980</td><td><span class="ct"> * Input/Output Parameters:</span></td></tr>
+<tr name="981" id="981">
+<td>981</td><td><span class="ct"> *	msglen	: (in) length of input string (out) length of output string</span></td></tr>
+<tr name="982" id="982">
+<td>982</td><td><span class="ct"> *</span></td></tr>
+<tr name="983" id="983">
+<td>983</td><td><span class="ct"> * Output Parameters:</span></td></tr>
+<tr name="984" id="984">
+<td>984</td><td><span class="ct"> *	errmsg	: string containing error message (if any occurred).</span></td></tr>
+<tr name="985" id="985">
+<td>985</td><td><span class="ct"> *</span></td></tr>
+<tr name="986" id="986">
+<td>986</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="987" id="987">
+<td>987</td><td><span class="ct"> *	NI_OK if no error</span></td></tr>
+<tr name="988" id="988">
+<td>988</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="989" id="989">
+<td>989</td><td><a id="989c1" class="tk">DLL_EXPORT</a> <a id="989c12" class="tk">int32_t</a> <a id="989c20" class="tk">NIRT_ModelError</a>(<span class="kw">char</span><a id="989c40" class="tk">*</a> <a id="989c42" class="tk">errmsg</a>, <a id="989c50" class="tk">int32_t</a> <a id="989c58" class="tk">*</a><a id="989c59" class="tk">msglen</a>)</td></tr>
+<tr name="990" id="990">
+<td>990</td><td><span class="br">{</span></td></tr>
+<tr name="991" id="991">
+<td>991</td><td>  <a id="991c3" class="tk">int32_t</a> <a id="991c11" class="tk">retVal</a> = <a id="991c20" class="tk">NI_OK</a>;</td></tr>
+<tr name="992" id="992">
+<td>992</td><td>  <span class="kw">const</span> <span class="kw">char</span> <a id="992c14" class="tk">*</a><a id="992c15" class="tk">sysmsg</a> = <a id="992c24" class="tk">NULL</a>;</td></tr>
+<tr name="993" id="993">
+<td>993</td><td>  <span class="kw">const</span> <span class="kw">char</span> <a id="993c14" class="tk">*</a><a id="993c15" class="tk">simStoppedMsg</a> =</td></tr>
+<tr name="994" id="994">
+<td>994</td><td>    "The model simulation was stopped, but no reason was specified. This may be expected behavior.";</td></tr>
+<tr name="995" id="995">
+<td>995</td><td>  <span class="kw">if</span> ((<a id="995c8" class="tk">SITglobals</a>.<a id="995c19" class="tk">errmsg</a> <a id="995c26" class="tk">!=</a> <a id="995c29" class="tk">NULL</a>) <a id="995c35" class="tk">||</a> (<a id="995c39" class="tk">rtmGetErrorStatus</a>(<a id="995c57" class="tk">S</a>) <a id="995c60" class="tk">!=</a> <a id="995c63" class="tk">NULL</a>)) <span class="br">{</span></td></tr>
+<tr name="996" id="996">
+<td>996</td><td>    <span class="ct">/* Set error condition */</span></td></tr>
+<tr name="997" id="997">
+<td>997</td><td>    <a id="997c5" class="tk">retVal</a> = <a id="997c14" class="tk">NI_ERROR</a>;</td></tr>
+<tr name="998" id="998">
+<td>998</td><td>    <span class="kw">if</span> (<a id="998c9" class="tk">*</a><a id="998c10" class="tk">msglen</a> <a id="998c17" class="tk">&gt;</a> 0) <span class="br">{</span></td></tr>
+<tr name="999" id="999">
+<td>999</td><td>      <span class="ct">/* Get system error message */</span></td></tr>
+<tr name="1000" id="1000">
+<td>1000</td><td>      <span class="kw">if</span> (<a id="1000c11" class="tk">SITglobals</a>.<a id="1000c22" class="tk">errmsg</a> <a id="1000c29" class="tk">!=</a> <a id="1000c32" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="1001" id="1001">
+<td>1001</td><td>        <a id="1001c9" class="tk">sysmsg</a> = <a id="1001c18" class="tk">SITglobals</a>.<a id="1001c29" class="tk">errmsg</a>;</td></tr>
+<tr name="1002" id="1002">
+<td>1002</td><td>      <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="1003" id="1003">
+<td>1003</td><td>        <a id="1003c9" class="tk">sysmsg</a> = <a id="1003c18" class="tk">rtmGetErrorStatus</a>(<a id="1003c36" class="tk">S</a>);</td></tr>
+<tr name="1004" id="1004">
+<td>1004</td><td>      <span class="br">}</span></td></tr>
+<tr name="1005" id="1005">
+<td>1005</td><td></td></tr>
+<tr name="1006" id="1006">
+<td>1006</td><td>      <span class="ct">/* Copy message */</span></td></tr>
+<tr name="1007" id="1007">
+<td>1007</td><td>      <span class="kw">if</span> (<a id="1007c11" class="tk">*</a><a id="1007c12" class="tk">msglen</a> <a id="1007c19" class="tk">&gt;</a> (<a id="1007c22" class="tk">int32_t</a>)<a id="1007c30" class="tk">strlen</a>(<a id="1007c37" class="tk">sysmsg</a>)) <span class="br">{</span></td></tr>
+<tr name="1008" id="1008">
+<td>1008</td><td>        <a id="1008c9" class="tk">*</a><a id="1008c10" class="tk">msglen</a> = <a id="1008c19" class="tk">strlen</a>(<a id="1008c26" class="tk">sysmsg</a>);</td></tr>
+<tr name="1009" id="1009">
+<td>1009</td><td>      <span class="br">}</span></td></tr>
+<tr name="1010" id="1010">
+<td>1010</td><td></td></tr>
+<tr name="1011" id="1011">
+<td>1011</td><td>      <a id="1011c7" class="tk">strncpy</a>(<a id="1011c15" class="tk">errmsg</a>, <a id="1011c23" class="tk">sysmsg</a>, <a id="1011c31" class="tk">*</a><a id="1011c32" class="tk">msglen</a>);</td></tr>
+<tr name="1012" id="1012">
+<td>1012</td><td>    <span class="br">}</span></td></tr>
+<tr name="1013" id="1013">
+<td>1013</td><td>  <span class="br">}</span> <span class="kw">else</span> <span class="kw">if</span> (<a id="1013c14" class="tk">SITglobals</a>.<a id="1013c25" class="tk">stopExecutionFlag</a> <a id="1013c43" class="tk">==</a> 1) <span class="br">{</span></td></tr>
+<tr name="1014" id="1014">
+<td>1014</td><td>    <span class="ct">/* No error */</span></td></tr>
+<tr name="1015" id="1015">
+<td>1015</td><td>    <a id="1015c5" class="tk">retVal</a> = <a id="1015c14" class="tk">NI_OK</a>;</td></tr>
+<tr name="1016" id="1016">
+<td>1016</td><td></td></tr>
+<tr name="1017" id="1017">
+<td>1017</td><td>    <span class="ct">/* Execution stopped, but without a message. Return generic message. */</span></td></tr>
+<tr name="1018" id="1018">
+<td>1018</td><td>    <span class="kw">if</span> (<a id="1018c9" class="tk">*</a><a id="1018c10" class="tk">msglen</a> <a id="1018c17" class="tk">&gt;</a> 0) <span class="br">{</span></td></tr>
+<tr name="1019" id="1019">
+<td>1019</td><td>      <span class="kw">if</span> (<a id="1019c11" class="tk">*</a><a id="1019c12" class="tk">msglen</a> <a id="1019c19" class="tk">&gt;</a> (<a id="1019c22" class="tk">int32_t</a>)<a id="1019c30" class="tk">strlen</a>(<a id="1019c37" class="tk">simStoppedMsg</a>)) <span class="br">{</span></td></tr>
+<tr name="1020" id="1020">
+<td>1020</td><td>        <span class="ct">/* Get error message */</span></td></tr>
+<tr name="1021" id="1021">
+<td>1021</td><td>        <a id="1021c9" class="tk">*</a><a id="1021c10" class="tk">msglen</a> = <a id="1021c19" class="tk">strlen</a>(<a id="1021c26" class="tk">simStoppedMsg</a>);</td></tr>
+<tr name="1022" id="1022">
+<td>1022</td><td>      <span class="br">}</span></td></tr>
+<tr name="1023" id="1023">
+<td>1023</td><td></td></tr>
+<tr name="1024" id="1024">
+<td>1024</td><td>      <span class="ct">/* Return error message */</span></td></tr>
+<tr name="1025" id="1025">
+<td>1025</td><td>      <a id="1025c7" class="tk">strncpy</a>(<a id="1025c15" class="tk">errmsg</a>, <a id="1025c23" class="tk">simStoppedMsg</a>, <a id="1025c38" class="tk">*</a><a id="1025c39" class="tk">msglen</a>);</td></tr>
+<tr name="1026" id="1026">
+<td>1026</td><td>    <span class="br">}</span></td></tr>
+<tr name="1027" id="1027">
+<td>1027</td><td>  <span class="br">}</span> <span class="kw">else</span> <span class="br">{</span></td></tr>
+<tr name="1028" id="1028">
+<td>1028</td><td>    <span class="ct">/* No error */</span></td></tr>
+<tr name="1029" id="1029">
+<td>1029</td><td>    <a id="1029c5" class="tk">retVal</a> = <a id="1029c14" class="tk">NI_OK</a>;</td></tr>
+<tr name="1030" id="1030">
+<td>1030</td><td>    <a id="1030c5" class="tk">*</a><a id="1030c6" class="tk">msglen</a> = 0;</td></tr>
+<tr name="1031" id="1031">
+<td>1031</td><td>  <span class="br">}</span></td></tr>
+<tr name="1032" id="1032">
+<td>1032</td><td></td></tr>
+<tr name="1033" id="1033">
+<td>1033</td><td>  <span class="kw">return</span> <a id="1033c10" class="tk">retVal</a>;</td></tr>
+<tr name="1034" id="1034">
+<td>1034</td><td><span class="br">}</span></td></tr>
+<tr name="1035" id="1035">
+<td>1035</td><td></td></tr>
+<tr name="1036" id="1036">
+<td>1036</td><td><span class="kw">extern</span> <span class="kw">const</span> <a id="1036c14" class="tk">NI_Task</a> <a id="1036c22" class="tk">NI_TaskList</a>[];</td></tr>
+<tr name="1037" id="1037">
+<td>1037</td><td><span class="kw">extern</span> <span class="kw">const</span> <a id="1037c14" class="tk">int32_t</a> <a id="1037c22" class="tk">NI_NumTasks</a>;</td></tr>
+<tr name="1038" id="1038">
+<td>1038</td><td></td></tr>
+<tr name="1039" id="1039">
+<td>1039</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="1040" id="1040">
+<td>1040</td><td><span class="ct"> * Function: NIRT_TaskRunTimeInfo</span></td></tr>
+<tr name="1041" id="1041">
+<td>1041</td><td><span class="ct"> *</span></td></tr>
+<tr name="1042" id="1042">
+<td>1042</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="1043" id="1043">
+<td>1043</td><td><span class="ct"> *	called in background loop. Returns number of overruns of tasks in the simulation overloading this function</span></td></tr>
+<tr name="1044" id="1044">
+<td>1044</td><td><span class="ct"> *	to set the HALT ON TASK OVERRUN flag halt = 1: do not halt, 2: halt.</span></td></tr>
+<tr name="1045" id="1045">
+<td>1045</td><td><span class="ct"> *</span></td></tr>
+<tr name="1046" id="1046">
+<td>1046</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="1047" id="1047">
+<td>1047</td><td><a id="1047c1" class="tk">DLL_EXPORT</a> <a id="1047c12" class="tk">int32_t</a> <a id="1047c20" class="tk">NIRT_TaskRunTimeInfo</a>(<a id="1047c41" class="tk">int32_t</a> <a id="1047c49" class="tk">halt</a>, <a id="1047c55" class="tk">int32_t</a><a id="1047c62" class="tk">*</a> <a id="1047c64" class="tk">overruns</a>, <a id="1047c74" class="tk">int32_t</a></td></tr>
+<tr name="1048" id="1048">
+<td>1048</td><td>  <a id="1048c3" class="tk">*</a><a id="1048c4" class="tk">numtasks</a>)</td></tr>
+<tr name="1049" id="1049">
+<td>1049</td><td><span class="br">{</span></td></tr>
+<tr name="1050" id="1050">
+<td>1050</td><td>  <a id="1050c3" class="tk">int32_t</a> <a id="1050c11" class="tk">TaskOverrun</a> = 0;</td></tr>
+<tr name="1051" id="1051">
+<td>1051</td><td>  <a id="1051c3" class="tk">int32_t</a> <a id="1051c11" class="tk">i</a> = 0;</td></tr>
+<tr name="1052" id="1052">
+<td>1052</td><td>  <span class="kw">if</span> (<a id="1052c7" class="tk">halt</a>) <span class="br">{</span></td></tr>
+<tr name="1053" id="1053">
+<td>1053</td><td>    <a id="1053c5" class="tk">SITglobals</a>.<a id="1053c16" class="tk">haltonOverrun</a> = <a id="1053c32" class="tk">halt</a><a id="1053c36" class="tk">-</a>1;</td></tr>
+<tr name="1054" id="1054">
+<td>1054</td><td>  <span class="br">}</span></td></tr>
+<tr name="1055" id="1055">
+<td>1055</td><td></td></tr>
+<tr name="1056" id="1056">
+<td>1056</td><td>  <span class="kw">for</span> (<a id="1056c8" class="tk">i</a>=0; <a id="1056c13" class="tk">i</a><a id="1056c14" class="tk">&lt;</a><a id="1056c15" class="tk">NUMST</a><a id="1056c20" class="tk">-</a><a id="1056c21" class="tk">TID01EQ</a>; <a id="1056c30" class="tk">i</a><a id="1056c31" class="tk">++</a>) <span class="br">{</span></td></tr>
+<tr name="1057" id="1057">
+<td>1057</td><td>    <a id="1057c5" class="tk">TaskOverrun</a><a id="1057c16" class="tk">+=</a> <a id="1057c19" class="tk">overruns</a>[<a id="1057c28" class="tk">i</a>] = <a id="1057c33" class="tk">SITglobals</a>.<a id="1057c44" class="tk">overrunCount</a>[<a id="1057c57" class="tk">i</a><a id="1057c58" class="tk">+</a><a id="1057c59" class="tk">FIRST_TID</a>];</td></tr>
+<tr name="1058" id="1058">
+<td>1058</td><td>  <span class="br">}</span></td></tr>
+<tr name="1059" id="1059">
+<td>1059</td><td></td></tr>
+<tr name="1060" id="1060">
+<td>1060</td><td>  <a id="1060c3" class="tk">*</a><a id="1060c4" class="tk">numtasks</a> = <a id="1060c15" class="tk">NUMST</a>;</td></tr>
+<tr name="1061" id="1061">
+<td>1061</td><td>  <span class="kw">return</span> <a id="1061c10" class="tk">TaskOverrun</a>;</td></tr>
+<tr name="1062" id="1062">
+<td>1062</td><td><span class="br">}</span></td></tr>
+<tr name="1063" id="1063">
+<td>1063</td><td></td></tr>
+<tr name="1064" id="1064">
+<td>1064</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="1065" id="1065">
+<td>1065</td><td><span class="ct"> * Function: NIRT_GetTaskSpec</span></td></tr>
+<tr name="1066" id="1066">
+<td>1066</td><td><span class="ct"> *</span></td></tr>
+<tr name="1067" id="1067">
+<td>1067</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="1068" id="1068">
+<td>1068</td><td><span class="ct"> *	Returns a model's multirate task specifications</span></td></tr>
+<tr name="1069" id="1069">
+<td>1069</td><td><span class="ct"> *</span></td></tr>
+<tr name="1070" id="1070">
+<td>1070</td><td><span class="ct"> * Input Parameters:</span></td></tr>
+<tr name="1071" id="1071">
+<td>1071</td><td><span class="ct"> *	index	: index of the task</span></td></tr>
+<tr name="1072" id="1072">
+<td>1072</td><td><span class="ct"> *</span></td></tr>
+<tr name="1073" id="1073">
+<td>1073</td><td><span class="ct"> * Output Parameters:</span></td></tr>
+<tr name="1074" id="1074">
+<td>1074</td><td><span class="ct"> *	tid		: task ID. This may not necessarily be the index of task in task list.</span></td></tr>
+<tr name="1075" id="1075">
+<td>1075</td><td><span class="ct"> *	tstep	: time step for this task</span></td></tr>
+<tr name="1076" id="1076">
+<td>1076</td><td><span class="ct"> *	offset	:</span></td></tr>
+<tr name="1077" id="1077">
+<td>1077</td><td><span class="ct"> *</span></td></tr>
+<tr name="1078" id="1078">
+<td>1078</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="1079" id="1079">
+<td>1079</td><td><span class="ct"> *	NI_OK if no error. (if index == -1, return number of tasks in the model)</span></td></tr>
+<tr name="1080" id="1080">
+<td>1080</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="1081" id="1081">
+<td>1081</td><td><a id="1081c1" class="tk">DLL_EXPORT</a> <a id="1081c12" class="tk">int32_t</a> <a id="1081c20" class="tk">NIRT_GetTaskSpec</a>(<a id="1081c37" class="tk">int32_t</a> <a id="1081c45" class="tk">index</a>, <a id="1081c52" class="tk">int32_t</a> <a id="1081c60" class="tk">*</a><a id="1081c61" class="tk">tID</a>, <span class="kw">double</span> <a id="1081c73" class="tk">*</a><a id="1081c74" class="tk">tstep</a>,</td></tr>
+<tr name="1082" id="1082">
+<td>1082</td><td>  <span class="kw">double</span> <a id="1082c10" class="tk">*</a><a id="1082c11" class="tk">offset</a>)</td></tr>
+<tr name="1083" id="1083">
+<td>1083</td><td><span class="br">{</span></td></tr>
+<tr name="1084" id="1084">
+<td>1084</td><td>  <span class="kw">if</span> ((<a id="1084c8" class="tk">index</a> <a id="1084c14" class="tk">&lt;</a> 0) <a id="1084c19" class="tk">||</a> (<a id="1084c23" class="tk">index</a> <a id="1084c29" class="tk">&gt;=</a> <a id="1084c32" class="tk">NI_NumTasks</a>) ) <span class="br">{</span></td></tr>
+<tr name="1085" id="1085">
+<td>1085</td><td>    <span class="kw">return</span> <a id="1085c12" class="tk">NI_NumTasks</a>;</td></tr>
+<tr name="1086" id="1086">
+<td>1086</td><td>  <span class="br">}</span></td></tr>
+<tr name="1087" id="1087">
+<td>1087</td><td></td></tr>
+<tr name="1088" id="1088">
+<td>1088</td><td>  <span class="kw">if</span> (<a id="1088c7" class="tk">tID</a> <a id="1088c11" class="tk">!=</a> <a id="1088c14" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="1089" id="1089">
+<td>1089</td><td>    <a id="1089c5" class="tk">*</a><a id="1089c6" class="tk">tID</a> = <a id="1089c12" class="tk">NI_TaskList</a>[<a id="1089c24" class="tk">index</a>].<a id="1089c31" class="tk">tid</a>;</td></tr>
+<tr name="1090" id="1090">
+<td>1090</td><td>  <span class="br">}</span></td></tr>
+<tr name="1091" id="1091">
+<td>1091</td><td></td></tr>
+<tr name="1092" id="1092">
+<td>1092</td><td>  <span class="kw">if</span> (<a id="1092c7" class="tk">tstep</a> <a id="1092c13" class="tk">!=</a> <a id="1092c16" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="1093" id="1093">
+<td>1093</td><td>    <a id="1093c5" class="tk">*</a><a id="1093c6" class="tk">tstep</a> = <a id="1093c14" class="tk">NI_TaskList</a>[<a id="1093c26" class="tk">index</a>].<a id="1093c33" class="tk">tstep</a>;</td></tr>
+<tr name="1094" id="1094">
+<td>1094</td><td>  <span class="br">}</span></td></tr>
+<tr name="1095" id="1095">
+<td>1095</td><td></td></tr>
+<tr name="1096" id="1096">
+<td>1096</td><td>  <span class="kw">if</span> (<a id="1096c7" class="tk">offset</a> <a id="1096c14" class="tk">!=</a> <a id="1096c17" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="1097" id="1097">
+<td>1097</td><td>    <a id="1097c5" class="tk">*</a><a id="1097c6" class="tk">offset</a> = <a id="1097c15" class="tk">NI_TaskList</a>[<a id="1097c27" class="tk">index</a>].<a id="1097c34" class="tk">offset</a>;</td></tr>
+<tr name="1098" id="1098">
+<td>1098</td><td>  <span class="br">}</span></td></tr>
+<tr name="1099" id="1099">
+<td>1099</td><td></td></tr>
+<tr name="1100" id="1100">
+<td>1100</td><td>  <span class="kw">return</span> <a id="1100c10" class="tk">NI_OK</a>;</td></tr>
+<tr name="1101" id="1101">
+<td>1101</td><td><span class="br">}</span></td></tr>
+<tr name="1102" id="1102">
+<td>1102</td><td></td></tr>
+<tr name="1103" id="1103">
+<td>1103</td><td><span class="ct">/*========================================================================*</span></td></tr>
+<tr name="1104" id="1104">
+<td>1104</td><td><span class="ct"> * Function: NIRT_GetModelSpec</span></td></tr>
+<tr name="1105" id="1105">
+<td>1105</td><td><span class="ct"> *</span></td></tr>
+<tr name="1106" id="1106">
+<td>1106</td><td><span class="ct"> * Abstract:</span></td></tr>
+<tr name="1107" id="1107">
+<td>1107</td><td><span class="ct"> *	Get the model information without initializing.</span></td></tr>
+<tr name="1108" id="1108">
+<td>1108</td><td><span class="ct"> *</span></td></tr>
+<tr name="1109" id="1109">
+<td>1109</td><td><span class="ct"> * Output Parameters:</span></td></tr>
+<tr name="1110" id="1110">
+<td>1110</td><td><span class="ct"> *	name			: name of the model</span></td></tr>
+<tr name="1111" id="1111">
+<td>1111</td><td><span class="ct"> *	namelen			: the name string length. If a value of "-1" is specified, the minimum buffer size of "name" is returned</span></td></tr>
+<tr name="1112" id="1112">
+<td>1112</td><td><span class="ct"> *	baseTimeStep	: base time step of the model</span></td></tr>
+<tr name="1113" id="1113">
+<td>1113</td><td><span class="ct"> *	outNumInports	: number of external inputs</span></td></tr>
+<tr name="1114" id="1114">
+<td>1114</td><td><span class="ct"> *	outNumOutports	: number of external outputs</span></td></tr>
+<tr name="1115" id="1115">
+<td>1115</td><td><span class="ct"> *	numtasks		: number of Tasks (including the base rate task)</span></td></tr>
+<tr name="1116" id="1116">
+<td>1116</td><td><span class="ct"> *</span></td></tr>
+<tr name="1117" id="1117">
+<td>1117</td><td><span class="ct"> * Returns:</span></td></tr>
+<tr name="1118" id="1118">
+<td>1118</td><td><span class="ct"> *	NI_OK if no error</span></td></tr>
+<tr name="1119" id="1119">
+<td>1119</td><td><span class="ct"> *========================================================================*/</span></td></tr>
+<tr name="1120" id="1120">
+<td>1120</td><td><a id="1120c1" class="tk">DLL_EXPORT</a> <a id="1120c12" class="tk">int32_t</a> <a id="1120c20" class="tk">NIRT_GetModelSpec</a>(<span class="kw">char</span><a id="1120c42" class="tk">*</a> <a id="1120c44" class="tk">name</a>, <a id="1120c50" class="tk">int32_t</a> <a id="1120c58" class="tk">*</a><a id="1120c59" class="tk">namelen</a>, <span class="kw">double</span></td></tr>
+<tr name="1121" id="1121">
+<td>1121</td><td>  <a id="1121c3" class="tk">*</a><a id="1121c4" class="tk">baseTimeStep</a>,</td></tr>
+<tr name="1122" id="1122">
+<td>1122</td><td>  <a id="1122c3" class="tk">int32_t</a> <a id="1122c11" class="tk">*</a><a id="1122c12" class="tk">outNumInports</a>, <a id="1122c27" class="tk">int32_t</a> <a id="1122c35" class="tk">*</a><a id="1122c36" class="tk">outNumOutports</a>, <a id="1122c52" class="tk">int32_t</a> <a id="1122c60" class="tk">*</a><a id="1122c61" class="tk">numTasks</a>)</td></tr>
+<tr name="1123" id="1123">
+<td>1123</td><td><span class="br">{</span></td></tr>
+<tr name="1124" id="1124">
+<td>1124</td><td>  <span class="ct">// fill name buffer to min of namelen or namelen</span></td></tr>
+<tr name="1125" id="1125">
+<td>1125</td><td>  <span class="kw">if</span> (<a id="1125c7" class="tk">namelen</a> <a id="1125c15" class="tk">!=</a> <a id="1125c18" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="1126" id="1126">
+<td>1126</td><td>    <a id="1126c5" class="tk">int32_t</a> <a id="1126c13" class="tk">i</a> = 0;</td></tr>
+<tr name="1127" id="1127">
+<td>1127</td><td>    <a id="1127c5" class="tk">int32_t</a> <a id="1127c13" class="tk">length</a> = 0;</td></tr>
+<tr name="1128" id="1128">
+<td>1128</td><td></td></tr>
+<tr name="1129" id="1129">
+<td>1129</td><td>    <span class="ct">/* Get the char length, not including the terminating char */</span></td></tr>
+<tr name="1130" id="1130">
+<td>1130</td><td>    <a id="1130c5" class="tk">length</a> = (<a id="1130c15" class="tk">int32_t</a>)<a id="1130c23" class="tk">strlen</a>(<a id="1130c30" class="tk">QUOTE</a>(<a id="1130c36" class="tk">MODEL</a>));</td></tr>
+<tr name="1131" id="1131">
+<td>1131</td><td>    <span class="kw">if</span> (<a id="1131c9" class="tk">*</a><a id="1131c10" class="tk">namelen</a> <a id="1131c18" class="tk">==</a> <a id="1131c21" class="tk">-</a>1) <span class="br">{</span></td></tr>
+<tr name="1132" id="1132">
+<td>1132</td><td>      <span class="ct">/* Return the required minimum buffer size */</span></td></tr>
+<tr name="1133" id="1133">
+<td>1133</td><td>      <a id="1133c7" class="tk">*</a><a id="1133c8" class="tk">namelen</a> = <a id="1133c18" class="tk">length</a>;</td></tr>
+<tr name="1134" id="1134">
+<td>1134</td><td>    <span class="br">}</span> <span class="kw">else</span> <span class="kw">if</span> (<a id="1134c16" class="tk">name</a> <a id="1134c21" class="tk">!=</a> <a id="1134c24" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="1135" id="1135">
+<td>1135</td><td>      <span class="kw">if</span> (<a id="1135c11" class="tk">*</a><a id="1135c12" class="tk">namelen</a> <a id="1135c20" class="tk">&gt;</a> <a id="1135c22" class="tk">length</a>) <span class="br">{</span></td></tr>
+<tr name="1136" id="1136">
+<td>1136</td><td>        <a id="1136c9" class="tk">*</a><a id="1136c10" class="tk">namelen</a> = <a id="1136c20" class="tk">length</a>;</td></tr>
+<tr name="1137" id="1137">
+<td>1137</td><td>      <span class="br">}</span></td></tr>
+<tr name="1138" id="1138">
+<td>1138</td><td></td></tr>
+<tr name="1139" id="1139">
+<td>1139</td><td>      <a id="1139c7" class="tk">strncpy</a>(<a id="1139c15" class="tk">name</a>, <a id="1139c21" class="tk">QUOTE</a>(<a id="1139c27" class="tk">MODEL</a>), <a id="1139c35" class="tk">*</a><a id="1139c36" class="tk">namelen</a>);</td></tr>
+<tr name="1140" id="1140">
+<td>1140</td><td>      <span class="kw">for</span> (<a id="1140c12" class="tk">i</a>=0; <a id="1140c17" class="tk">i</a><a id="1140c18" class="tk">&lt;</a><a id="1140c19" class="tk">*</a><a id="1140c20" class="tk">namelen</a>; <a id="1140c29" class="tk">i</a><a id="1140c30" class="tk">++</a>) <span class="br">{</span></td></tr>
+<tr name="1141" id="1141">
+<td>1141</td><td>        <span class="ct">/* Transform each character to lowercase*/</span></td></tr>
+<tr name="1142" id="1142">
+<td>1142</td><td>        <a id="1142c9" class="tk">name</a>[<a id="1142c14" class="tk">i</a>] = (<span class="kw">char</span>) <a id="1142c26" class="tk">tolower</a>(<a id="1142c34" class="tk">name</a>[<a id="1142c39" class="tk">i</a>]);</td></tr>
+<tr name="1143" id="1143">
+<td>1143</td><td>      <span class="br">}</span></td></tr>
+<tr name="1144" id="1144">
+<td>1144</td><td>    <span class="br">}</span></td></tr>
+<tr name="1145" id="1145">
+<td>1145</td><td>  <span class="br">}</span></td></tr>
+<tr name="1146" id="1146">
+<td>1146</td><td></td></tr>
+<tr name="1147" id="1147">
+<td>1147</td><td>  <span class="kw">if</span> (<a id="1147c7" class="tk">baseTimeStep</a> <a id="1147c20" class="tk">!=</a> <a id="1147c23" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="1148" id="1148">
+<td>1148</td><td>    <a id="1148c5" class="tk">*</a><a id="1148c6" class="tk">baseTimeStep</a> = <a id="1148c21" class="tk">NI_TaskList</a>[0].<a id="1148c36" class="tk">tstep</a>;</td></tr>
+<tr name="1149" id="1149">
+<td>1149</td><td>  <span class="br">}</span></td></tr>
+<tr name="1150" id="1150">
+<td>1150</td><td></td></tr>
+<tr name="1151" id="1151">
+<td>1151</td><td>  <span class="kw">if</span> (<a id="1151c7" class="tk">outNumInports</a> <a id="1151c21" class="tk">!=</a> <a id="1151c24" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="1152" id="1152">
+<td>1152</td><td>    <a id="1152c5" class="tk">*</a><a id="1152c6" class="tk">outNumInports</a> = <a id="1152c22" class="tk">NumInputPorts</a>();</td></tr>
+<tr name="1153" id="1153">
+<td>1153</td><td>  <span class="br">}</span></td></tr>
+<tr name="1154" id="1154">
+<td>1154</td><td></td></tr>
+<tr name="1155" id="1155">
+<td>1155</td><td>  <span class="kw">if</span> (<a id="1155c7" class="tk">outNumOutports</a> <a id="1155c22" class="tk">!=</a> <a id="1155c25" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="1156" id="1156">
+<td>1156</td><td>    <a id="1156c5" class="tk">*</a><a id="1156c6" class="tk">outNumOutports</a> = <a id="1156c23" class="tk">NumOutputPorts</a>();</td></tr>
+<tr name="1157" id="1157">
+<td>1157</td><td>  <span class="br">}</span></td></tr>
+<tr name="1158" id="1158">
+<td>1158</td><td></td></tr>
+<tr name="1159" id="1159">
+<td>1159</td><td>  <span class="kw">if</span> (<a id="1159c7" class="tk">numTasks</a> <a id="1159c16" class="tk">!=</a> <a id="1159c19" class="tk">NULL</a>) <span class="br">{</span></td></tr>
+<tr name="1160" id="1160">
+<td>1160</td><td></td></tr>
+<tr name="1161" id="1161">
+<td>1161</td><td><span class="pp">#if</span> <a id="1161c5" class="tk">!</a><a id="1161c6" class="tk">defined</a>(<a id="1161c14" class="tk">MULTITASKING</a>)             <span class="ct">/* SINGLETASKING */</span></td></tr>
+<tr name="1162" id="1162">
+<td>1162</td><td></td></tr>
+<tr name="1163" id="1163">
+<td>1163</td><td>    <a id="1163c5" class="tk">*</a><a id="1163c6" class="tk">numTasks</a> = 1;</td></tr>
+<tr name="1164" id="1164">
+<td>1164</td><td></td></tr>
+<tr name="1165" id="1165">
+<td>1165</td><td><span class="pp">#else</span></td></tr>
+<tr name="1166" id="1166">
+<td>1166</td><td></td></tr>
+<tr name="1167" id="1167">
+<td>1167</td><td>    <a id="1167c5" class="tk">*</a><a id="1167c6" class="tk">numTasks</a> = <a id="1167c17" class="tk">NI_NumTasks</a>;</td></tr>
+<tr name="1168" id="1168">
+<td>1168</td><td></td></tr>
+<tr name="1169" id="1169">
+<td>1169</td><td><span class="pp">#endif</span></td></tr>
+<tr name="1170" id="1170">
+<td>1170</td><td></td></tr>
+<tr name="1171" id="1171">
+<td>1171</td><td>  <span class="br">}</span></td></tr>
+<tr name="1172" id="1172">
+<td>1172</td><td></td></tr>
+<tr name="1173" id="1173">
+<td>1173</td><td>  <span class="kw">return</span> <a id="1173c10" class="tk">NI_OK</a>;</td></tr>
+<tr name="1174" id="1174">
+<td>1174</td><td><span class="br">}</span></td></tr>
+<tr name="1175" id="1175">
+<td>1175</td><td></td></tr>
+</table>
+</pre>
+</body>
+</html>
